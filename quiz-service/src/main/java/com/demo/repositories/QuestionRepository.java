@@ -11,7 +11,9 @@ import com.demo.entities.Question;
 import com.demo.entities.Test;
 import com.demo.entities.User;
 
-public interface QuestionRepository extends CrudRepository<Question, Integer>{
-	@Query("from Question where test.id = :id")
-	public List<Question> findQuestionByTestID(@Param("id") int id);
+
+public interface QuestionRepository extends CrudRepository<Question, Integer> {
+
+	@Query("from Question q where q.testID.id = :id")
+	List<Question> findQuestionByTestID(@Param("id") int id);
 }

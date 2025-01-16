@@ -3,6 +3,7 @@ package com.demo.configurations;
 
 import java.util.stream.Collectors;
 
+import com.demo.repositories.UserRepository;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -29,7 +30,8 @@ import com.demo.entities.User;
 public class ModelMapperConfiguration {
 	@Autowired
 	private Environment environment;
-
+	@Autowired
+	private UserRepository userRepository;
 	
 
 	@Bean
@@ -56,8 +58,7 @@ public class ModelMapperConfiguration {
 			@Override
 			protected void configure() {
 				// TODO Auto-generated method stub
-			
-				map().setUsername(source.getUser().getUsername());
+				map().setUsername(source.getUserID().getUsername());
 			}
 			
 		});

@@ -4,7 +4,7 @@ public class UserDTO {
 	private int id;
 	private String username;
 	private String password;
-	private int role;
+
 	public int getId() {
 		return id;
 	}
@@ -23,12 +23,8 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public int getRole() {
-		return role;
-	}
-	public void setRole(int role) {
-		this.role = role;
-	}
+
+
 
 	
 }
