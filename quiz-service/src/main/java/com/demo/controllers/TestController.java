@@ -1,7 +1,11 @@
 package com.demo.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.demo.controllers.advice.ResourceNotFoundException;
+import com.demo.entities.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +31,20 @@ public class TestController {
 		try {
 			return new ResponseEntity<List<TestDTO>>(testService.findAll(), HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<List<TestDTO>>(HttpStatus.BAD_REQUEST);
+			throw new ResourceNotFoundException("Không tìm thấy dữ liệu");
 		}
 	}
 	
 	@GetMapping(value = "findTestByCode/{code}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TestDTO> findTestByCode(@PathVariable("code") String code){
+	public ResponseEntity<?> findTestByCode(@PathVariable("code") String code){
 		try {
-			return new ResponseEntity<TestDTO>(testService.findTestByCode(code), HttpStatus.OK);
+			TestDTO testDTO = testService.findTestByCode(code);
+			Map<String, Object> response = new HashMap<>();
+			response.put("data", testDTO);
+			response.put("msg", "success");
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<TestDTO>(HttpStatus.BAD_REQUEST);
+			throw new ResourceNotFoundException("Không tìm thấy dữ liệu với mã: " + code);
 		}
 	}
 }
