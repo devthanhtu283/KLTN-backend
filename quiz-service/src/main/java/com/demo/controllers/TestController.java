@@ -24,7 +24,7 @@ import com.demo.services.TestService;
 public class TestController {
 	@Autowired
 	private TestService testService;
-	
+	// test commit
 	
 	@GetMapping(value = "findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TestDTO>> findAll(){
