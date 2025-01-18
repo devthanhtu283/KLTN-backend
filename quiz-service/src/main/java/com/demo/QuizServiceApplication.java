@@ -2,12 +2,14 @@ package com.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
-public class JobsApplication {
+@EnableDiscoveryClient
+public class QuizServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JobsApplication.class, args);
+		SpringApplication.run(QuizServiceApplication.class, args);
 	}
 
 }
