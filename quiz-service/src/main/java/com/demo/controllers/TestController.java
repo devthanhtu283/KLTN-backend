@@ -20,7 +20,7 @@ import com.demo.dtos.TestDTO;
 import com.demo.services.TestService;
 
 @Controller
-@RequestMapping("api/test")
+@RequestMapping("quiz")
 public class TestController {
 	@Autowired
 	private TestService testService;
