@@ -24,7 +24,6 @@ import com.demo.dtos.SeekerDTO;
 import com.demo.helpers.FileHelper;
 import com.demo.services.SeekerService;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/seeker")
 public class SeekerController {

@@ -19,9 +19,7 @@ import com.demo.dtos.SeekerDTO;
 import com.demo.dtos.TestDTO;
 import com.demo.dtos.UserDTO;
 import com.demo.entities.Employer;
-import com.demo.entities.Question;
 import com.demo.entities.Seeker;
-import com.demo.entities.Test;
 import com.demo.entities.User;
 
 
