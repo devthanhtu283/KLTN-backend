@@ -1,167 +1,136 @@
 package com.demo.entities;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "seeker", catalog = "jobs")
-public class Seeker implements java.io.Serializable {
+@Table(name = "seeker", schema = "jobs")
+public class Seeker implements Serializable {
+    private static final long serialVersionUID = -4044971807442193829L;
+    private Integer id;
 
-    @Id
-    private int id;
-
-    @OneToOne
-    @MapsId // Sử dụng ID của User làm ID của Seeker
-    @JoinColumn(name = "id") // Khóa ngoại trỏ đến ID của User
     private User user;
 
-    @Column(name = "full_name", length = 65535) // Cho phép full_name có giá trị null
     private String fullName;
 
-    @Column(name = "phone", length = 65535) // Cho phép phone có giá trị null
     private String phone;
 
-    @Column(name = "address", length = 65535) // Cho phép address có giá trị null
     private String address;
 
-    @Column(name = "dob", length = 10) // Cho phép dob có giá trị null
-    private Date dob;
+    private LocalDate dob;
 
-    @Column(name = "status") // Cho phép status có giá trị null
-    private boolean status; // Đổi thành Boolean để dễ dàng hỗ trợ giá trị null
+    private Boolean status = false;
 
-    @Column(name = "update_at", length = 19) // Cho phép updateAt có giá trị null
-    private Timestamp updateAt;
+    private Instant updateAt;
 
-    @Column(name = "gender", length = 10) // Cho phép dob có giá trị null
-    private String gender;
-    
-    @Column(name = "avatar", length = 65535) // Cho phép avatar có giá trị null
     private String avatar;
 
-    public Seeker() {
+    @Id
+    @Column(name = "id", nullable = false)
+    public Integer getId() {
+        return id;
     }
 
-    public Seeker(User user, String fullName, String phone, String address, Date dob, boolean status, Timestamp updateAt, String gender,
-            String avatar) {
-        this.user = user;
-        this.fullName = fullName;
-        this.phone = phone;
-        this.address = address;
-        this.dob = dob;
-        this.status = status;
-        this.updateAt = updateAt;
-        this.gender = gender;
-        this.avatar = avatar;
-    }
-
-    // Getters và setters cho các thuộc tính
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
+    public Seeker setId(Integer id) {
         this.id = id;
+        return this;
     }
 
+    @MapsId
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id", nullable = false)
     public User getUser() {
-        return this.user;
+        return user;
     }
 
-    public void setUser(User user) {
+    public Seeker setUser(User user) {
         this.user = user;
+        return this;
     }
 
+    @NotNull
+    @Lob
+    @Column(name = "full_name", nullable = false)
     public String getFullName() {
-        return this.fullName;
+        return fullName;
     }
 
-    public void setFullName(String fullName) {
+    public Seeker setFullName(String fullName) {
         this.fullName = fullName;
+        return this;
     }
 
+    @NotNull
+    @Lob
+    @Column(name = "phone", nullable = false)
     public String getPhone() {
-        return this.phone;
+        return phone;
     }
 
-    public void setPhone(String phone) {
+    public Seeker setPhone(String phone) {
         this.phone = phone;
+        return this;
     }
 
+    @NotNull
+    @Lob
+    @Column(name = "address", nullable = false)
     public String getAddress() {
-        return this.address;
+        return address;
     }
 
-    public void setAddress(String address) {
+    public Seeker setAddress(String address) {
         this.address = address;
+        return this;
     }
 
-    public Date getDob() {
-        return this.dob;
+    @NotNull
+    @Column(name = "dob", nullable = false)
+    public LocalDate getDob() {
+        return dob;
     }
 
-    public void setDob(Date dob) {
+    public Seeker setDob(LocalDate dob) {
         this.dob = dob;
+        return this;
     }
 
+    @NotNull
     @Column(name = "status", nullable = false)
-	public boolean isStatus() {
-		return this.status;
-	}
-
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
-
-    public Timestamp getUpdateAt() {
-        return this.updateAt;
+    public Boolean getStatus() {
+        return status;
     }
 
-    public void setUpdateAt(Timestamp updateAt) {
+    public Seeker setStatus(Boolean status) {
+        this.status = status;
+        return this;
+    }
+
+    @NotNull
+    @Column(name = "update_at", nullable = false)
+    public Instant getUpdateAt() {
+        return updateAt;
+    }
+
+    public Seeker setUpdateAt(Instant updateAt) {
         this.updateAt = updateAt;
+        return this;
     }
 
-    public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public Boolean getStatus() {
-		return status;
-	}
-
-	public String getAvatar() {
-        return this.avatar;
+    @NotNull
+    @Lob
+    @Column(name = "avatar", nullable = false)
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public Seeker setAvatar(String avatar) {
         this.avatar = avatar;
-    }
-    
-    @PrePersist
-    @PreUpdate
-    public void updateTimestamps() {
-        this.updateAt = new Timestamp(System.currentTimeMillis()); // Tự động cập nhật thời gian hiện tại
+        return this;
     }
 
-
-	@Override
-	public String toString() {
-		return "Seeker [id=" + id + ", user=" + user + ", fullName=" + fullName + ", phone=" + phone + ", address="
-				+ address + ", dob=" + dob + ", status=" + status + ", updateAt=" + updateAt + ", gender=" + gender
-				+ ", avatar=" + avatar + "]";
-	}
 }
