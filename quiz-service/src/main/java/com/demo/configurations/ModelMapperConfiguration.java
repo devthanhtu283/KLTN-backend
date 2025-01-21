@@ -59,6 +59,10 @@ public class ModelMapperConfiguration {
 			protected void configure() {
 				// TODO Auto-generated method stub
 				map().setUsername(source.getUserID().getUsername());
+				map().setEmail(source.getUserID().getEmail());
+				//test commit//test commit
+				//test commit
+				//test commit
 			}
 			
 		});
