@@ -6,6 +6,7 @@ public class TestDTO {
 	private String description;
 	private int userID;
 	private String username;
+	private String email;
 	private String code;
 	public int getId() {
 		return id;
@@ -43,6 +44,12 @@ public class TestDTO {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
-	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }
