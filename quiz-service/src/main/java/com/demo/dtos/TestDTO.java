@@ -6,7 +6,6 @@ public class TestDTO {
 	private String description;
 	private int userID;
 	private String username;
-	private String email;
 	private String code;
 	public int getId() {
 		return id;
@@ -45,11 +44,8 @@ public class TestDTO {
 		this.code = code;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	// test commit
+	// cc
+	/// aaaaa
+	// vvvv
 }
