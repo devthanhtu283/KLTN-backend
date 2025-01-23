@@ -10,13 +10,14 @@ public class UserDTO {
 	private int id;
 	private String username;
 	private String password;
-	private int user_type;
+	private Integer userType;
+
 	private String email;
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date created;
 	private String securityCode;
-	private boolean status;
+	private int status;
 	
 	public int getId() {
 		return id;
@@ -36,12 +37,11 @@ public class UserDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public int getUser_type() {
-		return user_type;
+
+	public int getStatus() {
+		return status;
 	}
-	public void setUser_type(int user_type) {
-		this.user_type = user_type;
-	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -60,12 +60,32 @@ public class UserDTO {
 	public void setSecurityCode(String securityCode) {
 		this.securityCode = securityCode;
 	}
-	public boolean isStatus() {
+	public int isStatus() {
 		return status;
 	}
-	public void setStatus(boolean status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 
-	
+	public Integer getUserType() {
+		return userType;
+	}
+
+	public void setUserType(Integer userType) {
+		this.userType = userType;
+	}
+
+	@Override
+	public String toString() {
+		return "UserDTO{" +
+				"id=" + id +
+				", username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", userType=" + userType +
+				", email='" + email + '\'' +
+				", created=" + created +
+				", securityCode='" + securityCode + '\'' +
+				", status=" + status +
+				'}';
+	}
 }
