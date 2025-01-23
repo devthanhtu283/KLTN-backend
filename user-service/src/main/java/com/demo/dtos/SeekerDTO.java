@@ -3,6 +3,7 @@ package com.demo.dtos;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+import com.demo.entities.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class SeekerDTO {
@@ -12,7 +13,7 @@ public class SeekerDTO {
 	private String address;
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private Date dob;
-	private boolean status;
+	private Integer status;
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	private Timestamp updateAt;
 	private String gender;
@@ -47,10 +48,10 @@ public class SeekerDTO {
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
-	public boolean isStatus() {
+	public Integer isStatus() {
 		return status;
 	}
-	public void setStatus(boolean status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 	public Timestamp getUpdateAt() {

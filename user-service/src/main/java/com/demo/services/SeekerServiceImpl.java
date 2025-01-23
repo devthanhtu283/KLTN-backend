@@ -35,9 +35,36 @@ public class SeekerServiceImpl implements SeekerService {
 	}
 
 	@Override
+	public boolean update(SeekerDTO seekerDTO) {
+		try {
+			// Tìm Seeker đã tồn tại
+			Seeker seeker = seekerRepository.findById(seekerDTO.getId())
+					.orElseThrow(() -> new RuntimeException("Seeker not found"));
+
+			// Cập nhật thông tin từ SeekerDTO
+			modelMapper.map(seekerDTO, seeker);
+			seekerRepository.save(seeker);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
 	public SeekerDTO findById(int id) {
-		// TODO Auto-generated method stub
-		return modelMapper.map(seekerRepository.findById(id).get(), SeekerDTO.class);
+		Seeker seeker = seekerRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Seeker not found"));
+
+		// Ánh xạ từ entity sang DTO
+		SeekerDTO seekerDTO = modelMapper.map(seeker, SeekerDTO.class);
+
+		// Kiểm tra và xử lý avatar
+		if (seekerDTO.getAvatar() != null && seekerDTO.getAvatar().startsWith("null")) {
+			seekerDTO.setAvatar(seekerDTO.getAvatar().replace("null", ""));
+		}
+
+		return seekerDTO;
 	}
 
 }

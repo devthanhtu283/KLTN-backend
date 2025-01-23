@@ -1,5 +1,7 @@
 package com.demo.dtos;
 
+import com.demo.entities.User;
+
 public class EmployerDTO {
 	private int id;
 	private String companyName;

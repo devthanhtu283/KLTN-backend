@@ -1,30 +1,31 @@
 package com.demo.controllers;
 
-import java.util.List;
-
+import com.demo.dtos.SeekerDTO;
+import com.demo.dtos.UserDTO;
+import com.demo.entities.Email;
+import com.demo.entities.User;
+import com.demo.helpers.ApiResponseEntity;
+import com.demo.helpers.FileHelper;
+import com.demo.services.MailService;
+import com.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.demo.dtos.TestDTO;
-import com.demo.dtos.UserDTO;
-import com.demo.entities.Email;
-import com.demo.entities.User;
-import com.demo.services.MailService;
-import com.demo.services.TestService;
-import com.demo.services.UserService;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
-
-@Controller
-@RequestMapping("api/user")
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("user")
 public class UserController {
 	@Autowired
 	private UserService userService;
@@ -34,15 +35,19 @@ public class UserController {
 
 	
 	@PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> login(@RequestBody UserDTO userDTO){
+	public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO){
 		try {
-			return new ResponseEntity<Object>(new Object() {
-				public boolean status = userService.login(userDTO.getEmail(), userDTO.getPassword());
-				
-			}, HttpStatus.OK);
+			UserDTO user = userService.findByEmail(userDTO.getEmail());
+			System.out.println(user);
+			boolean status = userService.login(userDTO.getEmail(), userDTO.getPassword());
+			if(status) {
+				return ApiResponseEntity.success(user, "Successfull!!");
+			} else {
+				return ApiResponseEntity.error("Failure !!", HttpStatus.BAD_REQUEST);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+			return ApiResponseEntity.badRequest("Error " + e.getMessage());
 		}
 	}
 	
@@ -99,15 +104,57 @@ public class UserController {
     }
 	
 	@GetMapping(value = "findByEmail")
-    public ResponseEntity<Object> findByEmail(@RequestParam String email) {
+    public ApiResponseEntity<Object> findByEmail(@RequestParam String email) {
 		try {
-			return new ResponseEntity<Object>(new Object() {
-				public UserDTO user = userService.findByEmail(email);
-			}, HttpStatus.OK);
+			UserDTO user = userService.findByEmail(email);
+
+			return ApiResponseEntity.success(user, "Successfull!!");
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+			return ApiResponseEntity.badRequest("Error " + e.getMessage());
 		}
     }
+	
+	@PostMapping(value = "upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> uploadFile(@RequestPart("file") MultipartFile file, @RequestPart("seekerDTO") String seekerDTO) {
+		try {
+			System.out.println(seekerDTO);
+			// Kiểm tra xem tệp có rỗng không
+			if (file.isEmpty()) {
+				return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+			}
+
+		
+			// Lấy thông tin của tệp
+			String originalFilename = file.getOriginalFilename();
+			String contentType = file.getContentType();
+			long size = file.getSize();
+
+			// Thư mục lưu trữ tệp
+			File uploadFolder = new File(new ClassPathResource("static/assets/images").getFile().getAbsolutePath());
+			if (!uploadFolder.exists()) {
+				uploadFolder.mkdirs();
+			}
+
+			// Tạo tên tệp duy nhất
+			String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
+
+			// Tạo đường dẫn lưu trữ tệp
+			Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
+
+			// Lưu tệp vào thư mục
+			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+			// Tạo URL cho tệp đã tải lên
+			String fileUrl = filename;
+			// Trả về URL của tệp đã tải lên
+			return ResponseEntity.ok().body(new Object() {
+				public String url = fileUrl;
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
+		}
+	}
 }

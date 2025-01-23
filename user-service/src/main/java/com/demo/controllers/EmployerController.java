@@ -17,7 +17,7 @@ import com.demo.services.EmployerService;
 import com.demo.services.SeekerService;
 
 @RestController
-@RequestMapping("api/employer")
+@RequestMapping("employer")
 public class EmployerController {
 	
 	@Autowired
