@@ -44,13 +44,13 @@ import jakarta.servlet.annotation.MultipartConfig;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("seeker")
+@RequestMapping("user")
 public class SeekerController {
 
 	@Autowired
 	private SeekerService seekerService;
 
-	@PostMapping(value = "update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/seeker/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponseEntity<SeekerDTO> update(@RequestParam("seekerDTO") String seekerDTO,
 			@RequestParam(value = "file", required = false) MultipartFile file) {
 		try {
@@ -77,7 +77,7 @@ public class SeekerController {
 				return ApiResponseEntity.success(seeker, "Seeker saved successfully!");
 			} else {
 				// Trả về phản hồi thất bại nếu lưu không thành công
-				return ApiResponseEntity.badRequest("Failed to save seeker.");
+				return ApiResponseEntity.success(seeker,"Failed to save seeker.");
 			}
 
 		} catch (Exception e) {
@@ -86,17 +86,24 @@ public class SeekerController {
 		}
 	}
 
-	@GetMapping(value = "findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/seeker/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ApiResponseEntity<Object> findById(@PathVariable("id") int id) {
 		try {
-			return ApiResponseEntity.success(seekerService.findById(id), "Seeker found");
+			SeekerDTO seekerDTO = seekerService.findById(id);
+			System.out.println(seekerDTO);
+			if(seekerDTO != null) {
+				return ApiResponseEntity.success(seekerDTO, "Seeker found");
+			} else {
+				return ApiResponseEntity.error("Seeker not found", HttpStatus.OK);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ApiResponseEntity.badRequest("Error " + e.getMessage());
 		}
 	}
 
-	@PostMapping(value = "upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/seeker/upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public String upload(@RequestPart("file") MultipartFile file) {
 		try {
 			// Kiểm tra xem tệp có rỗng không
