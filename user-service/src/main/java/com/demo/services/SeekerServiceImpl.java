@@ -1,6 +1,6 @@
 package com.demo.services;
 
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,15 +53,17 @@ public class SeekerServiceImpl implements SeekerService {
 
 	@Override
 	public SeekerDTO findById(int id) {
-		Seeker seeker = seekerRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Seeker not found"));
+		Optional<Seeker> seekerOptional  = seekerRepository.findById(id);
+		Seeker seeker = null;
+		SeekerDTO seekerDTO = null;
+		if(seekerOptional.isPresent()) {
+			seeker = seekerOptional.get();
 
-		// Ánh xạ từ entity sang DTO
-		SeekerDTO seekerDTO = modelMapper.map(seeker, SeekerDTO.class);
+			seekerDTO = modelMapper.map(seeker, SeekerDTO.class);
 
-		// Kiểm tra và xử lý avatar
-		if (seekerDTO.getAvatar() != null && seekerDTO.getAvatar().startsWith("null")) {
-			seekerDTO.setAvatar(seekerDTO.getAvatar().replace("null", ""));
+			if (seekerDTO.getAvatar() != null && seekerDTO.getAvatar().startsWith("null")) {
+				seekerDTO.setAvatar(seekerDTO.getAvatar().replace("null", ""));
+			}
 		}
 
 		return seekerDTO;

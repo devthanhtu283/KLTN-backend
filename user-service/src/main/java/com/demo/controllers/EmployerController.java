@@ -17,13 +17,13 @@ import com.demo.services.EmployerService;
 import com.demo.services.SeekerService;
 
 @RestController
-@RequestMapping("employer")
+@RequestMapping("user")
 public class EmployerController {
 	
 	@Autowired
 	private EmployerService employerService;
 	
-	@PostMapping(value = "save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/employer/save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> save(@RequestBody EmployerDTO employerDTO){
 		try {
 			return new ResponseEntity<Object>(new Object() {
@@ -36,7 +36,7 @@ public class EmployerController {
 		}
 	}
 	
-	@GetMapping(value = "findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/employer/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public  ResponseEntity<EmployerDTO> findById(@PathVariable("id") int id){
 		try {
 			return new ResponseEntity<EmployerDTO>(employerService.findById(id), HttpStatus.OK);
