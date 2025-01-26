@@ -2,61 +2,51 @@ package com.demo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.time.Instant;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "testhistory", schema = "jobs", indexes = {
         @Index(name = "testID", columnList = "testID"),
         @Index(name = "userID", columnList = "userID")
 })
 public class Testhistory implements Serializable {
-    private static final long serialVersionUID = 2392311558408054079L;
+    private static final long serialVersionUID = 794184357902061089L;
     private Integer id;
 
-    private Test testID;
+    private Integer testID;
 
-    private User userID;
+    private Integer userID;
 
     private Instant timeSubmit;
 
     private Integer score;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
     }
 
-    public Testhistory setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "testID", nullable = false)
-    public Test getTestID() {
+    @Column(name = "testID", nullable = false)
+    public Integer getTestID() {
         return testID;
     }
 
-    public Testhistory setTestID(Test testID) {
-        this.testID = testID;
-        return this;
-    }
-
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userID", nullable = false)
-    public User getUserID() {
+    @Column(name = "userID", nullable = false)
+    public Integer getUserID() {
         return userID;
-    }
-
-    public Testhistory setUserID(User userID) {
-        this.userID = userID;
-        return this;
     }
 
     @NotNull
@@ -66,20 +56,10 @@ public class Testhistory implements Serializable {
         return timeSubmit;
     }
 
-    public Testhistory setTimeSubmit(Instant timeSubmit) {
-        this.timeSubmit = timeSubmit;
-        return this;
-    }
-
     @NotNull
     @Column(name = "score", nullable = false)
     public Integer getScore() {
         return score;
-    }
-
-    public Testhistory setScore(Integer score) {
-        this.score = score;
-        return this;
     }
 
 }

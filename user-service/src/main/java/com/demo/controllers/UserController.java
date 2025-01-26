@@ -1,8 +1,9 @@
 package com.demo.controllers;
 
+import com.demo.dtos.Email;
 import com.demo.dtos.SeekerDTO;
 import com.demo.dtos.UserDTO;
-import com.demo.entities.Email;
+
 import com.demo.entities.User;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.helpers.FileHelper;

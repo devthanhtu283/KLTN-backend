@@ -5,10 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.Instant;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "application", schema = "jobs")
 public class Application implements Serializable {
@@ -29,20 +35,10 @@ public class Application implements Serializable {
         return id;
     }
 
-    public Application setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Column(name = "job_id", nullable = false)
     public Integer getJobId() {
         return jobId;
-    }
-
-    public Application setJobId(Integer jobId) {
-        this.jobId = jobId;
-        return this;
     }
 
     @NotNull
@@ -51,31 +47,16 @@ public class Application implements Serializable {
         return seekerId;
     }
 
-    public Application setSeekerId(Integer seekerId) {
-        this.seekerId = seekerId;
-        return this;
-    }
-
     @NotNull
     @Column(name = "applied_at", nullable = false)
     public Instant getAppliedAt() {
         return appliedAt;
     }
 
-    public Application setAppliedAt(Instant appliedAt) {
-        this.appliedAt = appliedAt;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Integer getStatus() {
         return status;
-    }
-
-    public Application setStatus(Integer status) {
-        this.status = status;
-        return this;
     }
 
 }

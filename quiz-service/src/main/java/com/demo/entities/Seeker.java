@@ -1,16 +1,22 @@
 package com.demo.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "seeker", schema = "jobs")
 public class Seeker implements Serializable {
-    private static final long serialVersionUID = -4044971807442193829L;
+    private static final long serialVersionUID = -6951980054783251822L;
     private Integer id;
 
     private User user;
@@ -23,21 +29,19 @@ public class Seeker implements Serializable {
 
     private LocalDate dob;
 
-    private Boolean status = false;
+    private String gender;
+
+    private Boolean status;
 
     private Instant updateAt;
 
     private String avatar;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
-    }
-
-    public Seeker setId(Integer id) {
-        this.id = id;
-        return this;
     }
 
     @MapsId
@@ -47,90 +51,49 @@ public class Seeker implements Serializable {
         return user;
     }
 
-    public Seeker setUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    @NotNull
     @Lob
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name")
     public String getFullName() {
         return fullName;
     }
 
-    public Seeker setFullName(String fullName) {
-        this.fullName = fullName;
-        return this;
-    }
-
-    @NotNull
     @Lob
-    @Column(name = "phone", nullable = false)
+    @Column(name = "phone")
     public String getPhone() {
         return phone;
     }
 
-    public Seeker setPhone(String phone) {
-        this.phone = phone;
-        return this;
-    }
-
-    @NotNull
     @Lob
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     public String getAddress() {
         return address;
     }
 
-    public Seeker setAddress(String address) {
-        this.address = address;
-        return this;
-    }
-
-    @NotNull
-    @Column(name = "dob", nullable = false)
+    @Column(name = "dob")
     public LocalDate getDob() {
         return dob;
     }
 
-    public Seeker setDob(LocalDate dob) {
-        this.dob = dob;
-        return this;
+    @Size(max = 250)
+    @Column(name = "gender", length = 250)
+    public String getGender() {
+        return gender;
     }
 
-    @NotNull
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     public Boolean getStatus() {
         return status;
     }
 
-    public Seeker setStatus(Boolean status) {
-        this.status = status;
-        return this;
-    }
-
-    @NotNull
-    @Column(name = "update_at", nullable = false)
+    @Column(name = "update_at")
     public Instant getUpdateAt() {
         return updateAt;
     }
 
-    public Seeker setUpdateAt(Instant updateAt) {
-        this.updateAt = updateAt;
-        return this;
-    }
-
-    @NotNull
     @Lob
-    @Column(name = "avatar", nullable = false)
+    @Column(name = "avatar")
     public String getAvatar() {
         return avatar;
-    }
-
-    public Seeker setAvatar(String avatar) {
-        this.avatar = avatar;
-        return this;
     }
 
 }

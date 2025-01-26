@@ -5,10 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "favorite", schema = "jobs")
 public class Favorite implements Serializable {
@@ -29,20 +35,10 @@ public class Favorite implements Serializable {
         return id;
     }
 
-    public Favorite setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Column(name = "seeker_id", nullable = false)
     public Integer getSeekerId() {
         return seekerId;
-    }
-
-    public Favorite setSeekerId(Integer seekerId) {
-        this.seekerId = seekerId;
-        return this;
     }
 
     @NotNull
@@ -51,31 +47,16 @@ public class Favorite implements Serializable {
         return jobId;
     }
 
-    public Favorite setJobId(Integer jobId) {
-        this.jobId = jobId;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
     }
 
-    public Favorite setStatus(Boolean status) {
-        this.status = status;
-        return this;
-    }
-
     @NotNull
     @Column(name = "created", nullable = false)
     public LocalDate getCreated() {
         return created;
-    }
-
-    public Favorite setCreated(LocalDate created) {
-        this.created = created;
-        return this;
     }
 
 }

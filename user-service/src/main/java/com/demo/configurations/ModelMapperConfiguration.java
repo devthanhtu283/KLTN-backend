@@ -82,7 +82,7 @@ public class ModelMapperConfiguration {
 				map().setEmail(source.getEmail());
 				map().setPassword(source.getPassword());
 				map().setUserType(source.getUserType());
-				map().setCreated((Date) source.getCreated());
+
 				map().setSecurityCode(source.getSecurityCode());
 				map().setStatus(source.getStatus());
 			}

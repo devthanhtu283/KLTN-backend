@@ -3,6 +3,9 @@ package com.demo.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
@@ -10,12 +13,15 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "user", schema = "jobs", uniqueConstraints = {
         @UniqueConstraint(name = "username", columnNames = {"username"})
 })
 public class User implements Serializable {
-    private static final long serialVersionUID = 5886079084834717110L;
+    private static final long serialVersionUID = -4431340165405147830L;
     private Integer id;
 
     private String username;
@@ -40,55 +46,11 @@ public class User implements Serializable {
 
     private Set<Testhistory> testhistories = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "userID")
-    public Set<Testhistory> getTesthistories() {
-        return testhistories;
-    }
-
-    public User setTesthistories(Set<Testhistory> testhistories) {
-        this.testhistories = testhistories;
-        return this;
-    }
-
-    @OneToMany(mappedBy = "userID")
-    public Set<Test> getTests() {
-        return tests;
-    }
-
-    public User setTests(Set<Test> tests) {
-        this.tests = tests;
-        return this;
-    }
-
-    @OneToOne(mappedBy = "user")
-    public Seeker getSeeker() {
-        return seeker;
-    }
-
-    public User setSeeker(Seeker seeker) {
-        this.seeker = seeker;
-        return this;
-    }
-
-    @OneToOne(mappedBy = "user")
-    public Employer getEmployer() {
-        return employer;
-    }
-
-    public User setEmployer(Employer employer) {
-        this.employer = employer;
-        return this;
-    }
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
-    }
-
-    public User setId(Integer id) {
-        this.id = id;
-        return this;
     }
 
     @Size(max = 250)
@@ -98,11 +60,6 @@ public class User implements Serializable {
         return username;
     }
 
-    public User setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
     @Size(max = 250)
     @NotNull
     @Column(name = "password", nullable = false, length = 250)
@@ -110,20 +67,10 @@ public class User implements Serializable {
         return password;
     }
 
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
     @NotNull
     @Column(name = "user_type", nullable = false)
     public Integer getUserType() {
         return userType;
-    }
-
-    public User setUserType(Integer userType) {
-        this.userType = userType;
-        return this;
     }
 
     @NotNull
@@ -133,21 +80,11 @@ public class User implements Serializable {
         return email;
     }
 
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
     @NotNull
     @ColumnDefault("current_timestamp()")
     @Column(name = "created", nullable = false)
     public LocalDate getCreated() {
         return created;
-    }
-
-    public User setCreated(LocalDate created) {
-        this.created = created;
-        return this;
     }
 
     @NotNull
@@ -157,20 +94,30 @@ public class User implements Serializable {
         return securityCode;
     }
 
-    public User setSecurityCode(String securityCode) {
-        this.securityCode = securityCode;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Integer getStatus() {
         return status;
     }
 
-    public User setStatus(Integer status) {
-        this.status = status;
-        return this;
+    @OneToOne(mappedBy = "user")
+    public Employer getEmployer() {
+        return employer;
+    }
+
+    @OneToOne(mappedBy = "user")
+    public Seeker getSeeker() {
+        return seeker;
+    }
+
+    @OneToMany(mappedBy = "userID")
+    public Set<Test> getTests() {
+        return tests;
+    }
+
+    @OneToMany(mappedBy = "userID")
+    public Set<Testhistory> getTesthistories() {
+        return testhistories;
     }
 
 }
