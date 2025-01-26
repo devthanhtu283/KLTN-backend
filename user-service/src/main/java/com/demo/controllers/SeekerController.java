@@ -50,7 +50,7 @@ public class SeekerController {
 	@Autowired
 	private SeekerService seekerService;
 
-	@PostMapping(value = "/seeker/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "seeker/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ApiResponseEntity<SeekerDTO> update(@RequestParam("seekerDTO") String seekerDTO,
 			@RequestParam(value = "file", required = false) MultipartFile file) {
 		try {
@@ -86,7 +86,7 @@ public class SeekerController {
 		}
 	}
 
-	@GetMapping(value = "/seeker/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "seeker/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ApiResponseEntity<Object> findById(@PathVariable("id") int id) {
 		try {
 			SeekerDTO seekerDTO = seekerService.findById(id);
@@ -103,7 +103,7 @@ public class SeekerController {
 		}
 	}
 
-	@PostMapping(value = "/seeker/upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "seeker/upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public String upload(@RequestPart("file") MultipartFile file) {
 		try {
 			// Kiểm tra xem tệp có rỗng không

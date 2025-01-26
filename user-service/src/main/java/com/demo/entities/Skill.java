@@ -2,9 +2,15 @@ package com.demo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "skill", schema = "jobs")
 public class Skill implements Serializable {
@@ -18,14 +24,10 @@ public class Skill implements Serializable {
     private Boolean status = false;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
-    }
-
-    public Skill setId(Integer id) {
-        this.id = id;
-        return this;
     }
 
     @NotNull
@@ -35,30 +37,15 @@ public class Skill implements Serializable {
         return name;
     }
 
-    public Skill setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     @Column(name = "skill_parent_id")
     public Integer getSkillParentId() {
         return skillParentId;
-    }
-
-    public Skill setSkillParentId(Integer skillParentId) {
-        this.skillParentId = skillParentId;
-        return this;
     }
 
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
-    }
-
-    public Skill setStatus(Boolean status) {
-        this.status = status;
-        return this;
     }
 
 }

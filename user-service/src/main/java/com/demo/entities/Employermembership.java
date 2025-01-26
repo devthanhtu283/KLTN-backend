@@ -5,11 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.time.Instant;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "employermembership", schema = "jobs")
 public class Employermembership implements Serializable {
@@ -34,31 +40,16 @@ public class Employermembership implements Serializable {
         return id;
     }
 
-    public Employermembership setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Column(name = "employer_id", nullable = false)
     public Integer getEmployerId() {
         return employerId;
     }
 
-    public Employermembership setEmployerId(Integer employerId) {
-        this.employerId = employerId;
-        return this;
-    }
-
     @NotNull
     @Column(name = "membership_id", nullable = false)
     public Integer getMembershipId() {
         return membershipId;
-    }
-
-    public Employermembership setMembershipId(Integer membershipId) {
-        this.membershipId = membershipId;
-        return this;
     }
 
     @NotNull
@@ -68,20 +59,10 @@ public class Employermembership implements Serializable {
         return startDate;
     }
 
-    public Employermembership setStartDate(Instant startDate) {
-        this.startDate = startDate;
-        return this;
-    }
-
     @NotNull
     @Column(name = "end_date", nullable = false)
     public Instant getEndDate() {
         return endDate;
-    }
-
-    public Employermembership setEndDate(Instant endDate) {
-        this.endDate = endDate;
-        return this;
     }
 
     @NotNull
@@ -90,20 +71,10 @@ public class Employermembership implements Serializable {
         return renewalDate;
     }
 
-    public Employermembership setRenewalDate(Instant renewalDate) {
-        this.renewalDate = renewalDate;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
-    }
-
-    public Employermembership setStatus(Boolean status) {
-        this.status = status;
-        return this;
     }
 
 }

@@ -1,29 +1,20 @@
 package com.demo.configurations;
 
 
-import java.util.stream.Collectors;
-
+import com.demo.entities.Question;
+import com.demo.entities.Test;
 import com.demo.repositories.UserRepository;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.batch.BatchProperties.Job;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import com.demo.dtos.AnswerDTO;
 import com.demo.dtos.QuestionDTO;
 import com.demo.dtos.TestDTO;
-import com.demo.dtos.UserDTO;
-import com.demo.entities.Answer;
-import com.demo.entities.Question;
-import com.demo.entities.Test;
-import com.demo.entities.User;
-
-
 
 
 @Configuration

@@ -2,9 +2,15 @@ package com.demo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "membership", schema = "jobs")
 public class Membership implements Serializable {
@@ -27,11 +33,6 @@ public class Membership implements Serializable {
         return id;
     }
 
-    public Membership setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Lob
     @Column(name = "name", nullable = false)
@@ -39,20 +40,10 @@ public class Membership implements Serializable {
         return name;
     }
 
-    public Membership setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     @NotNull
     @Column(name = "price", nullable = false)
     public Double getPrice() {
         return price;
-    }
-
-    public Membership setPrice(Double price) {
-        this.price = price;
-        return this;
     }
 
     @NotNull
@@ -62,11 +53,6 @@ public class Membership implements Serializable {
         return description;
     }
 
-    public Membership setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
     @NotNull
     @Lob
     @Column(name = "duration", nullable = false)
@@ -74,20 +60,10 @@ public class Membership implements Serializable {
         return duration;
     }
 
-    public Membership setDuration(String duration) {
-        this.duration = duration;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
-    }
-
-    public Membership setStatus(Boolean status) {
-        this.status = status;
-        return this;
     }
 
 }

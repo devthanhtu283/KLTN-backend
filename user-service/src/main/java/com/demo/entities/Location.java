@@ -2,13 +2,19 @@ package com.demo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
-@Table(name = "positionlevel", schema = "jobs")
-public class Positionlevel implements Serializable {
-    private static final long serialVersionUID = 6854134418550870512L;
+@Table(name = "location", schema = "jobs")
+public class Location implements Serializable {
+    private static final long serialVersionUID = -1749991280106382953L;
     private Integer id;
 
     private String name;
@@ -21,11 +27,6 @@ public class Positionlevel implements Serializable {
         return id;
     }
 
-    public Positionlevel setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Lob
     @Column(name = "name", nullable = false)
@@ -33,20 +34,10 @@ public class Positionlevel implements Serializable {
         return name;
     }
 
-    public Positionlevel setName(String name) {
-        this.name = name;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
-    }
-
-    public Positionlevel setStatus(Boolean status) {
-        this.status = status;
-        return this;
     }
 
 }

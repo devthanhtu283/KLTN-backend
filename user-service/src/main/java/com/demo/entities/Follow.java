@@ -5,10 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "follow", schema = "jobs")
 public class Follow implements Serializable {
@@ -29,20 +35,10 @@ public class Follow implements Serializable {
         return id;
     }
 
-    public Follow setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Column(name = "employer_id", nullable = false)
     public Integer getEmployerId() {
         return employerId;
-    }
-
-    public Follow setEmployerId(Integer employerId) {
-        this.employerId = employerId;
-        return this;
     }
 
     @NotNull
@@ -51,31 +47,16 @@ public class Follow implements Serializable {
         return seekerId;
     }
 
-    public Follow setSeekerId(Integer seekerId) {
-        this.seekerId = seekerId;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
     }
 
-    public Follow setStatus(Boolean status) {
-        this.status = status;
-        return this;
-    }
-
     @NotNull
     @Column(name = "created", nullable = false)
     public LocalDate getCreated() {
         return created;
-    }
-
-    public Follow setCreated(LocalDate created) {
-        this.created = created;
-        return this;
     }
 
 }

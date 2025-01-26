@@ -2,10 +2,16 @@ package com.demo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.Instant;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "feedback", schema = "jobs")
 public class Feedback implements Serializable {
@@ -26,20 +32,10 @@ public class Feedback implements Serializable {
         return id;
     }
 
-    public Feedback setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Column(name = "user_id", nullable = false)
     public Integer getUserId() {
         return userId;
-    }
-
-    public Feedback setUserId(Integer userId) {
-        this.userId = userId;
-        return this;
     }
 
     @NotNull
@@ -49,31 +45,16 @@ public class Feedback implements Serializable {
         return content;
     }
 
-    public Feedback setContent(String content) {
-        this.content = content;
-        return this;
-    }
-
     @NotNull
     @Column(name = "created_at", nullable = false)
     public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public Feedback setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
-    }
-
-    public Feedback setStatus(Boolean status) {
-        this.status = status;
-        return this;
     }
 
 }

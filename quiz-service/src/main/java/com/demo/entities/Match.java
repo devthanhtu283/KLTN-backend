@@ -2,10 +2,16 @@ package com.demo.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.Instant;
 
+@Getter
+@Setter
+@Accessors(chain = true)
 @Entity
 @Table(name = "matches", schema = "jobs")
 public class Match implements Serializable {
@@ -28,31 +34,16 @@ public class Match implements Serializable {
         return id;
     }
 
-    public Match setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
     @NotNull
     @Column(name = "cv_id", nullable = false)
     public Integer getCvId() {
         return cvId;
     }
 
-    public Match setCvId(Integer cvId) {
-        this.cvId = cvId;
-        return this;
-    }
-
     @NotNull
     @Column(name = "job_id", nullable = false)
     public Integer getJobId() {
         return jobId;
-    }
-
-    public Match setJobId(Integer jobId) {
-        this.jobId = jobId;
-        return this;
     }
 
     @NotNull
@@ -62,31 +53,16 @@ public class Match implements Serializable {
         return matchedSkill;
     }
 
-    public Match setMatchedSkill(String matchedSkill) {
-        this.matchedSkill = matchedSkill;
-        return this;
-    }
-
     @NotNull
     @Column(name = "time_matches", nullable = false)
     public Instant getTimeMatches() {
         return timeMatches;
     }
 
-    public Match setTimeMatches(Instant timeMatches) {
-        this.timeMatches = timeMatches;
-        return this;
-    }
-
     @NotNull
     @Column(name = "status", nullable = false)
     public Boolean getStatus() {
         return status;
-    }
-
-    public Match setStatus(Boolean status) {
-        this.status = status;
-        return this;
     }
 
 }
