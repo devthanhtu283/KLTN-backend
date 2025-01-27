@@ -10,6 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
-	@Query("from Question q where q.testID.id = :id")
+	@Query("from Question q where q.test.id = :id")
 	List<Question> findQuestionByTestID(@Param("id") int id);
 }

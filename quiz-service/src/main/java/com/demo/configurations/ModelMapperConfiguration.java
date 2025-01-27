@@ -49,7 +49,7 @@ public class ModelMapperConfiguration {
 			@Override
 			protected void configure() {
 				// TODO Auto-generated method stub
-				map().setUsername(source.getUserID().getUsername());
+				map().setUsername(source.getUser().getUsername());
 
 			}
 			
