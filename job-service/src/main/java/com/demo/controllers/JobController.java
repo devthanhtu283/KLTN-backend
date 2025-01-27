@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,15 @@ public class JobController {
             return new ResponseEntity<>(jobService.findAll(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<JobDTO> findById(@PathVariable("id") int id) {
+        try {
+            return new ResponseEntity<JobDTO>(jobService.findById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<JobDTO>(HttpStatus.BAD_REQUEST);
         }
     }
 }

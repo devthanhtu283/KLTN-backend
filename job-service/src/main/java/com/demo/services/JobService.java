@@ -8,4 +8,6 @@ import java.util.List;
 public interface JobService
 {
     public List<JobDTO> findAll();
+
+    public JobDTO findById(int id);
 }
