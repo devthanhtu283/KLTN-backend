@@ -16,6 +16,10 @@ public class JobDTO {
     private Integer experienceId;
     private Integer locationId;
     private Integer worktypeId;
+    private String employerName;
+    private String experienceName;
+    private String locationName;
+    private String worktypeName;
     private String title;
     private String description;
     private String required;
@@ -145,5 +149,37 @@ public class JobDTO {
 
     public void setMember(String member) {
         this.member = member;
+    }
+
+    public String getEmployerName() {
+        return employerName;
+    }
+
+    public void setEmployerName(String employerName) {
+        this.employerName = employerName;
+    }
+
+    public String getExperienceName() {
+        return experienceName;
+    }
+
+    public void setExperienceName(String experienceName) {
+        this.experienceName = experienceName;
+    }
+
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public String getWorktypeName() {
+        return worktypeName;
+    }
+
+    public void setWorktypeName(String worktypeName) {
+        this.worktypeName = worktypeName;
     }
 }
