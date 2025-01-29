@@ -51,6 +51,20 @@ public class UserController {
 			return ApiResponseEntity.badRequest("Error " + e.getMessage());
 		}
 	}
+
+	@GetMapping(value = "findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	public ApiResponseEntity<Object> findById(@PathVariable int id) {
+		try {
+			UserDTO result = userService.findById(id);
+			if(result != null) {
+				return ApiResponseEntity.success(result, "Successfull!!");
+			} else {
+				return ApiResponseEntity.error("User not found", HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return ApiResponseEntity.badRequest("Error: " + e.getMessage());
+		}
+	}
 	
 	@PostMapping(value = "register", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> register(@RequestBody UserDTO userDTO){
@@ -108,8 +122,12 @@ public class UserController {
     public ApiResponseEntity<Object> findByEmail(@RequestParam String email) {
 		try {
 			UserDTO user = userService.findByEmail(email);
+			if(user != null) {
+				return ApiResponseEntity.success(user, "Successfull!!");
+			} else {
+				return ApiResponseEntity.error("Email not found", HttpStatus.BAD_REQUEST);
+			}
 
-			return ApiResponseEntity.success(user, "Successfull!!");
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -143,13 +161,14 @@ public class UserController {
 
 			// Tạo đường dẫn lưu trữ tệp
 			Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
-
+			System.out.println( path.toString());
 			// Lưu tệp vào thư mục
 			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
 			// Tạo URL cho tệp đã tải lên
 			String fileUrl = filename;
 			// Trả về URL của tệp đã tải lên
+			System.out.println(fileUrl);
 			return ResponseEntity.ok().body(new Object() {
 				public String url = fileUrl;
 			});

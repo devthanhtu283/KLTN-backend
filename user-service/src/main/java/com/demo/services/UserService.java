@@ -14,4 +14,6 @@ public interface UserService {
 	public boolean verify(String email, String securityCode);
 	
 	public UserDTO findByEmail(String email);
+
+	public UserDTO findById(int id);
 }

@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 			if (user.getUserType() == 1) {
 				if (user.getSeeker() == null) {
 					Seeker seeker = new Seeker();
+//					seeker.setId(user.getId());
 					seeker.setUser(user);
 					seekerRepository.save(seeker);
 				}
@@ -135,6 +136,11 @@ public class UserServiceImpl implements UserService {
 
 		// Map the non-null User to UserDTO
 		return modelMapper.map(user, UserDTO.class);
+	}
+
+	@Override
+	public UserDTO findById(int id) {
+		return userRepository.findById(id).map(user -> modelMapper.map(user, UserDTO.class)).orElse(null);
 	}
 
 }
