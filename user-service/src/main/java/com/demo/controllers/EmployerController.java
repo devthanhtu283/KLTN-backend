@@ -1,5 +1,6 @@
 package com.demo.controllers;
 
+import com.demo.helpers.ApiResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +38,19 @@ public class EmployerController {
 	}
 	
 	@GetMapping(value = "employer/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-	public  ResponseEntity<EmployerDTO> findById(@PathVariable("id") int id){
+	public ApiResponseEntity<Object> findById(@PathVariable("id") int id){
 		try {
-			return new ResponseEntity<EmployerDTO>(employerService.findById(id), HttpStatus.OK);
+			EmployerDTO employerDTO = employerService.findById(id);
+			System.out.println(employerDTO);
+			if(employerDTO != null) {
+				return ApiResponseEntity.success(employerDTO, "Employer found");
+			} else {
+				return ApiResponseEntity.error("Employer not found", HttpStatus.OK);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new  ResponseEntity<EmployerDTO>(HttpStatus.BAD_REQUEST);
+			return ApiResponseEntity.badRequest("Error " + e.getMessage());
 		}
 	}
 }
