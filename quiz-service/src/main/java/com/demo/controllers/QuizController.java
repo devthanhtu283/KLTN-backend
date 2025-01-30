@@ -7,16 +7,16 @@ import java.util.Map;
 import com.demo.controllers.advice.ResourceNotFoundException;
 import com.demo.dtos.QuestionDTO;
 import com.demo.dtos.TestDTO;
+import com.demo.dtos.TestHistoryDTO;
 import com.demo.services.QuestionService;
+import com.demo.services.TestHistoryService;
 import com.demo.services.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("quiz")
@@ -27,6 +27,9 @@ public class QuizController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private TestHistoryService testHistoryService;
 
     // Các endpoint liên quan đến Test
     @GetMapping(value = "test/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
@@ -59,6 +62,17 @@ public class QuizController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping(value = "testHistory/save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> save(@RequestBody TestHistoryDTO testHistoryDTO){
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = testHistoryService.save(testHistoryDTO);
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
 }
