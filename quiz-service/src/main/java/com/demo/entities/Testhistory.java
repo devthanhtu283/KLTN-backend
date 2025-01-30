@@ -1,7 +1,7 @@
 package com.demo.entities;// default package
 // Generated Jan 27, 2025, 4:56:06 PM by Hibernate Tools 4.3.6.Final
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 /**
@@ -14,17 +14,19 @@ public class Testhistory implements java.io.Serializable {
 	private Integer id;
 	private Test test;
 	private User user;
-	private Date timeSubmit;
+	private LocalDateTime timeSubmit;
 	private int score;
+	private String contentAnswer;
 
 	public Testhistory() {
 	}
 
-	public Testhistory(Test test, User user, Date timeSubmit, int score) {
+	public Testhistory(Test test, User user, LocalDateTime timeSubmit, int score, String contentAnswer) {
 		this.test = test;
 		this.user = user;
 		this.timeSubmit = timeSubmit;
 		this.score = score;
+		this.contentAnswer = contentAnswer;
 	}
 
 	@Id
@@ -59,13 +61,12 @@ public class Testhistory implements java.io.Serializable {
 		this.user = user;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "timeSubmit", nullable = false, length = 19)
-	public Date getTimeSubmit() {
+	@Column(name = "timeSubmit", nullable = false)
+	public LocalDateTime getTimeSubmit() {
 		return this.timeSubmit;
 	}
 
-	public void setTimeSubmit(Date timeSubmit) {
+	public void setTimeSubmit(LocalDateTime timeSubmit) {
 		this.timeSubmit = timeSubmit;
 	}
 
@@ -78,4 +79,12 @@ public class Testhistory implements java.io.Serializable {
 		this.score = score;
 	}
 
+	@Column(name = "contentAnswer", nullable = false, length = 500)
+	public String getContentAnswer() {
+		return this.contentAnswer;
+	}
+
+	public void setContentAnswer(String contentAnswer) {
+		this.contentAnswer = contentAnswer;
+	}
 }

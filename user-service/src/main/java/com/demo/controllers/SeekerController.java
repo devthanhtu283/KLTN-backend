@@ -42,7 +42,6 @@ import com.google.gson.GsonBuilder;
 
 import jakarta.servlet.annotation.MultipartConfig;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("user")
 public class SeekerController {

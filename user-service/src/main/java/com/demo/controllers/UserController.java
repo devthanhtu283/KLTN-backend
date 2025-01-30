@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -118,8 +117,8 @@ public class UserController {
 		}
     }
 	
-	@GetMapping(value = "findByEmail")
-    public ApiResponseEntity<Object> findByEmail(@RequestParam String email) {
+	@GetMapping(value = "findByEmail/{email}")
+    public ApiResponseEntity<Object> findByEmail(@PathVariable String email) {
 		try {
 			UserDTO user = userService.findByEmail(email);
 			if(user != null) {
