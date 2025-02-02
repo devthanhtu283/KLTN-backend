@@ -1,5 +1,6 @@
 package com.demo.controllers;
 
+import com.demo.clients.NotificationService;
 import com.demo.dtos.Email;
 import com.demo.dtos.SeekerDTO;
 import com.demo.dtos.UserDTO;
@@ -32,6 +33,9 @@ public class UserController {
 	
 	@Autowired
 	private MailService mailService;
+
+	@Autowired
+	private NotificationService notificationService;
 
 	
 	@PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
@@ -95,7 +99,7 @@ public class UserController {
     public ResponseEntity<Object> sendEmail(@RequestBody Email email) {
 		try {
 			return new ResponseEntity<Object>(new Object() {
-				public boolean status = mailService.send(email.getFrom(), email.getTo(), email.getSubject(), email.getContent());
+				public boolean status = notificationService.sendEmail(email).hasBody();
 			}, HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO: handle exception
