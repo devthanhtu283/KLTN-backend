@@ -1,6 +1,7 @@
 package com.demo.services;
 
 import com.demo.dto.ApplicationDTO;
+import com.demo.dto.ApplicationIndex;
 import com.demo.entities.Application;
 import org.springframework.data.domain.Page;
 
@@ -16,5 +17,9 @@ public interface ApplicationService {
 
     public Page<ApplicationDTO> listApplicationByEmployerId(int employerId, int page, int size,int status);
 
+    public Page<ApplicationIndex> searchApplication(String jobTitle, String seekerName, int page, int size);
+
     public ApplicationDTO updateStatus(int id, int status );
+
+    public void saveDBIntoElasticsearch();
 }

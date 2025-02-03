@@ -1,8 +1,10 @@
 package com.demo.services;
 
 import com.demo.dto.ApplicationDTO;
+import com.demo.dto.ApplicationIndex;
 import com.demo.entities.Application;
-import com.demo.repository.ApplicationRepository;
+import com.demo.repository.elasticsearch.ApplicationElasticsearchRepository;
+import com.demo.repository.jpa.ApplicationRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private ApplicationRepository applicationRepository;
+
+    @Autowired
+    private ApplicationElasticsearchRepository applicationElasticsearchRepository;
 
     @Override
     public List<ApplicationDTO> listApplications() {
@@ -70,6 +75,32 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Page<ApplicationIndex> searchApplication(String jobTitle, String seekerName, int page, int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+
+
+            // Kiểm tra null
+            jobTitle = (jobTitle == null || jobTitle.isBlank()) ? "" : jobTitle.toLowerCase();
+            seekerName = (seekerName == null || seekerName.isBlank()) ? "" : seekerName.toLowerCase();
+
+            System.out.println("🔍 Tìm kiếm với jobTitle: " + jobTitle + ", seekerName: " + seekerName);
+
+
+            Page<ApplicationIndex> results = applicationElasticsearchRepository.searchApplication(jobTitle, seekerName, pageable);
+
+            System.out.println("🔍 Kết quả tìm kiếm: " + results.getTotalElements() + " records");
+
+            return results;
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi tìm kiếm: " + e.getMessage(), e);
+        }
+    }
+
+
+
+
+    @Override
     public ApplicationDTO updateStatus(int id, int status) {
         try {
             ApplicationDTO applicationDTO = findById(id);
@@ -82,6 +113,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void saveDBIntoElasticsearch() {
+        List<Application> applications = applicationRepository.findAll();
+
+        // Chuyển đổi sang DTO trước khi lưu vào Elasticsearch
+        List<ApplicationIndex> applicationsForES = applications.stream()
+                .map(ApplicationIndex::new) // 🔥 Chuyển đổi sang ApplicationIndex trước khi lưu
+                .collect(Collectors.toList());
+
+        applicationElasticsearchRepository.saveAll(applicationsForES);
     }
 
 
