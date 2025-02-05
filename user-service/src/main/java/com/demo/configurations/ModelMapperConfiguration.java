@@ -3,6 +3,7 @@ package com.demo.configurations;
 
 import java.sql.Date;
 
+import com.demo.entities.*;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -16,13 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.demo.dtos.EmployerDTO;
 import com.demo.dtos.SeekerDTO;
 import com.demo.dtos.UserDTO;
-import com.demo.entities.Employer;
-import com.demo.entities.Question;
-import com.demo.entities.Seeker;
-import com.demo.entities.Test;
-import com.demo.entities.User;
-
-
 
 
 @Configuration
@@ -88,6 +82,8 @@ public class ModelMapperConfiguration {
 			}
 
 		});
+
+
 
 		// mapper cho Seeker
 		mapper.addMappings(new PropertyMap<Seeker, SeekerDTO>() {

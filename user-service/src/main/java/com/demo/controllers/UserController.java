@@ -180,4 +180,43 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
 		}
 	}
+	@PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
+		try {
+			// Kiểm tra xem tệp có rỗng không
+			if (file.isEmpty()) {
+				return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+			}
+			// Lấy thông tin của tệp
+			String originalFilename = file.getOriginalFilename();
+			String contentType = file.getContentType();
+			long size = file.getSize();
+
+			// Thư mục lưu trữ tệp
+			File uploadFolder = new File(new ClassPathResource("static/assets/files").getFile().getAbsolutePath());
+			if (!uploadFolder.exists()) {
+				uploadFolder.mkdirs();
+			}
+
+			// Tạo tên tệp duy nhất
+			String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
+
+			// Tạo đường dẫn lưu trữ tệp
+			Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
+			System.out.println( path.toString());
+			// Lưu tệp vào thư mục
+			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+			// Tạo URL cho tệp đã tải lên
+			String fileUrl = filename;
+			// Trả về URL của tệp đã tải lên
+			System.out.println(fileUrl);
+			return ResponseEntity.ok().body(new Object() {
+				public String url = fileUrl;
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
+		}
+	}
 }
