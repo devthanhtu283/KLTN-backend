@@ -1,13 +1,8 @@
 package com.demo.controllers;
 
-import com.demo.dtos.ExperienceDTO;
-import com.demo.dtos.JobDTO;
-import com.demo.dtos.LocationDTO;
-import com.demo.dtos.WorktypeDTO;
-import com.demo.services.ExperienceService;
-import com.demo.services.JobService;
-import com.demo.services.LocationService;
-import com.demo.services.WorktypeService;
+import com.demo.dtos.*;
+import com.demo.repositories.FavoriteRepository;
+import com.demo.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -28,6 +23,12 @@ public class JobController {
     private WorktypeService worktypeService;
     @Autowired
     private ExperienceService experienceService;
+    @Autowired
+    private SkillService skillService;
+    @Autowired
+    private FavoriteService favoriteService;
+    @Autowired
+    private FavoriteRepository favoriteRepository;
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findAll( @RequestParam(defaultValue = "1") int page,
                                                  @RequestParam(defaultValue = "6") int size) {
@@ -95,4 +96,67 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value = "skill/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SkillDTO>> skillFindAll() {
+        try {
+            return new ResponseEntity<>(skillService.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // API lấy danh sách skill con theo parentId
+    @GetMapping(value = "skill/findByParentId/{parentId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<SkillDTO>> findSkillByParentId(@PathVariable("parentId") int parentId) {
+        try {
+            return new ResponseEntity<>(skillService.findByParentId(parentId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "favorite/findBySeekerIdPagination/{seekerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<FavoriteDTO>> findBySeekerIdPagination(
+            @PathVariable("seekerId") int seekerId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "6") int size) {
+        try {
+            Page<FavoriteDTO> result = favoriteService.findBySeekerIdPagination(seekerId, page, size);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping(value = "favorite/create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> favoriteCreate(@RequestBody FavoriteDTO favoriteDTO) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = favoriteService.save(favoriteDTO);
+
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "favorite/checkExists/{jobId}/{seekerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> favoriteCheckExists(@PathVariable("jobId") int jobId, @PathVariable("seekerId") int seekerId) {
+        try {
+
+            if(favoriteRepository.findByJobIdAndSeekerId(jobId, seekerId) != null) {
+                return new ResponseEntity<Object>(new Object() {
+                    public boolean status = true;
+
+                }, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<Object>(new Object() {
+                    public boolean status = false;
+
+                }, HttpStatus.OK);
+            }
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
