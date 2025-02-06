@@ -18,6 +18,7 @@ public class JobDTO {
     private Integer worktypeId;
     private String employerName;
     private String experienceName;
+    private String employerLogo;
     private String locationName;
     private String worktypeName;
     private String title;
@@ -181,5 +182,13 @@ public class JobDTO {
 
     public void setWorktypeName(String worktypeName) {
         this.worktypeName = worktypeName;
+    }
+
+    public String getEmployerLogo() {
+        return employerLogo;
+    }
+
+    public void setEmployerLogo(String emplloyerLogo) {
+        this.employerLogo = emplloyerLogo;
     }
 }

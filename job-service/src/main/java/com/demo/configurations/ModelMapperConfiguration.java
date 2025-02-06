@@ -30,6 +30,7 @@ public class ModelMapperConfiguration {
 				map().setEmployerName(source.getEmployer().getCompanyName());
 				map().setLocationName(source.getLocation().getName());
 				map().setWorktypeName(source.getWorktype().getName());
+				map().setEmployerLogo(source.getEmployer().getLogo());
 
 			}
 
