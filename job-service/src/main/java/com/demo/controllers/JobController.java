@@ -30,7 +30,7 @@ public class JobController {
     @Autowired
     private FavoriteRepository favoriteRepository;
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<JobDTO>> findAll( @RequestParam(defaultValue = "1") int page,
+    public ResponseEntity<Page<JobDTO>> findAllPagination( @RequestParam(defaultValue = "1") int page,
                                                  @RequestParam(defaultValue = "6") int size) {
         try {
             Page<JobDTO> result = jobService.findAllPagination(page, size);
