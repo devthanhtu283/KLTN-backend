@@ -16,15 +16,22 @@ import org.springframework.stereotype.Repository;
 public interface ApplicationElasticsearchRepository extends ElasticsearchRepository<ApplicationIndex, Integer> {
 
     @Query("""
-    {
-      "bool": {
-        "should": [
-          { "match_phrase": { "jobTitle": "?0" } },
-          { "match_phrase": { "seekerName": "?1" } }
-        ]
+{
+  "bool": {
+    "must": [
+      {
+        "bool": {
+          "should": [
+            { "match_phrase": { "jobTitle": "?0" } },
+            { "match_phrase": { "seekerName": "?1" } }
+          ],
+          "minimum_should_match": 1
+        }
       }
-    }
-    """)
+    ]
+  }
+}
+""")
     Page<ApplicationIndex> searchApplication(@Param("jobTitle") String jobTitle,
                                              @Param("seekerName") String seekerName,
                                              Pageable pageable);
