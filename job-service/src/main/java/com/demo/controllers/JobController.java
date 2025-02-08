@@ -1,6 +1,7 @@
 package com.demo.controllers;
 
 import com.demo.dtos.*;
+import com.demo.entities.Feedback;
 import com.demo.repositories.FavoriteRepository;
 import com.demo.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class JobController {
     private FavoriteService favoriteService;
     @Autowired
     private FavoriteRepository favoriteRepository;
+    @Autowired
+    private FeedbackService feedbackService;
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findAllPagination( @RequestParam(defaultValue = "1") int page,
                                                  @RequestParam(defaultValue = "6") int size) {
@@ -39,6 +42,17 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value = "findByEmployerIdPagination/{employerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<JobDTO>> findByEmployerIdPagination(@PathVariable("employerId") int employerId, @RequestParam(defaultValue = "1") int page,
+                                                           @RequestParam(defaultValue = "5") int size) {
+        try {
+            Page<JobDTO> result = jobService.findByEmployeeIdPagination(employerId, page, size);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<JobDTO>> findAll( ) {
         try {
@@ -156,6 +170,45 @@ public class JobController {
 
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "feedback/create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> feedbackCreate(@RequestBody FeedbackDTO feedback) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = feedbackService.saveFeedback(feedback);
+
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> create(@RequestBody JobDTO jobDTO) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = jobService.save(jobDTO);
+
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "delete/{jobId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> delete(@PathVariable int jobId) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = jobService.delete(jobId);
+
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
 

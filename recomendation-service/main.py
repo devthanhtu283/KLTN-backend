@@ -4,6 +4,13 @@ from py_eureka_client import eureka_client
 import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
+from fastapi import File, UploadFile, Form
+from fastapi.responses import JSONResponse
+import pdfplumber  # Hỗ trợ đọc PDF dạng scan
+import fitz  # PyMuPDF - Thư viện đọc PDF tốt nhất
+from pdfminer.high_level import extract_text
+import re
+from typing import Dict, List
 
 app = FastAPI()
 
@@ -104,3 +111,92 @@ def read_hello():
 @app.get("/python/bye")
 def read_bye():
     return {"message": "Bye Bye!!"}
+
+# 🔹 Trích xuất nội dung từ PDF chính xác
+def extract_text_from_pdf(file_path: str) -> str:
+    text = ""
+
+    try:
+        # Dùng pdfplumber trước
+        with pdfplumber.open(file_path) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
+
+        # Nếu pdfplumber không lấy được, thử PyMuPDF (fitz)
+        if not text.strip():
+            doc = fitz.open(file_path)
+            for page in doc:
+                text += page.get_text("text") + "\n"
+
+    except Exception as e:
+        print(f"Lỗi khi đọc PDF: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi khi đọc nội dung PDF")
+
+    return text.strip() if text.strip() else "Không tìm thấy nội dung trong PDF"
+
+# 🔹 Tách từng phần cụ thể (Skills, Education, Projects, Certificates)
+def extract_info(cv_text: str) -> Dict:
+    extracted_info = {}
+
+    extracted_info["education"] = extract_section(cv_text, ["education", "học vấn"])
+    extracted_info["skills"] = extract_section(cv_text, ["skills", "skill"])
+    extracted_info["certificate"] = extract_section(cv_text, ["certificate", "certification", "certifications"])
+    extracted_info["projects"] = extract_section(cv_text, ["project", "projects"])
+
+    return extracted_info
+
+# 🔹 Hàm trích xuất nội dung theo từng mục trong CV
+def extract_section(text: str, start_keywords: List[str]) -> str:
+    lines = text.split("\n")
+    extracted_section = []
+    capture = False
+
+    for line in lines:
+        if any(keyword.lower() in line.lower() for keyword in start_keywords):
+            capture = True
+            continue
+        if capture and line.strip() == "":
+            break
+        if capture:
+            extracted_section.append(line.strip())
+
+    return "\n".join(extracted_section) if extracted_section else "Không tìm thấy"
+
+# 🔹 API Upload CV - Đọc PDF và trích xuất thông tin
+@app.post("/upload-cv")
+async def upload_cv(file: UploadFile = File(...)):
+    """
+    Endpoint để upload CV dạng file PDF, đọc nội dung và tách thông tin quan trọng.
+    """
+    try:
+        filename = file.filename.lower()
+
+        # Kiểm tra định dạng file
+        if not filename.endswith(".pdf"):
+            raise HTTPException(status_code=400, detail="Chỉ hỗ trợ file PDF")
+
+        # Lưu file tạm
+        file_path = f"./temp_{filename}"
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
+
+        # Đọc nội dung PDF
+        extracted_text = extract_text_from_pdf(file_path)
+
+        # Phân tích nội dung và tách thông tin quan trọng
+        extracted_data = extract_info(extracted_text)
+
+        return JSONResponse(
+            content={
+                "filename": filename,
+                "message": "Upload và trích xuất PDF thành công!",
+                "extracted_data": extracted_data,
+            },
+            status_code=200
+        )
+
+    except Exception as e:
+        print(f"Lỗi khi upload file: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi máy chủ khi xử lý tệp tin")
