@@ -9,10 +9,17 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonSyntaxException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -49,41 +56,8 @@ public class SeekerController {
 	@Autowired
 	private SeekerService seekerService;
 
-	@PostMapping(value = "seeker/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ApiResponseEntity<SeekerDTO> update(@RequestParam("seekerDTO") String seekerDTO,
-			@RequestParam(value = "file", required = false) MultipartFile file) {
-		try {
-			String photo = null;
-
-			// Chỉ gọi upload nếu file không null
-			if (file != null) {
-				photo = upload(file);
-
-				// Cắt bỏ phần "/uploads/" từ đường dẫn hình ảnh
-				if (photo != null && photo.startsWith("/uploads/")) {
-					photo = photo.substring("/uploads/".length());
-				}
-			}
-
-			Gson gson = new GsonBuilder().registerTypeAdapter(Date.class, new DateHelper()).create();
-			SeekerDTO seeker = gson.fromJson(seekerDTO, SeekerDTO.class);
-			seeker.setAvatar(photo);
-			seeker.setUpdateAt(Timestamp.from(Instant.now()));
-
-			boolean status = seekerService.update(seeker);
-			if (status) {
-				// Trả về phản hồi thành công
-				return ApiResponseEntity.success(seeker, "Seeker saved successfully!");
-			} else {
-				// Trả về phản hồi thất bại nếu lưu không thành công
-				return ApiResponseEntity.success(seeker,"Failed to save seeker.");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ApiResponseEntity.badRequest("Error " + e.getMessage());
-		}
-	}
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@GetMapping(value = "seeker/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ApiResponseEntity<Object> findById(@PathVariable("id") int id) {
@@ -102,43 +76,108 @@ public class SeekerController {
 		}
 	}
 
-	@PostMapping(value = "seeker/upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-	public String upload(@RequestPart("file") MultipartFile file) {
-		try {
-			// Kiểm tra xem tệp có rỗng không
-			if (file.isEmpty()) {
-				return null;
+//	@PostMapping(value = "seeker/upload", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+//	public String upload(@RequestPart("file") MultipartFile file) {
+//		try {
+//			// Kiểm tra xem tệp có rỗng không
+//			if (file.isEmpty()) {
+//				return null;
+//			}
+//
+//			// Lấy thông tin của tệp
+//			String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+//			String contentType = file.getContentType();
+//			long size = file.getSize();
+//
+//			// Thư mục lưu trữ tệp (bên ngoài classpath)
+//			String uploadDir = "uploads";
+//			File uploadFolder = new File(uploadDir);
+//			if (!uploadFolder.exists()) {
+//				uploadFolder.mkdirs();
+//			}
+//
+//			// Tạo tên tệp duy nhất
+//			String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức
+//																				// generateFileName
+//
+//			// Tạo đường dẫn lưu trữ tệp
+//			Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
+//
+//			// Lưu tệp vào thư mục
+//			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+//
+//			// Tạo URL cho tệp đã tải lên
+//			String fileUrl = "/uploads/" + filename;
+//			return fileUrl;
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return "Lỗi khi tải lên tệp: " + e.getMessage();
+//		}
+//
+//	}
+@PostMapping(value = "seeker/update", produces = MediaType.APPLICATION_JSON_VALUE)
+public ResponseEntity<Object> uploadAndUpdateProfile(
+		@RequestPart(value = "file", required = false) MultipartFile file,
+		@RequestPart("seekerDTO") String seekerDTOStr) {
+
+	try {
+		// Parse JSON sang đối tượng DTO
+		SeekerDTO seekerDTO = objectMapper.readValue(seekerDTOStr, SeekerDTO.class);
+		String fileUrl = null;
+		String currentAvatar = seekerService.findById(seekerDTO.getId()).getAvatar();
+		System.out.println("Current ava: " + currentAvatar);
+		// Xử lý upload file nếu có
+		if (file != null && !file.isEmpty()) {
+			// Validate file
+			String originalFilename = file.getOriginalFilename();
+			String contentType = file.getContentType();
+
+			// Kiểm tra loại file (ví dụ: chỉ cho phép ảnh)
+			if (!contentType.startsWith("image/")) {
+				return ResponseEntity.badRequest().body("Only image files are allowed");
 			}
 
-			// Lấy thông tin của tệp
-			String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-			String contentType = file.getContentType();
-			long size = file.getSize();
-
-			// Thư mục lưu trữ tệp (bên ngoài classpath)
-			String uploadDir = "uploads";
-			File uploadFolder = new File(uploadDir);
+			// Tạo thư mục lưu trữ
+			Resource resource = new ClassPathResource("static/assets/images");
+			File uploadFolder = resource.getFile();
 			if (!uploadFolder.exists()) {
 				uploadFolder.mkdirs();
 			}
 
-			// Tạo tên tệp duy nhất
-			String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức
-																				// generateFileName
+			// Tạo tên file độc nhất
+			String filename = FileHelper.generateFileName(originalFilename);
 
-			// Tạo đường dẫn lưu trữ tệp
+			// Lưu file
 			Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
-
-			// Lưu tệp vào thư mục
 			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-			// Tạo URL cho tệp đã tải lên
-			String fileUrl = "/uploads/" + filename;
-			return fileUrl;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return "Lỗi khi tải lên tệp: " + e.getMessage();
+			fileUrl = filename;
+			seekerDTO.setAvatar(fileUrl); // Cập nhật avatar vào DTO
+		} else {
+			seekerDTO.setAvatar(currentAvatar);
 		}
 
+		// Cập nhật thông tin người dùng
+		boolean status = seekerService.save(seekerDTO);
+		seekerDTO.setUpdateAt(new Timestamp(Instant.now().toEpochMilli()));
+		SeekerDTO updatedSeeker = null;
+		if(status) {
+			updatedSeeker = seekerService.findById(seekerDTO.getId());
+		}
+
+		// Tạo response
+		Map<String, Object> response = new HashMap<>();
+		response.put("message", "Profile updated successfully");
+		response.put("data", updatedSeeker);
+		if (fileUrl != null) {
+			response.put("avatarUrl", fileUrl);
+		}
+
+		return ResponseEntity.ok(response);
+
+	} catch (Exception e) {
+		return ResponseEntity.internalServerError().body(Collections.singletonMap("error", e.getMessage()));
 	}
+}
+
 }

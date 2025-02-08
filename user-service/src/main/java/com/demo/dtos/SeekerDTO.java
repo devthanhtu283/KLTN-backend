@@ -11,7 +11,7 @@ public class SeekerDTO {
 	private String fullName;
 	private String phone;
 	private String address;
-	@JsonFormat(pattern = "dd/MM/yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
 	private Date dob;
 	private Integer status;
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
