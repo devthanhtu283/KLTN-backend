@@ -1,5 +1,6 @@
 package com.demo.repositories;
 
+import com.demo.entities.Favorite;
 import com.demo.entities.Job;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,6 @@ public interface JobPaginationRepository extends PagingAndSortingRepository<Job,
                          @Param("worktypeId") Integer worktypeId,
                          @Param("experienceId") Integer experienceId,
                          Pageable pageable);
+
+    Page<Job> findByEmployerId(@Param("employerId") Integer employerId, Pageable pageable);
 }

@@ -22,5 +22,5 @@ public interface JobRepository extends CrudRepository<Job, Integer> {
                          @Param("locationId") Integer locationId,
                          @Param("worktypeId") Integer worktypeId,
                          @Param("experienceId") Integer experienceId);
-
+    List<Job> findByEmployerId(Integer employerId);
 }

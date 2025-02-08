@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import org.modelmapper.TypeToken;
 
@@ -37,14 +39,50 @@ public class JobServiceImpl implements JobService{
 
     @Override
     public Page<JobDTO> findAllPagination(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.findAll(pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
     public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, pageable).map(job -> mapper.map(job, JobDTO.class));
+    }
+
+    @Override
+    public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
+        return jobPaginationRepository.findByEmployerId(employeeId, pageable).map(job -> mapper.map(job, JobDTO.class));
+    }
+
+    @Override
+    public boolean save(JobDTO jobDTO) {
+        try{
+            Job job = mapper.map(jobDTO, Job.class);
+            job.setStatus(true);
+            job.setPostedAt(new Date());
+
+            jobRepository.save(job);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(int jobId) {
+        try {
+            Job job = jobRepository.findById(jobId).get();
+            job.setStatus(false);
+            jobRepository.save(job);
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

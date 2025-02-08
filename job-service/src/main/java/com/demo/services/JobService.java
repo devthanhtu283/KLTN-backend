@@ -16,4 +16,11 @@ public interface JobService
     public Page<JobDTO> findAllPagination(int pageNo, int pageSize);
 
     public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, int pageNo, int pageSize);
+
+    public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize);
+
+    public boolean save(JobDTO jobDTO);
+
+    public boolean delete(int jobId);
+
 }
