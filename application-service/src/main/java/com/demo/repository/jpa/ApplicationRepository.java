@@ -17,6 +17,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(value = "SELECT a FROM Application a join a.job j join j.employer e where e.id = :employerId and a.status = :status ORDER BY a.id DESC")
     public Page<Application> listApplicationByEmployerId(@Param("employerId") int employerId, Pageable pageable,@Param("status") int status);
 
-
+    @Query(value = "SELECT COUNT(*) FROM Application a where a.job.id = :jobId and a.seeker.id = :seekerId")
+    public int countApply(@Param("seekerId") int seekerId, @Param("jobId") int jobId);
 
 }
