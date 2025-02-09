@@ -22,4 +22,6 @@ public interface ApplicationService {
     public ApplicationDTO updateStatus(int id, int status );
 
     public void saveDBIntoElasticsearch();
+
+    public int countApply(int seekerId, int jobId);
 }

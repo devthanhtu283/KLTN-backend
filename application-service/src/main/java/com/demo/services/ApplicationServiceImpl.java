@@ -127,5 +127,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationElasticsearchRepository.saveAll(applicationsForES);
     }
 
+    @Override
+    public int countApply(int seekerId, int jobId) {
+        return applicationRepository.countApply(seekerId, jobId);
+    }
+
 
 }

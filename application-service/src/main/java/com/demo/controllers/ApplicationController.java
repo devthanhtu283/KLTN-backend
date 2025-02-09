@@ -49,11 +49,33 @@ public class ApplicationController {
         }
     }
 
+    @GetMapping(value ="count-apply")
+    public ApiResponseEntity<Object> countApplication(@RequestParam("seekerId") int seekerId, @RequestParam("jobId") int jobId) {
+        try {
+            int count = applicationService.countApply(seekerId, jobId);
+            if(count > 0 && count < 3) {
+                return ApiResponseEntity.success(true, "Successful !!");
+            } else if(count == 3) {
+                return ApiResponseEntity.success(3, "Successful !!");
+            } else {
+                return ApiResponseEntity.success(false, "No application found");
+            }
+        } catch (Exception e) {
+            return ApiResponseEntity.badRequest("Error " + e.getMessage());
+        }
+    }
+
 
     @PostMapping(value = "save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> save(@RequestBody ApplicationDTO applicationDTO) {
         try {
-            boolean result = applicationService.save(applicationDTO);
+            int count = applicationService.countApply(applicationDTO.getSeekerId(), applicationDTO.getJobId());
+            boolean result = false;
+            if(count < 3) {
+                result = applicationService.save(applicationDTO);
+            } else {
+                return ApiResponseEntity.success(3, "Bạn đã ứng tuyển quá 3 lần nên không được phép ứng tuyển nữa !!");
+            }
             if(result) {
                 return ApiResponseEntity.success(result, "Successful !!");
             } else {
