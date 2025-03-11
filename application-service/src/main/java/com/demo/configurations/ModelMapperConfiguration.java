@@ -27,7 +27,7 @@ public class ModelMapperConfiguration {
 			@Override
 			protected void configure() {
 				// TODO Auto-generated method stub
-				map().setId( source.getId());
+				map().setId(source.getId());
 				map().setSeekerId(source.getSeeker().getId());
 				map().setSeekerName(source.getSeeker().getFullName());
 				map().setAddress(source.getSeeker().getAddress());

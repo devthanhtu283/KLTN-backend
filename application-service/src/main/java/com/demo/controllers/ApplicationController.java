@@ -125,7 +125,7 @@ public class ApplicationController {
     public ApiResponseEntity<Object> searchApplication(@RequestParam(required = false) String jobTitle, @RequestParam(required = false) String seekerName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         try {
             System.out.println("🔍 API nhận request: jobTitle=" + jobTitle + ", seekerName=" + seekerName);
-            Page<ApplicationIndex> result = applicationService.searchApplication(jobTitle, seekerName, page, size);
+            Page<Application> result = applicationService.searchApplication(jobTitle, seekerName, page, size);
             System.out.println("🔍 API trả về: " + result.getTotalElements() + " kết quả");
             if(result != null) {
                 return ApiResponseEntity.success(result, "Successful !!");
@@ -138,9 +138,9 @@ public class ApplicationController {
     }
 
     // API để đồng bộ dữ liệu từ database lên Elasticsearch
-    @PostMapping("/sync")
-    public ResponseEntity<String> syncDataToElasticsearch() {
-        applicationService.saveDBIntoElasticsearch();
-        return ResponseEntity.ok("Dữ liệu đã được đồng bộ lên Elasticsearch thành công!");
-    }
+//    @PostMapping("/sync")
+//    public ResponseEntity<String> syncDataToElasticsearch() {
+//        applicationService.saveDBIntoElasticsearch();
+//        return ResponseEntity.ok("Dữ liệu đã được đồng bộ lên Elasticsearch thành công!");
+//    }
 }

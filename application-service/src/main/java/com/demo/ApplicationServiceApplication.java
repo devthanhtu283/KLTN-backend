@@ -9,9 +9,9 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
-@EnableJpaRepositories(basePackages = "com.demo.repository.jpa")
-@EnableElasticsearchRepositories(basePackages = "com.demo.repository.elasticsearch")
+//@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
+//@EnableJpaRepositories(basePackages = "com.demo.repository.jpa")
+//@EnableElasticsearchRepositories(basePackages = "com.demo.repository.elasticsearch")
 public class ApplicationServiceApplication {
 
 	public static void main(String[] args) {
