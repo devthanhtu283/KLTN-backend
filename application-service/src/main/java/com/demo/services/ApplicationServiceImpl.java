@@ -3,8 +3,7 @@ package com.demo.services;
 import com.demo.dto.ApplicationDTO;
 import com.demo.dto.ApplicationIndex;
 import com.demo.entities.Application;
-import com.demo.repository.elasticsearch.ApplicationElasticsearchRepository;
-import com.demo.repository.jpa.ApplicationRepository;
+import com.demo.repository.ApplicationRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
-    @Autowired
-    private ApplicationElasticsearchRepository applicationElasticsearchRepository;
 
     @Override
     public List<ApplicationDTO> listApplications() {
@@ -75,7 +72,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationIndex> searchApplication(String jobTitle, String seekerName, int page, int size) {
+    public Page<Application> searchApplication(String jobTitle, String seekerName, int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
 
@@ -87,7 +84,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             System.out.println("🔍 Tìm kiếm với jobTitle: " + jobTitle + ", seekerName: " + seekerName);
 
 
-            Page<ApplicationIndex> results = applicationElasticsearchRepository.searchApplication(jobTitle, seekerName, pageable);
+            Page<Application> results = applicationRepository.searchApplication(jobTitle, seekerName, pageable);
 
             System.out.println("🔍 Kết quả tìm kiếm: " + results.getTotalElements() + " records");
 
@@ -115,17 +112,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    @Override
-    public void saveDBIntoElasticsearch() {
-        List<Application> applications = applicationRepository.findAll();
-
-        // Chuyển đổi sang DTO trước khi lưu vào Elasticsearch
-        List<ApplicationIndex> applicationsForES = applications.stream()
-                .map(ApplicationIndex::new) // 🔥 Chuyển đổi sang ApplicationIndex trước khi lưu
-                .collect(Collectors.toList());
-
-        applicationElasticsearchRepository.saveAll(applicationsForES);
-    }
+//    @Override
+//    public void saveDBIntoElasticsearch() {
+//        List<Application> applications = applicationRepository.findAll();
+//
+//        // Chuyển đổi sang DTO trước khi lưu vào Elasticsearch
+//        List<ApplicationIndex> applicationsForES = applications.stream()
+//                .map(ApplicationIndex::new) // 🔥 Chuyển đổi sang ApplicationIndex trước khi lưu
+//                .collect(Collectors.toList());
+//
+//        applicationElasticsearchRepository.saveAll(applicationsForES);
+//    }
 
     @Override
     public int countApply(int seekerId, int jobId) {

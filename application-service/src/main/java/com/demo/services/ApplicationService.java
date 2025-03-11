@@ -17,11 +17,11 @@ public interface ApplicationService {
 
     public Page<ApplicationDTO> listApplicationByEmployerId(int employerId, int page, int size,int status);
 
-    public Page<ApplicationIndex> searchApplication(String jobTitle, String seekerName, int page, int size);
+    public Page<Application> searchApplication(String jobTitle, String seekerName, int page, int size);
 
     public ApplicationDTO updateStatus(int id, int status );
 
-    public void saveDBIntoElasticsearch();
+//    public void saveDBIntoElasticsearch();
 
     public int countApply(int seekerId, int jobId);
 }
