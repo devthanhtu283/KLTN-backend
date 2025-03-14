@@ -19,7 +19,6 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfiguration {
-    // Configuration
     private static final Logger logger = LoggerFactory.getLogger(RedisConfiguration.class);
 
     @Bean
