@@ -5,7 +5,11 @@ import com.demo.entities.Job;
 import com.demo.repositories.JobPaginationRepository;
 import com.demo.repositories.JobRepository;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +23,7 @@ import org.modelmapper.TypeToken;
 @Service
 public class JobServiceImpl implements JobService{
 
+    private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
     @Autowired
     private JobRepository jobRepository;
     @Autowired
@@ -28,11 +33,14 @@ public class JobServiceImpl implements JobService{
 
 
     @Override
+    @Cacheable(value = "jobs", key = "'allJobs'")
     public List<JobDTO> findAll() {
+        logger.info("⚡ Fetching jobs from database...");
         return mapper.map(jobRepository.findAll(), new TypeToken<List<JobDTO>>() {}.getType());
     }
 
     @Override
+    @Cacheable(value = "job", key = "#id")
     public JobDTO findById(int id) {
         return mapper.map(jobRepository.findById(id).get(), JobDTO.class);
     }
@@ -56,6 +64,7 @@ public class JobServiceImpl implements JobService{
     }
 
     @Override
+    @CacheEvict(value = "jobs", allEntries = true)
     public boolean save(JobDTO jobDTO) {
         try{
             Job job = mapper.map(jobDTO, Job.class);
@@ -72,6 +81,7 @@ public class JobServiceImpl implements JobService{
     }
 
     @Override
+    @CacheEvict(value = "jobs", allEntries = true)
     public boolean delete(int jobId) {
         try {
             Job job = jobRepository.findById(jobId).get();
