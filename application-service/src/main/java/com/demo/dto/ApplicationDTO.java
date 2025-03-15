@@ -1,10 +1,7 @@
 package com.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
@@ -12,13 +9,13 @@ import java.sql.Timestamp;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ApplicationDTO {
 
     private Integer id;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private Timestamp appliedAt;
     private int status;
-
     private Integer jobId;
     private String jobTitle;
     private Integer seekerId;
@@ -26,20 +23,8 @@ public class ApplicationDTO {
     private String avatar;
     private String address;
     private String phone;
-
-    @Override
-    public String toString() {
-        return "ApplicationDTO{" +
-                "id=" + id +
-                ", appliedAt=" + appliedAt +
-                ", status=" + status +
-                ", jobId=" + jobId +
-                ", jobTitle='" + jobTitle + '\'' +
-                ", seekerId=" + seekerId +
-                ", seekerName='" + seekerName + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
+    private String workType;
+    private String experience;
+    private String salary;
+    private String companyName;
 }
