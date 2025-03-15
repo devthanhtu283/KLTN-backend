@@ -1,7 +1,6 @@
 package com.demo.services;
 
 import com.demo.dto.ApplicationDTO;
-import com.demo.dto.ApplicationIndex;
 import com.demo.entities.Application;
 import com.demo.repository.ApplicationRepository;
 import org.modelmapper.ModelMapper;
@@ -28,7 +27,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<ApplicationDTO> listApplications() {
-        return modelMapper.map(applicationRepository.findAll(), new TypeToken<List<ApplicationDTO>>() {}.getType());
+        return modelMapper.map(applicationRepository.findAll(), new TypeToken<List<ApplicationDTO>>() {
+        }.getType());
     }
 
     @Override
@@ -72,7 +72,26 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<Application> searchApplication(String jobTitle, String seekerName, int page, int size) {
+    public Page<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Application> applicationPage = applicationRepository.listDistinctApplicationByEmployerId(employerId, pageable, status);
+
+            // Ánh xạ từng phần tử trong Page<Application> sang ApplicationDTO
+            List<ApplicationDTO> applicationDTOs = applicationPage.getContent()
+                    .stream()
+                    .map(application -> modelMapper.map(application, ApplicationDTO.class))
+                    .collect(Collectors.toList());
+
+            // Tạo đối tượng Page<ApplicationDTO> mới
+            return new PageImpl<>(applicationDTOs, pageable, applicationPage.getTotalElements());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Page<ApplicationDTO> searchApplication(String jobTitle, String seekerName, int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
 
@@ -84,24 +103,27 @@ public class ApplicationServiceImpl implements ApplicationService {
             System.out.println("🔍 Tìm kiếm với jobTitle: " + jobTitle + ", seekerName: " + seekerName);
 
 
-            Page<Application> results = applicationRepository.searchApplication(jobTitle, seekerName, pageable);
-
-            System.out.println("🔍 Kết quả tìm kiếm: " + results.getTotalElements() + " records");
-
-            return results;
+            return applicationRepository.searchApplication(jobTitle, seekerName, pageable)
+                    .map(application -> modelMapper.map(application, ApplicationDTO.class));
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi tìm kiếm: " + e.getMessage(), e);
         }
     }
 
+    @Override
+    public Page<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status) {
+        Pageable pageable = PageRequest.of(page, size);
 
+        return applicationRepository.listSeekerApplied(seekerId, pageable, status)
+                .map(application -> modelMapper.map(application, ApplicationDTO.class));
+    }
 
 
     @Override
     public ApplicationDTO updateStatus(int id, int status) {
         try {
             ApplicationDTO applicationDTO = findById(id);
-            if(applicationDTO != null) {
+            if (applicationDTO != null) {
                 applicationDTO.setStatus(status);
                 Application application = modelMapper.map(applicationDTO, Application.class);
                 applicationRepository.save(application);
