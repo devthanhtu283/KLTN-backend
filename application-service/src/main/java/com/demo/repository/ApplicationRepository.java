@@ -11,12 +11,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Integer> {
 
 
-    @Query(value = "SELECT a FROM Application a join a.job j join j.employer e where e.id = :employerId and a.status = :status ORDER BY a.id DESC")
+    @Query(value = "SELECT a FROM Application a join a.job j join j.employer e where e.id = :employerId  and a.status = :status ORDER BY a.id DESC")
     public Page<Application> listApplicationByEmployerId(@Param("employerId") int employerId, Pageable pageable, @Param("status") int status);
+
+    @Query(value = "SELECT a FROM Application a join a.job j join j.employer e where j.id = :jobId  and a.status = :status ORDER BY a.id DESC")
+    public Page<Application> listApplicationByJobId(@Param("jobId") int jobId, Pageable pageable, @Param("status") int status);
 
     @Query(value = """
                 SELECT a FROM Application a
@@ -50,6 +55,14 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
                 ORDER BY j.id DESC
             """)
     Page<Application> listSeekerApplied(@Param("seekerId") int seekerId, Pageable pageable, @Param("status") int status);
+
+    @Query("""
+                SELECT a FROM Application a
+                JOIN FETCH a.job j
+                WHERE a.seeker.id = :seekerId AND a.job.id = :jobId
+            
+            """)
+    List<Application> listSeekerAppliedForJob(@Param("seekerId") int seekerId, @Param("jobId") int jobId);
 
 
     @Query("""

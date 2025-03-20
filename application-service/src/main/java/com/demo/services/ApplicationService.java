@@ -14,7 +14,7 @@ public interface ApplicationService {
 
     public ApplicationDTO findById(int id);
 
-    public Page<ApplicationDTO> listApplicationByEmployerId(int employerId, int page, int size, int status);
+    public Page<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status);
 
     public Page<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status);
 
