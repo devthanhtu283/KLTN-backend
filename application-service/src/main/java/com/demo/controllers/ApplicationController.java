@@ -79,11 +79,11 @@ public class ApplicationController {
 
 
     @GetMapping(value = "list-application", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ApiResponseEntity<Object> listApplicationByEmployerId(@RequestParam int employerId,
-                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "10") int size,
-                                                                 @RequestParam int status) {
-        Page<ApplicationDTO> result = applicationService.listApplicationByEmployerId(employerId, page, size, status);
+    public ApiResponseEntity<Object> listApplicationByJobId(@RequestParam int jobId,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam int status) {
+        Page<ApplicationDTO> result = applicationService.listApplicationByJobId(jobId, page, size, status);
         return result.hasContent() ? ApiResponseEntity.success(result, "Successful !!")
                 : ApiResponseEntity.success(result, "No data !!");
     }

@@ -53,10 +53,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> listApplicationByEmployerId(int employerId, int page, int size, int status) {
+    public Page<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
-            Page<Application> applicationPage = applicationRepository.listApplicationByEmployerId(employerId, pageable, status);
+            Page<Application> applicationPage = applicationRepository.listApplicationByJobId(jobId, pageable, status);
 
             // Ánh xạ từng phần tử trong Page<Application> sang ApplicationDTO
             List<ApplicationDTO> applicationDTOs = applicationPage.getContent()
@@ -122,17 +122,29 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationDTO updateStatus(int id, int status) {
         try {
+            // Tìm đơn ứng tuyển hiện tại
             ApplicationDTO applicationDTO = findById(id);
             if (applicationDTO != null) {
+                // Cập nhật trạng thái cho đơn ứng tuyển hiện tại
                 applicationDTO.setStatus(status);
                 Application application = modelMapper.map(applicationDTO, Application.class);
                 applicationRepository.save(application);
+
+                List<Application> allApplicationsForJobs = applicationRepository.listSeekerAppliedForJob(applicationDTO.getSeekerId(), applicationDTO.getJobId());
+
+                for (Application app : allApplicationsForJobs) {
+                    if (app.getStatus() != status) {
+                        app.setStatus(status);
+                        applicationRepository.save(app);
+                    }
+                }
             }
             return applicationDTO;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
 
 //    @Override
 //    public void saveDBIntoElasticsearch() {
