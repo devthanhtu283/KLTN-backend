@@ -1,12 +1,14 @@
 package com.demo.controllers;
 
+import com.demo.dtos.ChatDTO;
+
+import com.demo.services.ChatService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +19,8 @@ public class ChatHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<WebSocketSession> sessions = new ArrayList<>();
 
-//    @Autowired
-//    private ChatService chatService;
+    @Autowired
+    private ChatService chatService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -29,25 +31,20 @@ public class ChatHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // Chuyển đổi tin nhắn JSON thành đối tượng ChatDTO
-//        ChatDTO chatMessage = objectMapper.readValue(message.getPayload(), ChatDTO.class);
-//        System.out.println("Received message from client: " + chatMessage.getContent());
-//
-//        // Lưu tin nhắn vào cơ sở dữ liệu
-//        chatService.save(chatMessage);
+        ChatDTO chatMessage = objectMapper.readValue(message.getPayload(), ChatDTO.class);
+        System.out.println("Received message from client: " + chatMessage.getMessage());
 
-        // Chuyển đổi lại thành JSON để gửi cho các phiên khác
-//        String responseMessage = objectMapper.writeValueAsString(chatMessage);
+        // Lưu tin nhắn vào cơ sở dữ liệu
+        ChatDTO savedMessage = chatService.save(chatMessage);
 
-        // Gửi tin nhắn đến tất cả các client khác (ngoại trừ chính client gửi tin nhắn này)
+        // Chuyển đổi lại thành JSON để gửi cho các client
+        String responseMessage = objectMapper.writeValueAsString(savedMessage);
+
+        // Gửi tin nhắn đến tất cả các client (bao gồm cả client gửi tin nhắn)
         for (WebSocketSession s : sessions) {
-            if (s.isOpen() && s != session) {
-                s.sendMessage(message);
+            if (s.isOpen()) {
+                s.sendMessage(new TextMessage(responseMessage));
             }
-        }
-
-        // Nếu chỉ có một client, vẫn cần gửi phản hồi để client có thể hiển thị tin nhắn
-        if (sessions.size() == 1) {
-            session.sendMessage(message);
         }
     }
 
