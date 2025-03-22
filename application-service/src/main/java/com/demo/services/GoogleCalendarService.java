@@ -1,5 +1,6 @@
 package com.demo.services;
 
+import com.demo.dto.InterviewDTO;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -13,6 +14,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.ConferenceData;
 import com.google.api.services.calendar.model.CreateConferenceRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import com.google.api.services.calendar.model.Event;
@@ -33,6 +35,9 @@ public class GoogleCalendarService {
     // 🔹 File lưu token trong resources (chạy local) hoặc thư mục bên ngoài (khi deploy)
     private static final String TOKEN_FILE_PATH = "src/main/resources/client_secret.json"; // Local
     private static final String TOKEN_FILE_DEPLOY = System.getProperty("user.home") + "/google_tokens.json"; // Deploy
+
+    @Autowired
+    private InterviewService interviewService;
 
     public boolean isUserAuthenticated() {
         File tokenFile = new File(TOKEN_FILE_PATH);
@@ -145,7 +150,7 @@ public class GoogleCalendarService {
         if (createdEvent.getConferenceData() != null &&
                 createdEvent.getConferenceData().getEntryPoints() != null &&
                 !createdEvent.getConferenceData().getEntryPoints().isEmpty()) {
-
+           
             return createdEvent.getConferenceData().getEntryPoints().get(0).getUri();
         } else {
             throw new IOException("Failed to generate Google Meet link.");
