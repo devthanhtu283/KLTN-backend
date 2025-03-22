@@ -1,13 +1,16 @@
 package com.demo.controllers;
 
 import com.demo.clients.NotificationService;
+import com.demo.dtos.ChatDTO;
 import com.demo.dtos.Email;
 import com.demo.dtos.SeekerDTO;
 import com.demo.dtos.UserDTO;
 
+import com.demo.entities.Chat;
 import com.demo.entities.User;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.helpers.FileHelper;
+import com.demo.services.ChatService;
 import com.demo.services.MailService;
 import com.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @RestController
 @RequestMapping("user")
@@ -37,7 +41,8 @@ public class UserController {
 	@Autowired
 	private NotificationService notificationService;
 
-	
+	@Autowired
+	private ChatService chatService;
 	@PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO){
 		try {
@@ -219,4 +224,33 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
 		}
 	}
+	@GetMapping("chat/getReceiverIdsByUserId/{userId}")
+	public ResponseEntity<List<Integer>> getReceiverIdsByUserId(@PathVariable Integer userId) {
+		try {
+			List<Integer> receiverIds = chatService.getReceiverIdsByUserId(userId);
+			if (receiverIds.isEmpty()) {
+				return ResponseEntity.noContent().build(); // Trả về 204 nếu không có dữ liệu
+			}
+			return ResponseEntity.ok(receiverIds); // Trả về 200 với danh sách receiver_id
+		} catch (Exception e) {
+			return ResponseEntity.status(500).build(); // Trả về 500 nếu có lỗi
+		}
+	}
+
+	@GetMapping("/chat/getMessagesBetweenUsers/{senderId}/{receiverId}")
+	public ResponseEntity<List<ChatDTO>> getMessagesBetweenUsers(
+			@PathVariable Integer senderId,
+			@PathVariable Integer receiverId) {
+		try {
+			List<ChatDTO> messages = chatService.getMessagesBetweenUsers(senderId, receiverId);
+			if (messages.isEmpty()) {
+				return ResponseEntity.noContent().build();
+			}
+			return ResponseEntity.ok(messages);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(500).build();
+		}
+	}
+
 }
