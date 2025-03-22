@@ -2,7 +2,9 @@ package com.demo.configurations;
 
 
 import com.demo.dto.ApplicationDTO;
+import com.demo.dto.InterviewDTO;
 import com.demo.entities.Application;
+import com.demo.entities.Interview;
 import com.demo.entities.Job;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -41,6 +43,21 @@ public class ModelMapperConfiguration {
                 map().setCompanyName(source.getJob().getEmployer().getCompanyName());
             }
 
+        });
+
+        mapper.addMappings(new PropertyMap<Interview, InterviewDTO>() {
+            @Override
+            protected void configure() {
+                // TODO Auto-generated method stub
+                map().setId(source.getId());
+                map().setApplicationId(source.getApplication().getId());
+                map().setScheduledAt(source.getScheduledAt());
+                map().setInterviewLink(source.getInterviewLink());
+                map().setStatus(source.getStatus());
+                map().setJobTitle(source.getApplication().getJob().getTitle());
+                map().setSeekerName(source.getApplication().getSeeker().getFullName());
+                map().setEmployeeName(source.getApplication().getJob().getEmployer().getCompanyName());
+            }
         });
 
         mapper.addMappings(new PropertyMap<ApplicationDTO, Application>() {
