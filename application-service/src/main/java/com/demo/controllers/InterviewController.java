@@ -5,6 +5,7 @@ import com.demo.helpers.ApiResponseEntity;
 import com.demo.services.InterviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MimeTypeUtils;
@@ -27,7 +28,8 @@ public class InterviewController {
 
     @GetMapping(value = "list-interviews-of-employer")
     public ApiResponseEntity<Object> listInterviewsOfEmployer(@RequestParam("employerId") int id, Pageable pageable) {
-        Page<InterviewDTO> result = interviewService.listInterviewsOfEmployer(id, pageable);
+        Pageable modifiedPageable = PageRequest.of(pageable.getPageNumber(), 10, pageable.getSort());
+        Page<InterviewDTO> result = interviewService.listInterviewsOfEmployer(id, modifiedPageable);
 
         return !result.isEmpty() ? ApiResponseEntity.success(result, "Successful !!")
                 : ApiResponseEntity.error("No data !!", HttpStatus.BAD_REQUEST);
