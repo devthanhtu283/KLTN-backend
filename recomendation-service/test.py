@@ -3,7 +3,6 @@ from spacy.matcher import PhraseMatcher
 import pandas as pd
 import numpy as np
 from xgboost import XGBClassifier
-
 if not hasattr(XGBClassifier, "__sklearn_tags__"):
     XGBClassifier.__sklearn_tags__ = lambda self: {}
 from sklearn.model_selection import train_test_split
@@ -12,42 +11,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import mysql.connector
+from flask import Flask, request, jsonify
 from datetime import datetime
-from fastapi import FastAPI
-from py_eureka_client import eureka_client
-import asyncio
-
-# Khởi tạo FastAPI app
-app = FastAPI()
-
-
-# Hàm khởi tạo Eureka Client
-async def init_eureka():
-    await eureka_client.init_async(
-        eureka_server="http://localhost:9999",  # Địa chỉ Eureka Server
-        app_name="recommendation-service",  # Tên ứng dụng của bạn
-        instance_port=8000,  # Port mà API của bạn chạy
-        instance_host="localhost"  # Host mà API của bạn chạy
-    )
-
-
-# Khởi tạo Eureka Client khi ứng dụng khởi động
-@app.on_event("startup")
-async def startup_event():
-    asyncio.create_task(init_eureka())
-
-
-# Định nghĩa endpoint GET tại "/python/hello"
-@app.get("/python/hello")
-def read_hello():
-    return {"message": "Xin chào, đây là API của tôi!"}
-
-
-# Định nghĩa endpoint GET tại "/python/bye"
-@app.get("/python/bye")
-def read_bye():
-    return {"message": "Bye Bye!!"}
-
 
 # Kết nối MySQL
 def get_db_connection():
@@ -58,12 +23,13 @@ def get_db_connection():
         database="jobs"
     )
 
+# Khởi tạo Flask app
+app = Flask(__name__)
 
 # Load spaCy model
 nlp = spacy.load("vi_core_news_lg")
 matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
-
-# Từ điển chuẩn hóa kỹ năng (giữ nguyên từ code gốc)
+# Giả sử skills_dictionary là từ điển chuẩn hóa kỹ năng (bạn cần định nghĩa trước)
 skills_dictionary = {
     "java script": "javascript",
     "node js": "node.js",
@@ -104,10 +70,12 @@ skills_dictionary = {
     "agile": "agile",
     "objective c": "objective-c",
     "flutter framework": "flutter",
+
     "bridge software engineer": "brse",
     "business analyst": "brse",
     "requirements analysis": "brse",
     "stakeholder communication": "brse",
+
     "mobile app development": "mobile development",
     "android development": "mobile development",
     "ios development": "mobile development",
@@ -115,6 +83,7 @@ skills_dictionary = {
     "flutter mobile": "mobile development",
     "xcode": "mobile development",
     "android studio": "mobile development",
+
     "devops engineer": "devops",
     "site reliability engineer": "sre",
     "ci/cd pipeline": "ci/cd",
@@ -226,6 +195,7 @@ skills_dictionary = {
     "google cloud platform": "gcp",
     "aws lambda": "aws lambda",
     "azure functions": "azure functions",
+
     "lập trình java": "java",
     "lập trình python": "python",
     "lập trình javascript": "javascript",
@@ -337,6 +307,7 @@ skills_dictionary = {
     "celery": "celery",
     "apache kafka": "apache kafka",
     "kafka": "kafka",
+
     "mysql": "mysql",
     "postgresql": "postgresql",
     "mongodb": "mongodb",
@@ -348,6 +319,7 @@ skills_dictionary = {
     "pgadmin": "pgadmin",
     "sql developer": "sql developer",
     "datagrip": "datagrip",
+
     "tcp/ip": "tcp/ip",
     "http": "http",
     "https": "https",
@@ -370,6 +342,7 @@ skills_dictionary = {
     "autopsy": "digital forensics",
     "ftk imager": "digital forensics",
     "encase": "digital forensics",
+
     "aws": "aws",
     "azure": "azure",
     "google cloud platform": "google cloud platform",
@@ -381,6 +354,7 @@ skills_dictionary = {
     "spark": "spark",
     "hive": "hive",
     "pig": "pig",
+
     "linux": "linux",
     "windows server": "windows server",
     "system administration": "system administration",
@@ -390,11 +364,10 @@ skills_dictionary = {
     "figma": "figma",
     "adobe xd": "adobe xd",
     "sketch": "sketch"
-}
 
+}
 skill_patterns = [nlp(text) for text in skills_dictionary.keys()]
 matcher.add("SKILL", None, *skill_patterns)
-
 
 # Hàm chuẩn hóa kỹ năng
 def extract_skills(text):
@@ -407,64 +380,60 @@ def extract_skills(text):
         skills.add(standardized)
     return skills
 
-
-# Hàm tính Jaccard similarity
+# Hàm tính Jaccard similarity (chỉ tính trên các kỹ năng liên quan)
 def jaccard_similarity(cv_skills, job_skills):
     if not cv_skills or not job_skills:
         return 0.0
+    # Chỉ lấy các kỹ năng của CV có liên quan đến job
     relevant_cv_skills = cv_skills.intersection(job_skills)
     if not relevant_cv_skills:
         return 0.0
+
     intersection = len(relevant_cv_skills)
-    union = len(job_skills)
+    union = len(job_skills)  
     return intersection / union
 
 
-# Hàm load dữ liệu từ database
 def load_data_from_db():
     conn = get_db_connection()
     cursor = conn.cursor()
-
+    
     query_job = """
     SELECT id, title, description, required_skills 
     FROM job
     """
     df_job = pd.read_sql(query_job, conn)
     df_job.columns = ['Job_ID', 'Title', 'Job Description', 'Required_Skills']
-
+    
     query_cv = """
     SELECT id, skills 
     FROM cv
     """
     df_cv = pd.read_sql(query_cv, conn)
     df_cv.columns = ['CV_ID', 'Skills']
-
+    
     conn.close()
     return df_job, df_cv
 
-
-# Hàm huấn luyện mô hình
 def train_models(df_job):
     df_job['combined_text'] = df_job['Required_Skills'].apply(lambda x: str(x))
     df_job['extracted_skills'] = df_job['Required_Skills'].apply(extract_skills)
-
+    
     job_tfidf_vectorizer = TfidfVectorizer()
     job_tfidf_matrix = job_tfidf_vectorizer.fit_transform(df_job['combined_text'])
-
+    
     return job_tfidf_vectorizer, job_tfidf_matrix, df_job
 
-
 # Hàm gợi ý công việc
-def recommend_jobs_for_cv_model(cv_text, cv_skills, job_df, job_tfidf_vectorizer, job_tfidf_matrix, alpha=0.5, beta=0.5,
-                                threshold=0.1):
+def recommend_jobs_for_cv_model(cv_text, cv_skills, job_df, job_tfidf_vectorizer, job_tfidf_matrix, alpha=0.5, beta=0.5, threshold=0.1):
     cv_vec = job_tfidf_vectorizer.transform([cv_text])
     cosine_sim = cosine_similarity(cv_vec, job_tfidf_matrix).flatten()
     jaccard_scores = job_df['extracted_skills'].apply(lambda js: jaccard_similarity(cv_skills, js)).values
     hybrid_score = alpha * cosine_sim + beta * jaccard_scores
-
+    
     print(f"CV Skills: {cv_skills}")
     sorted_indices = np.argsort(hybrid_score)[::-1]
-
+    
     recommendations = []
     for idx in sorted_indices:
         if hybrid_score[idx] < threshold:
@@ -472,18 +441,16 @@ def recommend_jobs_for_cv_model(cv_text, cv_skills, job_df, job_tfidf_vectorizer
         job_skills = job_df.loc[idx, 'extracted_skills']
         matched = job_skills.intersection(cv_skills) if isinstance(job_skills, set) else set()
         if matched:
-            print(
-                f"Job ID: {job_df.loc[idx, 'Job_ID']}, Job Skills: {job_skills}, Cosine Sim: {cosine_sim[idx]}, Jaccard Score: {jaccard_scores[idx]}, Hybrid Score: {hybrid_score[idx]}")
+            print(f"Job ID: {job_df.loc[idx, 'Job_ID']}, Job Skills: {job_skills}, Cosine Sim: {cosine_sim[idx]}, Jaccard Score: {jaccard_scores[idx]}, Hybrid Score: {hybrid_score[idx]}")
             recommendations.append((job_df.loc[idx, 'Job_ID'], ', '.join(matched)))
-
+    
     return recommendations
 
 
-# Hàm xóa các match không còn phù hợp
 def remove_outdated_matches(cv_id, cv_skills, df_job):
     conn = get_db_connection()
     cursor = conn.cursor()
-
+    
     query_matches = """
     SELECT cv_id, job_id, matched_skill
     FROM matches
@@ -491,15 +458,16 @@ def remove_outdated_matches(cv_id, cv_skills, df_job):
     """
     cursor.execute(query_matches, (cv_id,))
     matches = cursor.fetchall()
-
+    
     records_to_delete = []
-
+    
     for match in matches:
         cv_id, job_id, matched_skill = match
         job_skills = df_job[df_job['Job_ID'] == job_id]['extracted_skills'].iloc[0]
         matched = job_skills.intersection(cv_skills) if isinstance(job_skills, set) else set()
-        if not matched:
+        if not matched:  # Nếu không còn kỹ năng nào khớp
             records_to_delete.append((cv_id, job_id))
+    
 
     if records_to_delete:
         delete_query = """
@@ -509,30 +477,29 @@ def remove_outdated_matches(cv_id, cv_skills, df_job):
         cursor.executemany(delete_query, records_to_delete)
         conn.commit()
         print(f"Deleted {len(records_to_delete)} outdated matches for CV ID {cv_id}")
-
+    
     conn.close()
 
 
-# Endpoint để gợi ý công việc
-@app.post("/python/recommend")
-async def recommend_jobs():
+@app.route('/recommend', methods=['POST'])
+def recommend_jobs():
     df_job, df_cv = load_data_from_db()
     job_tfidf_vectorizer, job_tfidf_matrix, df_job = train_models(df_job)
-
+    
     df_cv['combined_text'] = df_cv['Skills'].apply(lambda x: str(x))
     df_cv['extracted_skills'] = df_cv['Skills'].apply(extract_skills)
-
+    
     recommendation_rows = []
     for idx, row in df_cv.iterrows():
         cv_id = int(row['CV_ID'])
         cv_text = row['combined_text']
         cv_skills = row['extracted_skills']
-
+        
         remove_outdated_matches(cv_id, cv_skills, df_job)
+        
 
-        rec = recommend_jobs_for_cv_model(cv_text, cv_skills, df_job, job_tfidf_vectorizer, job_tfidf_matrix, alpha=0.5,
-                                          beta=0.5, threshold=0.1)
-
+        rec = recommend_jobs_for_cv_model(cv_text, cv_skills, df_job, job_tfidf_vectorizer, job_tfidf_matrix, alpha=0.5, beta=0.5, threshold=0.1)
+        
         for job_id, matched in rec:
             recommendation_rows.append({
                 'cv_id': cv_id,
@@ -541,10 +508,11 @@ async def recommend_jobs():
                 'time_matches': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'status': 1
             })
+    
 
     conn = get_db_connection()
     cursor = conn.cursor()
-
+    
     insert_query = """
     INSERT INTO matches (cv_id, job_id, matched_skill, time_matches, status)
     VALUES (%s, %s, %s, %s, %s)
@@ -561,18 +529,14 @@ async def recommend_jobs():
             rec['time_matches'],
             rec['status']
         ))
-
+    
     conn.commit()
     conn.close()
-
-    return {
+    
+    return jsonify({
         'status': 'success',
         'message': f'Inserted or updated {len(recommendation_rows)} recommendations into database'
-    }
+    })
 
-
-# # Chạy ứng dụng
-# if __name__ == '__main__':
-#     import uvicorn
-#
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
