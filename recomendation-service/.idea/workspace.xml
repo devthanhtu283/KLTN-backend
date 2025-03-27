@@ -42,6 +42,7 @@
   "keyToString": {
     "FastAPI.FastAPIProject.executor": "Run",
     "HTTP Request.test_main | #2.executor": "Run",
+    "Python.cv.executor": "Run",
     "Python.demo1.executor": "Run",
     "Python.job_recommendation.executor": "Run",
     "Python.main.executor": "Run",
@@ -66,7 +67,27 @@
     </key>
   </component>
   <component name="RunManager" selected="FastAPI.FastAPIProject">
-    <configuration name="test_main | #2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/test_main.http" executionIdentifier="#2" index="2" runType="Run single request">
+    <configuration name="cv" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="FastAPIProject" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cv.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
     <configuration name="demo1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -178,7 +199,7 @@
     </configuration>
     <list>
       <item itemvalue="FastAPI.FastAPIProject" />
-      <item itemvalue="HTTP Request.test_main | #2" />
+      <item itemvalue="Python.cv" />
       <item itemvalue="Python.test" />
       <item itemvalue="Python.demo1" />
       <item itemvalue="Python.job_recommendation" />
@@ -186,11 +207,11 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.cv" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.job_recommendation" />
         <item itemvalue="Python.demo1" />
-        <item itemvalue="HTTP Request.test_main | #2" />
       </list>
     </recent_temporary>
   </component>
@@ -221,7 +242,8 @@
       <workItem from="1742957590572" duration="1628000" />
       <workItem from="1742959444995" duration="294000" />
       <workItem from="1742959863515" duration="1429000" />
-      <workItem from="1742978981320" duration="2063000" />
+      <workItem from="1742978981320" duration="2169000" />
+      <workItem from="1743047918102" duration="2305000" />
     </task>
     <servers />
   </component>
@@ -232,7 +254,8 @@
     <SUITE FILE_PATH="coverage/FastAPIProject$job_recommendation.coverage" NAME="job_recommendation Coverage Results" MODIFIED="1741664052379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.venv" />
     <SUITE FILE_PATH="coverage/FastAPIProject$main.coverage" NAME="main Coverage Results" MODIFIED="1742957735962" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/FastAPIProject$test.coverage" NAME="test Coverage Results" MODIFIED="1742979887818" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/FastAPIProject$FastAPIProject.coverage" NAME="FastAPIProject Coverage Results" MODIFIED="1742980587083" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/FastAPIProject$FastAPIProject.coverage" NAME="FastAPIProject Coverage Results" MODIFIED="1743050196964" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/FastAPIProject$demo1.coverage" NAME="demo1 Coverage Results" MODIFIED="1741098130811" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.venv" />
+    <SUITE FILE_PATH="coverage/FastAPIProject$cv.coverage" NAME="cv Coverage Results" MODIFIED="1743049975020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
