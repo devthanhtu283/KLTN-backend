@@ -1,15 +1,16 @@
 package com.demo.controllers;
 
 import com.demo.clients.NotificationService;
-import com.demo.dtos.ChatDTO;
-import com.demo.dtos.Email;
-import com.demo.dtos.SeekerDTO;
-import com.demo.dtos.UserDTO;
+import com.demo.dtos.*;
 
 import com.demo.entities.Chat;
+import com.demo.entities.Cv;
+import com.demo.entities.Seeker;
 import com.demo.entities.User;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.helpers.FileHelper;
+import com.demo.repositories.SeekerRepository;
+import com.demo.services.CVService;
 import com.demo.services.ChatService;
 import com.demo.services.MailService;
 import com.demo.services.UserService;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("user")
@@ -43,6 +45,12 @@ public class UserController {
 
 	@Autowired
 	private ChatService chatService;
+
+	@Autowired
+	private CVService cvService;
+    @Autowired
+    private SeekerRepository seekerRepository;
+
 	@PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO){
 		try {
@@ -185,7 +193,7 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
 		}
 	}
-	@PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "cv/uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
 		try {
 			// Kiểm tra xem tệp có rỗng không
@@ -252,5 +260,32 @@ public class UserController {
 			return ResponseEntity.status(500).build();
 		}
 	}
+
+	@PostMapping(value = "cv/save",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> saveCV(@RequestBody CvDTO cv) {
+		try {
+			return new ResponseEntity<Object>(new Object() {
+				public boolean status = cvService.save(cv);
+			}, HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@GetMapping(value = "cv/findBySeekerId/{id}")
+	public ResponseEntity<Object> findCVBySeekerId(@PathVariable Integer id) {
+		try {
+			return new ResponseEntity<Object>(cvService.getCvById(id), HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
+
+
 
 }
