@@ -69,7 +69,7 @@ public class ApplicationController {
         int count = applicationService.countApply(applicationDTO.getSeekerId(), applicationDTO.getJobId());
 
         if (count >= 3) {
-            return ApiResponseEntity.error("Bạn đã ứng tuyển quá 3 lần nên không được phép ứng tuyển nữa !!", HttpStatus.BAD_REQUEST);
+            return ApiResponseEntity.success(3, "Bạn đã ứng tuyển quá 3 lần nên không được phép ứng tuyển nữa !!");
         }
 
         boolean result = applicationService.save(applicationDTO);
