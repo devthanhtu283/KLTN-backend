@@ -213,7 +213,7 @@ public class UserController {
 
 	
 
-	@PostMapping(value = "cv/uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
 		try {
 			// Kiểm tra xem tệp có rỗng không
