@@ -1,4 +1,5 @@
 package com.demo.configurations;
+
 import com.demo.dtos.JobDTO;
 import com.demo.entities.Job;
 import com.demo.entities.Location;
@@ -18,25 +19,26 @@ import org.springframework.core.env.Environment;
 @Configuration
 public class ModelMapperConfiguration {
 
-	@Bean
-	public ModelMapper modelMapper() {
-		ModelMapper mapper = new ModelMapper();
+    @Bean
+    public ModelMapper modelMapper() {
+        ModelMapper mapper = new ModelMapper();
 
-		mapper.addMappings(new PropertyMap<Job, JobDTO>() {
-			@Override
-			protected void configure() {
-				// TODO Auto-generated method stub
-				map().setExperienceName(source.getExperience().getName());
-				map().setEmployerName(source.getEmployer().getCompanyName());
-				map().setLocationName(source.getLocation().getName());
-				map().setWorktypeName(source.getWorktype().getName());
-				map().setEmployerLogo(source.getEmployer().getLogo());
+        mapper.addMappings(new PropertyMap<Job, JobDTO>() {
+            @Override
+            protected void configure() {
+                // TODO Auto-generated method stub
+                map().setExperienceName(source.getExperience().getName());
+                map().setEmployerName(source.getEmployer().getCompanyName());
+                map().setLocationName(source.getLocation().getName());
+                map().setWorktypeName(source.getWorktype().getName());
+                map().setCategoryName(source.getCategory().getCategoryName());
+                map().setEmployerLogo(source.getEmployer().getLogo());
 
-			}
+            }
 
-		});
+        });
 
-		return mapper;
-	}
+        return mapper;
+    }
 
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+
 @Getter
 @Setter
 public class JobDTO {
@@ -16,11 +17,13 @@ public class JobDTO {
     private Integer experienceId;
     private Integer locationId;
     private Integer worktypeId;
+    private Integer categoryId;
     private String employerName;
     private String experienceName;
     private String employerLogo;
     private String locationName;
     private String worktypeName;
+    private String categoryName;
     private String title;
     private String description;
     private String required;
@@ -50,6 +53,10 @@ public class JobDTO {
 
     public Integer getWorktypeId() {
         return worktypeId;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
     }
 
     public String getTitle() {
@@ -110,6 +117,10 @@ public class JobDTO {
 
     public void setWorktypeId(Integer worktypeId) {
         this.worktypeId = worktypeId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public void setTitle(String title) {
@@ -182,6 +193,14 @@ public class JobDTO {
 
     public void setWorktypeName(String worktypeName) {
         this.worktypeName = worktypeName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getEmployerLogo() {
