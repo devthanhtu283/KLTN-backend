@@ -24,4 +24,10 @@ public class CategoryServiceImpl implements CategoryService {
         return mapper.map(categoryRepository.findAll(), new TypeToken<List<CategoryDTO>>() {
         }.getType());
     }
+
+    @Override
+    public List<CategoryDTO> getSubcategoriesByCategoryName(String categoryName) {
+        return mapper.map(categoryRepository.findByCategoryName(categoryName), new TypeToken<List<CategoryDTO>>() {
+        }.getType());
+    }
 }
