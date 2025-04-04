@@ -22,5 +22,16 @@ public interface JobRepository extends CrudRepository<Job, Integer> {
                          @Param("locationId") Integer locationId,
                          @Param("worktypeId") Integer worktypeId,
                          @Param("experienceId") Integer experienceId);
+
     List<Job> findByEmployerId(Integer employerId);
+
+    @Query("SELECT j FROM Job j " +
+            "JOIN j.location l " +
+            "JOIN j.category c " +
+            "WHERE (:title IS NULL OR j.title LIKE %:title%) " +
+            "AND (:locationId IS NULL OR l.id = :locationId) " +
+            "AND (:category IS NULL OR c.id = :categoryId) ")
+    List<Job> searchBarJobs(@Param("title") String title,
+                            @Param("locationId") Integer locationId,
+                            @Param("categoryId") Integer categoryId);
 }

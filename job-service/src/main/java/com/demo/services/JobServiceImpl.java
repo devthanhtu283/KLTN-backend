@@ -18,10 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+
 import org.modelmapper.TypeToken;
 
 @Service
-public class JobServiceImpl implements JobService{
+public class JobServiceImpl implements JobService {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
     @Autowired
@@ -36,7 +37,8 @@ public class JobServiceImpl implements JobService{
     @Cacheable(value = "jobs", key = "'allJobs'")
     public List<JobDTO> findAll() {
         logger.info("⚡ Fetching jobs from database...");
-        return mapper.map(jobRepository.findAll(), new TypeToken<List<JobDTO>>() {}.getType());
+        return mapper.map(jobRepository.findAll(), new TypeToken<List<JobDTO>>() {
+        }.getType());
     }
 
     @Override
@@ -52,9 +54,9 @@ public class JobServiceImpl implements JobService{
     }
 
     @Override
-    public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, int pageNo, int pageSize) {
+    public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, Integer categoryId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
-        return jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, pageable).map(job -> mapper.map(job, JobDTO.class));
+        return jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, categoryId, pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
@@ -66,7 +68,7 @@ public class JobServiceImpl implements JobService{
     @Override
     @CacheEvict(value = "jobs", allEntries = true)
     public boolean save(JobDTO jobDTO) {
-        try{
+        try {
             Job job = mapper.map(jobDTO, Job.class);
             job.setStatus(true);
             job.setPostedAt(new Date());
@@ -88,8 +90,7 @@ public class JobServiceImpl implements JobService{
             job.setStatus(false);
             jobRepository.save(job);
             return true;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

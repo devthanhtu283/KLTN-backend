@@ -111,16 +111,26 @@ public class JobController {
         }
     }
 
+    @GetMapping(value = "category/{categoryName}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CategoryDTO>> getSubcategoriesByCategoryName(@PathVariable String categoryName) {
+        try {
+            return new ResponseEntity<>(categoryService.getSubcategoriesByCategoryName(categoryName), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("searchJobs")
     public ResponseEntity<Page<JobDTO>> searchJobs(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "locationId", required = false) Integer locationId,
             @RequestParam(value = "worktypeId", required = false) Integer worktypeId,
             @RequestParam(value = "experienceId", required = false) Integer experienceId,
+            @RequestParam(value = "categoryId", required = false) Integer categoryId,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "6") int size) {
         try {
-            return new ResponseEntity<>(jobService.searchJobs(title, locationId, worktypeId, experienceId, page, size), HttpStatus.OK);
+            return new ResponseEntity<>(jobService.searchJobs(title, locationId, worktypeId, experienceId, categoryId, page, size), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

@@ -7,15 +7,14 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface JobService
-{
+public interface JobService {
     public List<JobDTO> findAll();
 
     public JobDTO findById(int id);
 
     public Page<JobDTO> findAllPagination(int pageNo, int pageSize);
 
-    public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, int pageNo, int pageSize);
+    public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, Integer categoryId, int pageNo, int pageSize);
 
     public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize);
 
