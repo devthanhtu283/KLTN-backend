@@ -66,6 +66,14 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public List<JobDTO> findByEmployeeId(int employeeId) {
+        return jobRepository.findByEmployerId(employeeId, true)
+                .stream()
+                .map(job -> mapper.map(job, JobDTO.class))
+                .toList();
+    }
+
+    @Override
     @CacheEvict(value = "jobs", allEntries = true)
     public boolean save(JobDTO jobDTO) {
         try {

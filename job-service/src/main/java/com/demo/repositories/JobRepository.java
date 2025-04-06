@@ -23,7 +23,8 @@ public interface JobRepository extends CrudRepository<Job, Integer> {
                          @Param("worktypeId") Integer worktypeId,
                          @Param("experienceId") Integer experienceId);
 
-    List<Job> findByEmployerId(Integer employerId);
+    @Query("SELECT j FROM Job j where j.employer.id = :employerId and j.status = :status")
+    List<Job> findByEmployerId(@Param("employerId") Integer employerId, @Param("status") boolean status);
 
     @Query("SELECT j FROM Job j " +
             "JOIN j.location l " +

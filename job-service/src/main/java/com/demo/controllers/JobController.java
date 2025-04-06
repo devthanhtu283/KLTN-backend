@@ -2,6 +2,7 @@ package com.demo.controllers;
 
 import com.demo.dtos.*;
 import com.demo.entities.Feedback;
+import com.demo.helpers.ApiResponseEntity;
 import com.demo.repositories.FavoriteRepository;
 import com.demo.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,13 @@ public class JobController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> findAllByEmployerId(@PathVariable("id") int id) {
+        List<JobDTO> res = jobService.findByEmployeeId(id);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+                : ApiResponseEntity.success(res, "Fail");
     }
 
     @GetMapping(value = "findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
