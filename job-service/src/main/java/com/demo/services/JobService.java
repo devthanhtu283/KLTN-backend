@@ -18,6 +18,8 @@ public interface JobService {
 
     public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize);
 
+    public List<JobDTO> findByEmployeeId(int employeeId);
+
     public boolean save(JobDTO jobDTO);
 
     public boolean delete(int jobId);
