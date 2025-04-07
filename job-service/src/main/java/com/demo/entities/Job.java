@@ -14,239 +14,252 @@ import java.util.Set;
 @Table(name = "job", catalog = "jobs")
 public class Job implements java.io.Serializable {
 
-	private Integer id;
-	private Employer employer;
-	private Experience experience;
-	private Location location;
-	private Worktype worktype;
-	private String title;
-	private String description;
-	private String required;
-	private String address;
-	private String salary;
-	private boolean status;
-	private Date postedAt;
-	private Date postedExpired;
-	private String requiredSkills;
-	private String member;
-	private Set<Favorite> favorites = new HashSet<Favorite>(0);
-	private Set<Application> applications = new HashSet<Application>(0);
-	private Set<Matches> matcheses = new HashSet<Matches>(0);
+    private Integer id;
+    private Employer employer;
+    private Experience experience;
+    private Location location;
+    private Worktype worktype;
+    private Category category;
+    private String title;
+    private String description;
+    private String required;
+    private String address;
+    private String salary;
+    private boolean status;
+    private Date postedAt;
+    private Date postedExpired;
+    private String requiredSkills;
+    private String member;
+    private Set<Favorite> favorites = new HashSet<Favorite>(0);
+    private Set<Application> applications = new HashSet<Application>(0);
+    private Set<Matches> matcheses = new HashSet<Matches>(0);
 
-	public Job() {
-	}
+    public Job() {
+    }
 
-	public Job(Employer employer, Experience experience, Location location, Worktype worktype, String title,
+    public Job(Employer employer, Experience experience, Location location, Worktype worktype, Category category, String title,
                String description, String required, String address, String salary, boolean status, Date postedAt,
                Date postedExpired, String requiredSkills, String member) {
-		this.employer = employer;
-		this.experience = experience;
-		this.location = location;
-		this.worktype = worktype;
-		this.title = title;
-		this.description = description;
-		this.required = required;
-		this.address = address;
-		this.salary = salary;
-		this.status = status;
-		this.postedAt = postedAt;
-		this.postedExpired = postedExpired;
-		this.requiredSkills = requiredSkills;
-		this.member = member;
-	}
+        this.employer = employer;
+        this.experience = experience;
+        this.location = location;
+        this.worktype = worktype;
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.required = required;
+        this.address = address;
+        this.salary = salary;
+        this.status = status;
+        this.postedAt = postedAt;
+        this.postedExpired = postedExpired;
+        this.requiredSkills = requiredSkills;
+        this.member = member;
+    }
 
-	public Job(Employer employer, Experience experience, Location location, Worktype worktype, String title,
+    public Job(Employer employer, Experience experience, Location location, Worktype worktype, Category category, String title,
                String description, String required, String address, String salary, boolean status, Date postedAt,
                Date postedExpired, String requiredSkills, String member, Set<Favorite> favorites,
                Set<Application> applications, Set<Matches> matcheses) {
-		this.employer = employer;
-		this.experience = experience;
-		this.location = location;
-		this.worktype = worktype;
-		this.title = title;
-		this.description = description;
-		this.required = required;
-		this.address = address;
-		this.salary = salary;
-		this.status = status;
-		this.postedAt = postedAt;
-		this.postedExpired = postedExpired;
-		this.requiredSkills = requiredSkills;
-		this.member = member;
-		this.favorites = favorites;
-		this.applications = applications;
-		this.matcheses = matcheses;
-	}
+        this.employer = employer;
+        this.experience = experience;
+        this.location = location;
+        this.worktype = worktype;
+        this.category = category;
+        this.title = title;
+        this.description = description;
+        this.required = required;
+        this.address = address;
+        this.salary = salary;
+        this.status = status;
+        this.postedAt = postedAt;
+        this.postedExpired = postedExpired;
+        this.requiredSkills = requiredSkills;
+        this.member = member;
+        this.favorites = favorites;
+        this.applications = applications;
+        this.matcheses = matcheses;
+    }
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employer_id", nullable = false)
-	public Employer getEmployer() {
-		return this.employer;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employer_id", nullable = false)
+    public Employer getEmployer() {
+        return this.employer;
+    }
 
-	public void setEmployer(Employer employer) {
-		this.employer = employer;
-	}
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "experience_id", nullable = false)
-	public Experience getExperience() {
-		return this.experience;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "experience_id", nullable = false)
+    public Experience getExperience() {
+        return this.experience;
+    }
 
-	public void setExperience(Experience experience) {
-		this.experience = experience;
-	}
+    public void setExperience(Experience experience) {
+        this.experience = experience;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "location_id", nullable = false)
-	public Location getLocation() {
-		return this.location;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_id", nullable = false)
+    public Location getLocation() {
+        return this.location;
+    }
 
-	public void setLocation(Location location) {
-		this.location = location;
-	}
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "work_type_id", nullable = false)
-	public Worktype getWorktype() {
-		return this.worktype;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "work_type_id", nullable = false)
+    public Worktype getWorktype() {
+        return this.worktype;
+    }
 
-	public void setWorktype(Worktype worktype) {
-		this.worktype = worktype;
-	}
+    public void setWorktype(Worktype worktype) {
+        this.worktype = worktype;
+    }
 
-	@Column(name = "title", nullable = false, length = 65535)
-	public String getTitle() {
-		return this.title;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    public Category getCategory() {
+        return this.category;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-	@Column(name = "description", nullable = false, length = 65535)
-	public String getDescription() {
-		return this.description;
-	}
+    @Column(name = "title", nullable = false, length = 65535)
+    public String getTitle() {
+        return this.title;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	@Column(name = "required", nullable = false, length = 65535)
-	public String getRequired() {
-		return this.required;
-	}
+    @Column(name = "description", nullable = false, length = 65535)
+    public String getDescription() {
+        return this.description;
+    }
 
-	public void setRequired(String required) {
-		this.required = required;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Column(name = "address", nullable = false, length = 65535)
-	public String getAddress() {
-		return this.address;
-	}
+    @Column(name = "required", nullable = false, length = 65535)
+    public String getRequired() {
+        return this.required;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setRequired(String required) {
+        this.required = required;
+    }
 
-	@Column(name = "salary", nullable = false, length = 65535)
-	public String getSalary() {
-		return this.salary;
-	}
+    @Column(name = "address", nullable = false, length = 65535)
+    public String getAddress() {
+        return this.address;
+    }
 
-	public void setSalary(String salary) {
-		this.salary = salary;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	@Column(name = "status", nullable = false)
-	public boolean isStatus() {
-		return this.status;
-	}
+    @Column(name = "salary", nullable = false, length = 65535)
+    public String getSalary() {
+        return this.salary;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public void setSalary(String salary) {
+        this.salary = salary;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "posted_at", nullable = false, length = 19)
-	public Date getPostedAt() {
-		return this.postedAt;
-	}
+    @Column(name = "status", nullable = false)
+    public boolean isStatus() {
+        return this.status;
+    }
 
-	public void setPostedAt(Date postedAt) {
-		this.postedAt = postedAt;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "posted_expired", nullable = false, length = 19)
-	public Date getPostedExpired() {
-		return this.postedExpired;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "posted_at", nullable = false, length = 19)
+    public Date getPostedAt() {
+        return this.postedAt;
+    }
 
-	public void setPostedExpired(Date postedExpired) {
-		this.postedExpired = postedExpired;
-	}
+    public void setPostedAt(Date postedAt) {
+        this.postedAt = postedAt;
+    }
 
-	@Column(name = "required_skills", nullable = false, length = 65535)
-	public String getRequiredSkills() {
-		return this.requiredSkills;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "posted_expired", nullable = false, length = 19)
+    public Date getPostedExpired() {
+        return this.postedExpired;
+    }
 
-	public void setRequiredSkills(String requiredSkills) {
-		this.requiredSkills = requiredSkills;
-	}
+    public void setPostedExpired(Date postedExpired) {
+        this.postedExpired = postedExpired;
+    }
 
-	@Column(name = "member", nullable = false, length = 65535)
-	public String getMember() {
-		return this.member;
-	}
+    @Column(name = "required_skills", nullable = false, length = 65535)
+    public String getRequiredSkills() {
+        return this.requiredSkills;
+    }
 
-	public void setMember(String member) {
-		this.member = member;
-	}
+    public void setRequiredSkills(String requiredSkills) {
+        this.requiredSkills = requiredSkills;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job")
-	public Set<Favorite> getFavorites() {
-		return this.favorites;
-	}
+    @Column(name = "member", nullable = false, length = 65535)
+    public String getMember() {
+        return this.member;
+    }
 
-	public void setFavorites(Set<Favorite> favorites) {
-		this.favorites = favorites;
-	}
+    public void setMember(String member) {
+        this.member = member;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job")
-	public Set<Application> getApplications() {
-		return this.applications;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "job")
+    public Set<Favorite> getFavorites() {
+        return this.favorites;
+    }
 
-	public void setApplications(Set<Application> applications) {
-		this.applications = applications;
-	}
+    public void setFavorites(Set<Favorite> favorites) {
+        this.favorites = favorites;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "job")
-	public Set<Matches> getMatcheses() {
-		return this.matcheses;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "job")
+    public Set<Application> getApplications() {
+        return this.applications;
+    }
 
-	public void setMatcheses(Set<Matches> matcheses) {
-		this.matcheses = matcheses;
-	}
+    public void setApplications(Set<Application> applications) {
+        this.applications = applications;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "job")
+    public Set<Matches> getMatcheses() {
+        return this.matcheses;
+    }
+
+    public void setMatcheses(Set<Matches> matcheses) {
+        this.matcheses = matcheses;
+    }
 
 }

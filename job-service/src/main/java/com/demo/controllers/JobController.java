@@ -2,6 +2,7 @@ package com.demo.controllers;
 
 import com.demo.dtos.*;
 import com.demo.entities.Feedback;
+import com.demo.helpers.ApiResponseEntity;
 import com.demo.repositories.FavoriteRepository;
 import com.demo.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,12 @@ public class JobController {
     private FavoriteRepository favoriteRepository;
     @Autowired
     private FeedbackService feedbackService;
+    @Autowired
+    private CategoryService categoryService;
+
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<JobDTO>> findAllPagination( @RequestParam(defaultValue = "1") int page,
-                                                 @RequestParam(defaultValue = "6") int size) {
+    public ResponseEntity<Page<JobDTO>> findAllPagination(@RequestParam(defaultValue = "1") int page,
+                                                          @RequestParam(defaultValue = "6") int size) {
         try {
             Page<JobDTO> result = jobService.findAllPagination(page, size);
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -42,9 +46,10 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "findByEmployerIdPagination/{employerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findByEmployerIdPagination(@PathVariable("employerId") int employerId, @RequestParam(defaultValue = "1") int page,
-                                                           @RequestParam(defaultValue = "5") int size) {
+                                                                   @RequestParam(defaultValue = "5") int size) {
         try {
             Page<JobDTO> result = jobService.findByEmployeeIdPagination(employerId, page, size);
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -54,12 +59,19 @@ public class JobController {
     }
 
     @GetMapping(value = "findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<JobDTO>> findAll( ) {
+    public ResponseEntity<List<JobDTO>> findAll() {
         try {
             return new ResponseEntity<>(jobService.findAll(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> findAllByEmployerId(@PathVariable("id") int id) {
+        List<JobDTO> res = jobService.findByEmployeeId(id);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+                : ApiResponseEntity.success(res, "Fail");
     }
 
     @GetMapping(value = "findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
@@ -72,25 +84,45 @@ public class JobController {
     }
 
     @GetMapping(value = "location/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LocationDTO>> locationFindAll( ) {
+    public ResponseEntity<List<LocationDTO>> locationFindAll() {
         try {
             return new ResponseEntity<>(locationService.findAll(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "experience/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ExperienceDTO>> experienceFindAll( ) {
+    public ResponseEntity<List<ExperienceDTO>> experienceFindAll() {
         try {
             return new ResponseEntity<>(experienceService.findAll(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "worktype/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<WorktypeDTO>> worktypeFindAll( ) {
+    public ResponseEntity<List<WorktypeDTO>> worktypeFindAll() {
         try {
             return new ResponseEntity<>(worktypeService.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "category/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CategoryDTO>> getCategories() {
+        try {
+            return new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "category/{categoryName}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CategoryDTO>> getSubcategoriesByCategoryName(@PathVariable String categoryName) {
+        try {
+            return new ResponseEntity<>(categoryService.getSubcategoriesByCategoryName(categoryName), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -102,14 +134,16 @@ public class JobController {
             @RequestParam(value = "locationId", required = false) Integer locationId,
             @RequestParam(value = "worktypeId", required = false) Integer worktypeId,
             @RequestParam(value = "experienceId", required = false) Integer experienceId,
+            @RequestParam(value = "categoryId", required = false) Integer categoryId,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "6") int size) {
         try {
-            return new ResponseEntity<>(jobService.searchJobs(title, locationId, worktypeId, experienceId, page, size), HttpStatus.OK);
+            return new ResponseEntity<>(jobService.searchJobs(title, locationId, worktypeId, experienceId, categoryId, page, size), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "skill/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SkillDTO>> skillFindAll() {
         try {
@@ -128,6 +162,7 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "favorite/findBySeekerIdPagination/{seekerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<FavoriteDTO>> findBySeekerIdPagination(
             @PathVariable("seekerId") int seekerId,
@@ -140,6 +175,7 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @PostMapping(value = "favorite/create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> favoriteCreate(@RequestBody FavoriteDTO favoriteDTO) {
         try {
@@ -152,11 +188,12 @@ public class JobController {
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "favorite/checkExists/{jobId}/{seekerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> favoriteCheckExists(@PathVariable("jobId") int jobId, @PathVariable("seekerId") int seekerId) {
         try {
 
-            if(favoriteRepository.findByJobIdAndSeekerId(jobId, seekerId) != null) {
+            if (favoriteRepository.findByJobIdAndSeekerId(jobId, seekerId) != null) {
                 return new ResponseEntity<Object>(new Object() {
                     public boolean status = true;
 
