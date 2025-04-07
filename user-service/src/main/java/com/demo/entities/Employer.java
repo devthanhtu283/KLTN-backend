@@ -32,9 +32,8 @@ public class Employer implements java.io.Serializable {
 	private String teamMember;
 	private String companyField;
 	private String companyLink;
-	private Set<Employermembership> employermemberships = new HashSet<Employermembership>(0);
+
 	private Set<Follow> follows = new HashSet<Follow>(0);
-	private Set<Payment> payments = new HashSet<Payment>(0);
 	private Set<Job> jobs = new HashSet<Job>(0);
 
 	public Employer() {
@@ -64,9 +63,8 @@ public class Employer implements java.io.Serializable {
 		this.teamMember = teamMember;
 		this.companyField = companyField;
 		this.companyLink = companyLink;
-		this.employermemberships = employermemberships;
 		this.follows = follows;
-		this.payments = payments;
+
 		this.jobs = jobs;
 	}
 
@@ -228,14 +226,7 @@ public class Employer implements java.io.Serializable {
 		this.companyLink = companyLink;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
-	public Set<Employermembership> getEmployermemberships() {
-		return this.employermemberships;
-	}
 
-	public void setEmployermemberships(Set<Employermembership> employermemberships) {
-		this.employermemberships = employermemberships;
-	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
 	public Set<Follow> getFollows() {
@@ -246,14 +237,7 @@ public class Employer implements java.io.Serializable {
 		this.follows = follows;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
-	public Set<Payment> getPayments() {
-		return this.payments;
-	}
 
-	public void setPayments(Set<Payment> payments) {
-		this.payments = payments;
-	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
 	public Set<Job> getJobs() {

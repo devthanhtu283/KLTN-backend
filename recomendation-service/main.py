@@ -510,12 +510,24 @@ def extract_experience_flexible(text: str) -> List[dict]:
 
             position = raw_pos
             time = f"{time_match.group(1)} - {time_match.group(2)}"
-            company = None
 
-            if i + 1 < len(lines):
-                next_line = lines[i + 1].strip()
-                if not next_line.startswith("•") and not time_pattern.search(next_line):
-                    company = next_line
+            # Tìm dòng gần nhất là tên công ty (nâng cấp thuật toán)
+            company = None
+            for j in range(i + 1, min(i + 10, len(lines))):
+                next_line = lines[j].strip()
+                if (
+                    next_line
+                    and not next_line.startswith("•")
+                    and not next_line.startswith("-")
+                    and not time_pattern.search(next_line.lower())
+                    and not any(keyword in next_line.lower() for keyword in ["project", "tech stack", "experience", "description"])
+                ):
+                    if (
+                        any(kw in next_line.lower() for kw in ["company", "technology", "inc", "co."])
+                        or sum(1 for w in next_line.split() if w[0].isupper()) >= 2
+                    ):
+                        company = next_line
+                        break
 
             desc_lines = []
             j = i + 2
