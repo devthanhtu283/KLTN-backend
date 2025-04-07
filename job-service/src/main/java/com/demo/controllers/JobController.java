@@ -35,7 +35,8 @@ public class JobController {
     private FeedbackService feedbackService;
     @Autowired
     private CategoryService categoryService;
-
+    @Autowired
+    private MembershipService membershipService;
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findAllPagination(@RequestParam(defaultValue = "1") int page,
                                                           @RequestParam(defaultValue = "6") int size) {
@@ -249,4 +250,12 @@ public class JobController {
         }
     }
 
+    @GetMapping(value = "membership/findByTypeForAndDuration/{typeFor}/{duration}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> findByTypeForAndDuration(@PathVariable("typeFor") int typeFor, @PathVariable("duration") String duration) {
+        try {
+                return new ResponseEntity<Object>(membershipService.findByTypeForAndDuration(typeFor, duration), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

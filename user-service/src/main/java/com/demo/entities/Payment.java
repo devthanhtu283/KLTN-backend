@@ -13,7 +13,6 @@ import java.util.Date;
 public class Payment implements java.io.Serializable {
 
 	private Integer id;
-	private Employer employer;
 	private Employermembership employermembership;
 	private String paymentType;
 	private double amount;
@@ -28,7 +27,7 @@ public class Payment implements java.io.Serializable {
 
 	public Payment(Employer employer, String paymentType, double amount, String paymentMethod, boolean status,
                    int transactionId, String description, Date time) {
-		this.employer = employer;
+
 		this.paymentType = paymentType;
 		this.amount = amount;
 		this.paymentMethod = paymentMethod;
@@ -40,7 +39,7 @@ public class Payment implements java.io.Serializable {
 
 	public Payment(Employer employer, Employermembership employermembership, String paymentType, double amount,
                    String paymentMethod, boolean status, int transactionId, String description, Date time) {
-		this.employer = employer;
+
 		this.employermembership = employermembership;
 		this.paymentType = paymentType;
 		this.amount = amount;
@@ -63,15 +62,7 @@ public class Payment implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employer_id", nullable = false)
-	public Employer getEmployer() {
-		return this.employer;
-	}
 
-	public void setEmployer(Employer employer) {
-		this.employer = employer;
-	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "employer_membership_id")

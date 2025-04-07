@@ -3,17 +3,13 @@ package com.demo.controllers;
 import com.demo.clients.NotificationService;
 import com.demo.dtos.*;
 
-import com.demo.entities.Chat;
-import com.demo.entities.Cv;
-import com.demo.entities.Seeker;
-import com.demo.entities.User;
+import com.demo.entities.*;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.helpers.FileHelper;
+import com.demo.helpers.PaymentProcessor;
 import com.demo.repositories.SeekerRepository;
-import com.demo.services.CVService;
-import com.demo.services.ChatService;
-import com.demo.services.MailService;
-import com.demo.services.UserService;
+import com.demo.services.*;
+import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -52,8 +48,10 @@ public class UserController {
 	private CVService cvService;
     @Autowired
     private SeekerRepository seekerRepository;
-
-
+    @Autowired
+    private EmployerMembershipService employerMembershipService;
+    @Autowired
+    private PaymentService paymentService;
 
     @PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO) {
@@ -305,8 +303,56 @@ public class UserController {
 			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 		}
 	}
+    @GetMapping(value = "payment/{amount}",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> saveCV(@PathVariable long amount) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public String paymentUrl = PaymentProcessor.processPayment(amount);
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @PostMapping(value = "employerMembership/create",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> createEmployerMembership(@RequestBody EmployerMembershipDTO employerMembershipDTO) {
+        try {
+            Employermembership employermembership = employerMembershipService.create(employerMembershipDTO);
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = employermembership != null;
+                public Employermembership object = employermembership;
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping(value = "employerMembership/findByUserId/{userId}",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> findEmployerMembershipByUserId(@PathVariable("userId") int userId) {
+        try {
+            return new ResponseEntity<Object>(employerMembershipService.findByUserId(userId), HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @PostMapping(value = "payment/create",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> createPayment(@RequestBody PaymentDTO paymentDTO) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = paymentService.create(paymentDTO);
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

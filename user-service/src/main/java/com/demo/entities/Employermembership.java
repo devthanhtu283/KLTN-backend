@@ -15,20 +15,19 @@ import java.util.Set;
 public class Employermembership implements java.io.Serializable {
 
 	private Integer id;
-	private Employer employer;
+	private User user; // đổi từ Employer sang User
 	private Membership membership;
 	private Date startDate;
 	private Date endDate;
 	private Date renewalDate;
 	private boolean status;
-	private Set<Payment> payments = new HashSet<Payment>(0);
+	private Set<Payment> payments = new HashSet<>(0);
 
 	public Employermembership() {
 	}
 
-	public Employermembership(Employer employer, Membership membership, Date startDate, Date endDate, Date renewalDate,
-                              boolean status) {
-		this.employer = employer;
+	public Employermembership(User user, Membership membership, Date startDate, Date endDate, Date renewalDate, boolean status) {
+		this.user = user;
 		this.membership = membership;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -36,9 +35,8 @@ public class Employermembership implements java.io.Serializable {
 		this.status = status;
 	}
 
-	public Employermembership(Employer employer, Membership membership, Date startDate, Date endDate, Date renewalDate,
-                              boolean status, Set<Payment> payments) {
-		this.employer = employer;
+	public Employermembership(User user, Membership membership, Date startDate, Date endDate, Date renewalDate, boolean status, Set<Payment> payments) {
+		this.user = user;
 		this.membership = membership;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -49,30 +47,30 @@ public class Employermembership implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-
 	@Column(name = "id", unique = true, nullable = false)
 	public Integer getId() {
-		return this.id;
+		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
+	// 💡 Cập nhật chỗ này
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "employer_id", nullable = false)
-	public Employer getEmployer() {
-		return this.employer;
+	@JoinColumn(name = "user_id", nullable = false)
+	public User getUser() {
+		return user;
 	}
 
-	public void setEmployer(Employer employer) {
-		this.employer = employer;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "membership_id", nullable = false)
 	public Membership getMembership() {
-		return this.membership;
+		return membership;
 	}
 
 	public void setMembership(Membership membership) {
@@ -82,7 +80,7 @@ public class Employermembership implements java.io.Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "start_date", nullable = false, length = 19)
 	public Date getStartDate() {
-		return this.startDate;
+		return startDate;
 	}
 
 	public void setStartDate(Date startDate) {
@@ -92,7 +90,7 @@ public class Employermembership implements java.io.Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "end_date", nullable = false, length = 19)
 	public Date getEndDate() {
-		return this.endDate;
+		return endDate;
 	}
 
 	public void setEndDate(Date endDate) {
@@ -102,7 +100,7 @@ public class Employermembership implements java.io.Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "renewal_date", nullable = false, length = 19)
 	public Date getRenewalDate() {
-		return this.renewalDate;
+		return renewalDate;
 	}
 
 	public void setRenewalDate(Date renewalDate) {
@@ -111,7 +109,7 @@ public class Employermembership implements java.io.Serializable {
 
 	@Column(name = "status", nullable = false)
 	public boolean isStatus() {
-		return this.status;
+		return status;
 	}
 
 	public void setStatus(boolean status) {
@@ -120,11 +118,12 @@ public class Employermembership implements java.io.Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employermembership")
 	public Set<Payment> getPayments() {
-		return this.payments;
+		return payments;
 	}
 
 	public void setPayments(Set<Payment> payments) {
 		this.payments = payments;
 	}
-
 }
+
+

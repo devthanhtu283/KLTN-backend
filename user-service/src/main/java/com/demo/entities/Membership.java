@@ -1,8 +1,6 @@
-package com.demo.entities;// default package
-// Generated Jan 27, 2025, 4:56:06 PM by Hibernate Tools 4.3.6.Final
+package com.demo.entities;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,32 +17,34 @@ public class Membership implements java.io.Serializable {
 	private String description;
 	private String duration;
 	private boolean status;
+	private Integer typeFor; // Thêm cột type_for kiểu Integer
 	private Set<Employermembership> employermemberships = new HashSet<Employermembership>(0);
 
 	public Membership() {
 	}
 
-	public Membership(String name, double price, String description, String duration, boolean status) {
+	public Membership(String name, double price, String description, String duration, boolean status, Integer typeFor) {
 		this.name = name;
 		this.price = price;
 		this.description = description;
 		this.duration = duration;
 		this.status = status;
+		this.typeFor = typeFor;
 	}
 
 	public Membership(String name, double price, String description, String duration, boolean status,
-			Set<Employermembership> employermemberships) {
+					  Integer typeFor, Set<Employermembership> employermemberships) {
 		this.name = name;
 		this.price = price;
 		this.description = description;
 		this.duration = duration;
 		this.status = status;
+		this.typeFor = typeFor;
 		this.employermemberships = employermemberships;
 	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-
 	@Column(name = "id", unique = true, nullable = false)
 	public Integer getId() {
 		return this.id;
@@ -99,6 +99,15 @@ public class Membership implements java.io.Serializable {
 		this.status = status;
 	}
 
+	@Column(name = "type_for", nullable = false) // Thêm ánh xạ cho cột type_for
+	public Integer getTypeFor() {
+		return this.typeFor;
+	}
+
+	public void setTypeFor(Integer typeFor) {
+		this.typeFor = typeFor;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "membership")
 	public Set<Employermembership> getEmployermemberships() {
 		return this.employermemberships;
@@ -107,5 +116,4 @@ public class Membership implements java.io.Serializable {
 	public void setEmployermemberships(Set<Employermembership> employermemberships) {
 		this.employermemberships = employermemberships;
 	}
-
 }
