@@ -1,6 +1,7 @@
 package com.demo.configurations;
 
 import com.demo.dtos.JobDTO;
+import com.demo.dtos.MatchesDTO;
 import com.demo.dtos.ReviewDTO;
 import com.demo.entities.*;
 
@@ -52,6 +53,43 @@ public class ModelMapperConfiguration {
                 map().setStatus(source.isStatus());
             }
 
+        });
+
+        mapper.addMappings(new PropertyMap<Matches, MatchesDTO>() {
+            @Override
+            protected void configure() {
+                // Map các trường cơ bản của Matches
+                map().setId(source.getId());
+                map().setCvId(source.getCv().getId());
+                map().setSeekerId(source.getCv().getSeeker().getId());
+                map().setMatchedSkill(source.getMatchedSkill());
+                map().setTimeMatches(source.getTimeMatches());
+                map().setStatus(source.isStatus());
+
+                // Map các trường từ Job
+                map().setJobId(source.getJob().getId());
+                map().setJobName(source.getJob().getTitle());
+                map().setEmployerId(source.getJob().getEmployer().getId());
+                map().setExperienceId(source.getJob().getExperience().getId());
+                map().setLocationId(source.getJob().getLocation().getId());
+                map().setWorktypeId(source.getJob().getWorktype().getId());
+                map().setCategoryId(source.getJob().getCategory().getId());
+                map().setEmployerName(source.getJob().getEmployer().getCompanyName());
+                map().setExperienceName(source.getJob().getExperience().getName());
+                map().setEmployerLogo(source.getJob().getEmployer().getLogo());
+                map().setLocationName(source.getJob().getLocation().getName());
+                map().setWorktypeName(source.getJob().getWorktype().getName());
+                map().setCategoryName(source.getJob().getCategory().getCategoryName());
+                map().setTitle(source.getJob().getTitle());
+                map().setDescription(source.getJob().getDescription());
+                map().setRequired(source.getJob().getRequired());
+                map().setAddress(source.getJob().getAddress());
+                map().setSalary(source.getJob().getSalary());
+                map().setPostedAt(source.getJob().getPostedAt());
+                map().setPostedExpired(source.getJob().getPostedExpired());
+                map().setRequiredSkills(source.getJob().getRequiredSkills());
+                map().setMember(source.getJob().getMember());
+            }
         });
 
 
