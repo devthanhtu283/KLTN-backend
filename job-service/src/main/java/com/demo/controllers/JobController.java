@@ -22,6 +22,8 @@ public class JobController {
     @Autowired
     private LocationService locationService;
     @Autowired
+    private MatchesService matchesService;
+    @Autowired
     private WorktypeService worktypeService;
     @Autowired
     private ExperienceService experienceService;
@@ -37,6 +39,7 @@ public class JobController {
     private CategoryService categoryService;
     @Autowired
     private MembershipService membershipService;
+
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findAllPagination(@RequestParam(defaultValue = "1") int page,
                                                           @RequestParam(defaultValue = "6") int size) {
@@ -71,6 +74,28 @@ public class JobController {
     @GetMapping(value = "/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> findAllByEmployerId(@PathVariable("id") int id) {
         List<JobDTO> res = jobService.findByEmployeeId(id);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+                : ApiResponseEntity.success(res, "Fail");
+    }
+
+    @GetMapping(value = "/recommend-jobs", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> getRecommendJobsBySeekerId(@RequestParam("seekerId") int seekerId, @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "5") int size) {
+        Page<MatchesDTO> res = matchesService.getRecommendJobsBySeekerId(seekerId, page, size);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+                : ApiResponseEntity.success(res, "Fail");
+    }
+
+    @GetMapping(value = "/search-recommend-jobs", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> searchRecommendJobs(@RequestParam("seekerId") int seekerId,
+                                                         @RequestParam(value = "title", required = false) String title,
+                                                         @RequestParam(value = "locationId", required = false) Integer locationId,
+                                                         @RequestParam(value = "worktypeId", required = false) Integer worktypeId,
+                                                         @RequestParam(value = "experienceId", required = false) Integer experienceId,
+                                                         @RequestParam(value = "categoryId", required = false) Integer categoryId,
+                                                         @RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "5") int size) {
+        Page<MatchesDTO> res = matchesService.searchRecommendJobsBySeekerId(seekerId, title, locationId, worktypeId, experienceId, categoryId, page, size);
         return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
                 : ApiResponseEntity.success(res, "Fail");
     }
@@ -253,7 +278,7 @@ public class JobController {
     @GetMapping(value = "membership/findByTypeForAndDuration/{typeFor}/{duration}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> findByTypeForAndDuration(@PathVariable("typeFor") int typeFor, @PathVariable("duration") String duration) {
         try {
-                return new ResponseEntity<Object>(membershipService.findByTypeForAndDuration(typeFor, duration), HttpStatus.OK);
+            return new ResponseEntity<Object>(membershipService.findByTypeForAndDuration(typeFor, duration), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

@@ -742,6 +742,98 @@ async def extract_cv(file: UploadFile = File(...)):
 async def hello():
     return "aaaa"
 
+
+@app.post("/python/recommend-by-seeker")
+async def recommend_jobs_by_seeker(seeker_id: int):
+    # Load dữ liệu với seeker_id cụ thể
+    df_job, df_cv = load_data_by_seeker_id(seeker_id)
+
+    if df_cv.empty:
+        return {
+            'status': 'error',
+            'message': f'No CV found for seeker_id {seeker_id}'
+        }
+
+    job_tfidf_vectorizer, job_tfidf_matrix, df_job = train_models(df_job)
+
+    df_cv['combined_text'] = df_cv['Skills'].apply(lambda x: str(x))
+    df_cv['extracted_skills'] = df_cv['Skills'].apply(extract_skills)
+
+    recommendation_rows = []
+    for idx, row in df_cv.iterrows():
+        cv_id = int(row['CV_ID'])
+        cv_text = row['combined_text']
+        cv_skills = row['extracted_skills']
+
+        remove_outdated_matches(cv_id, cv_skills, df_job)
+
+        rec = recommend_jobs_for_cv_model(cv_text, cv_skills, df_job, job_tfidf_vectorizer, job_tfidf_matrix, alpha=0.5,
+                                          beta=0.5, threshold=0.1)
+
+        for job_id, matched in rec:
+            recommendation_rows.append({
+                'cv_id': cv_id,
+                'job_id': int(job_id),
+                'matched_skill': matched,
+                'time_matches': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'status': 1
+            })
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    insert_query = """
+    INSERT INTO matches (cv_id, job_id, matched_skill, time_matches, status)
+    VALUES (%s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        matched_skill = VALUES(matched_skill),
+        time_matches = VALUES(time_matches),
+        status = VALUES(status)
+    """
+
+    for rec in recommendation_rows:
+        cursor.execute(insert_query, (
+            rec['cv_id'],
+            rec['job_id'],
+            rec['matched_skill'],
+            rec['time_matches'],
+            rec['status']
+        ))
+
+    conn.commit()
+    conn.close()
+
+    return {
+        'status': 'success',
+        'message': f'Inserted or updated {len(recommendation_rows)} recommendations for seeker_id {seeker_id}'
+    }
+
+
+# Hàm load dữ liệu mới dựa trên seeker_id
+def load_data_by_seeker_id(seeker_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Load tất cả jobs
+    query_job = """
+    SELECT id, title, description, required_skills 
+    FROM job
+    """
+    df_job = pd.read_sql(query_job, conn)
+    df_job.columns = ['Job_ID', 'Title', 'Job Description', 'Required_Skills']
+
+    # Load CV theo seeker_id
+    query_cv = """
+    SELECT id, seeker_id, skills 
+    FROM cv
+    WHERE seeker_id = %s
+    """
+    df_cv = pd.read_sql(query_cv, conn, params=(seeker_id,))
+    df_cv.columns = ['CV_ID', 'Seeker_ID', 'Skills']
+
+    conn.close()
+    return df_job, df_cv
+
 # Chạy ứng dụng
 if __name__ == "__main__":
     import uvicorn
