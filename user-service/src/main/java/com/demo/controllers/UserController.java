@@ -32,20 +32,20 @@ import java.util.Optional;
 @RequestMapping("user")
 public class UserController {
 
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private MailService mailService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private NotificationService notificationService;
+    @Autowired
+    private MailService mailService;
 
-	@Autowired
-	private ChatService chatService;
+    @Autowired
+    private NotificationService notificationService;
 
-	@Autowired
-	private CVService cvService;
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private CVService cvService;
     @Autowired
     private SeekerRepository seekerRepository;
     @Autowired
@@ -209,101 +209,101 @@ public class UserController {
     }
 
 
-	
+    @PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
+        try {
+            // Kiểm tra xem tệp có rỗng không
+            if (file.isEmpty()) {
+                return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+            }
+            // Lấy thông tin của tệp
+            String originalFilename = file.getOriginalFilename();
+            String contentType = file.getContentType();
+            long size = file.getSize();
 
-	@PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
-		try {
-			// Kiểm tra xem tệp có rỗng không
-			if (file.isEmpty()) {
-				return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
-			}
-			// Lấy thông tin của tệp
-			String originalFilename = file.getOriginalFilename();
-			String contentType = file.getContentType();
-			long size = file.getSize();
+            // Thư mục lưu trữ tệp
+            File uploadFolder = new File(new ClassPathResource("static/assets/files").getFile().getAbsolutePath());
+            if (!uploadFolder.exists()) {
+                uploadFolder.mkdirs();
+            }
 
-			// Thư mục lưu trữ tệp
-			File uploadFolder = new File(new ClassPathResource("static/assets/files").getFile().getAbsolutePath());
-			if (!uploadFolder.exists()) {
-				uploadFolder.mkdirs();
-			}
+            // Tạo tên tệp duy nhất
+            String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
 
-			// Tạo tên tệp duy nhất
-			String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
+            // Tạo đường dẫn lưu trữ tệp
+            Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
+            System.out.println(path.toString());
+            // Lưu tệp vào thư mục
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-			// Tạo đường dẫn lưu trữ tệp
-			Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
-			System.out.println( path.toString());
-			// Lưu tệp vào thư mục
-			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            // Tạo URL cho tệp đã tải lên
+            String fileUrl = filename;
+            // Trả về URL của tệp đã tải lên
+            System.out.println(fileUrl);
+            return ResponseEntity.ok().body(new Object() {
+                public String url = fileUrl;
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
+        }
+    }
 
-			// Tạo URL cho tệp đã tải lên
-			String fileUrl = filename;
-			// Trả về URL của tệp đã tải lên
-			System.out.println(fileUrl);
-			return ResponseEntity.ok().body(new Object() {
-				public String url = fileUrl;
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
-		}
-	}
-	@GetMapping("chat/getReceiverIdsByUserId/{userId}")
-	public ResponseEntity<List<Integer>> getReceiverIdsByUserId(@PathVariable Integer userId) {
-		try {
-			List<Integer> receiverIds = chatService.getReceiverIdsByUserId(userId);
-			if (receiverIds.isEmpty()) {
-				return ResponseEntity.noContent().build(); // Trả về 204 nếu không có dữ liệu
-			}
-			return ResponseEntity.ok(receiverIds); // Trả về 200 với danh sách receiver_id
-		} catch (Exception e) {
-			return ResponseEntity.status(500).build(); // Trả về 500 nếu có lỗi
-		}
-	}
+    @GetMapping("chat/getReceiverIdsByUserId/{userId}")
+    public ResponseEntity<List<Integer>> getReceiverIdsByUserId(@PathVariable Integer userId) {
+        try {
+            List<Integer> receiverIds = chatService.getReceiverIdsByUserId(userId);
+            if (receiverIds.isEmpty()) {
+                return ResponseEntity.noContent().build(); // Trả về 204 nếu không có dữ liệu
+            }
+            return ResponseEntity.ok(receiverIds); // Trả về 200 với danh sách receiver_id
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build(); // Trả về 500 nếu có lỗi
+        }
+    }
 
-	@GetMapping("/chat/getMessagesBetweenUsers/{senderId}/{receiverId}")
-	public ResponseEntity<List<ChatDTO>> getMessagesBetweenUsers(
-			@PathVariable Integer senderId,
-			@PathVariable Integer receiverId) {
-		try {
-			List<ChatDTO> messages = chatService.getMessagesBetweenUsers(senderId, receiverId);
-			if (messages.isEmpty()) {
-				return ResponseEntity.noContent().build();
-			}
-			return ResponseEntity.ok(messages);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(500).build();
-		}
-	}
+    @GetMapping("/chat/getMessagesBetweenUsers/{senderId}/{receiverId}")
+    public ResponseEntity<List<ChatDTO>> getMessagesBetweenUsers(
+            @PathVariable Integer senderId,
+            @PathVariable Integer receiverId) {
+        try {
+            List<ChatDTO> messages = chatService.getMessagesBetweenUsers(senderId, receiverId);
+            if (messages.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 
 
-	@PostMapping(value = "cv/save",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> saveCV(@RequestBody CvDTO cv) {
-		try {
-			return new ResponseEntity<Object>(new Object() {
-				public boolean status = cvService.save(cv);
-			}, HttpStatus.OK);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-		}
-	}
+    @PostMapping(value = "cv/save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> saveCV(@RequestBody CvDTO cv) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = cvService.save(cv);
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
-	@GetMapping(value = "cv/findBySeekerId/{id}")
-	public ResponseEntity<Object> findCVBySeekerId(@PathVariable Integer id) {
-		try {
-			return new ResponseEntity<Object>(cvService.getCvById(id), HttpStatus.OK);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-		}
-	}
-    @GetMapping(value = "payment/{amount}",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "cv/findBySeekerId/{id}")
+    public ResponseEntity<Object> findCVBySeekerId(@PathVariable Integer id) {
+        try {
+            return new ResponseEntity<Object>(cvService.getCvById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "payment/{amount}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> saveCV(@PathVariable long amount) {
         try {
             return new ResponseEntity<Object>(new Object() {
@@ -316,7 +316,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "employerMembership/create",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "employerMembership/create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createEmployerMembership(@RequestBody EmployerMembershipDTO employerMembershipDTO) {
         try {
             Employermembership employermembership = employerMembershipService.create(employerMembershipDTO);
@@ -331,7 +331,7 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "employerMembership/findByUserId/{userId}",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "employerMembership/findByUserId/{userId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> findEmployerMembershipByUserId(@PathVariable("userId") int userId) {
         try {
             return new ResponseEntity<Object>(employerMembershipService.findByUserId(userId), HttpStatus.OK);
@@ -342,7 +342,7 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "payment/create",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "payment/create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createPayment(@RequestBody PaymentDTO paymentDTO) {
         try {
             return new ResponseEntity<Object>(new Object() {
@@ -352,6 +352,47 @@ public class UserController {
             // TODO: handle exception
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping(value = "applyCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> applyCV(@RequestPart("file") MultipartFile file) {
+        try {
+            // Kiểm tra xem tệp có rỗng không
+            if (file.isEmpty()) {
+                return ApiResponseEntity.badRequest("file is empty");
+            }
+            // Lấy thông tin của tệp
+            String originalFilename = file.getOriginalFilename();
+            String contentType = file.getContentType();
+            long size = file.getSize();
+
+            // Thư mục lưu trữ tệp
+            File uploadFolder = new File(new ClassPathResource("static/assets/files").getFile().getAbsolutePath());
+            if (!uploadFolder.exists()) {
+                uploadFolder.mkdirs();
+            }
+
+            // Tạo tên tệp duy nhất
+            String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
+
+            // Tạo đường dẫn lưu trữ tệp
+            Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
+            System.out.println(path.toString());
+            // Lưu tệp vào thư mục
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+            // Tạo URL cho tệp đã tải lên
+            String fileUrl = "/assets/files/" + filename;
+            String fullFileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path(fileUrl)
+                    .toUriString();
+
+            return ApiResponseEntity.success(fullFileUrl, "Successfull!!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ApiResponseEntity.badRequest("Error uploading file");
         }
     }
 
