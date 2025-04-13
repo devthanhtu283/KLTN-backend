@@ -4,6 +4,7 @@ import com.demo.dtos.JobDTO;
 import com.demo.entities.Job;
 import com.demo.repositories.JobPaginationRepository;
 import com.demo.repositories.JobRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,8 @@ public class JobServiceImpl implements JobService {
             Job job = mapper.map(jobDTO, Job.class);
             job.setStatus(true);
             job.setPostedAt(new Date());
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            job.setDescriptionJson(objectMapper.writeValueAsString(jobDTO.getDescriptionJson()));
 
             jobRepository.save(job);
 

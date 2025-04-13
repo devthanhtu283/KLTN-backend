@@ -5,6 +5,8 @@ import com.demo.dtos.MatchesDTO;
 import com.demo.dtos.ReviewDTO;
 import com.demo.entities.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -22,6 +24,18 @@ public class ModelMapperConfiguration {
     public ModelMapper modelMapper() {
         ModelMapper mapper = new ModelMapper();
 
+        Converter<String, JsonNode> stringToJsonNode = ctx -> {
+            if (ctx.getSource() == null) return null;
+            try {
+                ObjectMapper map = new ObjectMapper();
+                return map.readTree(ctx.getSource());
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        };
+
+
         mapper.addMappings(new PropertyMap<Job, JobDTO>() {
             @Override
             protected void configure() {
@@ -32,6 +46,7 @@ public class ModelMapperConfiguration {
                 map().setWorktypeName(source.getWorktype().getName());
                 map().setCategoryName(source.getCategory().getCategoryName());
                 map().setEmployerLogo(source.getEmployer().getLogo());
+                using(stringToJsonNode).map(source.getDescriptionJson()).setDescriptionJson(null);
 
             }
 

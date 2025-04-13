@@ -4,6 +4,8 @@ import com.demo.entities.Employer;
 import com.demo.entities.Experience;
 import com.demo.entities.Location;
 import com.demo.entities.Worktype;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +28,7 @@ public class JobDTO {
     private String categoryName;
     private String title;
     private String description;
+    private JsonNode descriptionJson;
     private String required;
     private String address;
     private String salary;
@@ -39,128 +42,48 @@ public class JobDTO {
         return id;
     }
 
-    public Integer getEmployerId() {
-        return employerId;
-    }
-
-    public Integer getExperienceId() {
-        return experienceId;
-    }
-
-    public Integer getLocationId() {
-        return locationId;
-    }
-
-    public Integer getWorktypeId() {
-        return worktypeId;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getRequired() {
-        return required;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getSalary() {
-        return salary;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public Date getPostedAt() {
-        return postedAt;
-    }
-
-    public Date getPostedExpired() {
-        return postedExpired;
-    }
-
-    public String getRequiredSkills() {
-        return requiredSkills;
-    }
-
-    public String getMember() {
-        return member;
-    }
-
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getEmployerId() {
+        return employerId;
     }
 
     public void setEmployerId(Integer employerId) {
         this.employerId = employerId;
     }
 
+    public Integer getExperienceId() {
+        return experienceId;
+    }
+
     public void setExperienceId(Integer experienceId) {
         this.experienceId = experienceId;
+    }
+
+    public Integer getLocationId() {
+        return locationId;
     }
 
     public void setLocationId(Integer locationId) {
         this.locationId = locationId;
     }
 
+    public Integer getWorktypeId() {
+        return worktypeId;
+    }
+
     public void setWorktypeId(Integer worktypeId) {
         this.worktypeId = worktypeId;
     }
 
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setRequired(String required) {
-        this.required = required;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setSalary(String salary) {
-        this.salary = salary;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
-    public void setPostedAt(Date postedAt) {
-        this.postedAt = postedAt;
-    }
-
-    public void setPostedExpired(Date postedExpired) {
-        this.postedExpired = postedExpired;
-    }
-
-    public void setRequiredSkills(String requiredSkills) {
-        this.requiredSkills = requiredSkills;
-    }
-
-    public void setMember(String member) {
-        this.member = member;
     }
 
     public String getEmployerName() {
@@ -177,6 +100,14 @@ public class JobDTO {
 
     public void setExperienceName(String experienceName) {
         this.experienceName = experienceName;
+    }
+
+    public String getEmployerLogo() {
+        return employerLogo;
+    }
+
+    public void setEmployerLogo(String employerLogo) {
+        this.employerLogo = employerLogo;
     }
 
     public String getLocationName() {
@@ -203,11 +134,91 @@ public class JobDTO {
         this.categoryName = categoryName;
     }
 
-    public String getEmployerLogo() {
-        return employerLogo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setEmployerLogo(String emplloyerLogo) {
-        this.employerLogo = emplloyerLogo;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public JsonNode getDescriptionJson() {
+        return descriptionJson;
+    }
+
+    public void setDescriptionJson(JsonNode descriptionJson) {
+        this.descriptionJson = descriptionJson;
+    }
+
+    public String getRequired() {
+        return required;
+    }
+
+    public void setRequired(String required) {
+        this.required = required;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getSalary() {
+        return salary;
+    }
+
+    public void setSalary(String salary) {
+        this.salary = salary;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public Date getPostedAt() {
+        return postedAt;
+    }
+
+    public void setPostedAt(Date postedAt) {
+        this.postedAt = postedAt;
+    }
+
+    public Date getPostedExpired() {
+        return postedExpired;
+    }
+
+    public void setPostedExpired(Date postedExpired) {
+        this.postedExpired = postedExpired;
+    }
+
+    public String getRequiredSkills() {
+        return requiredSkills;
+    }
+
+    public void setRequiredSkills(String requiredSkills) {
+        this.requiredSkills = requiredSkills;
+    }
+
+    public String getMember() {
+        return member;
+    }
+
+    public void setMember(String member) {
+        this.member = member;
     }
 }

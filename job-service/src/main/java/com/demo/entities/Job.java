@@ -1,7 +1,10 @@
-package com.demo.entities;// default package
-// Generated Jan 27, 2025, 4:56:06 PM by Hibernate Tools 4.3.6.Final
+package com.demo.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -22,6 +25,7 @@ public class Job implements java.io.Serializable {
     private Category category;
     private String title;
     private String description;
+    private String descriptionJson; // Đổi lại thành JsonNode
     private String required;
     private String address;
     private String salary;
@@ -38,7 +42,7 @@ public class Job implements java.io.Serializable {
     }
 
     public Job(Employer employer, Experience experience, Location location, Worktype worktype, Category category, String title,
-               String description, String required, String address, String salary, boolean status, Date postedAt,
+               String description, String descriptionJson, String required, String address, String salary, boolean status, Date postedAt,
                Date postedExpired, String requiredSkills, String member) {
         this.employer = employer;
         this.experience = experience;
@@ -47,6 +51,7 @@ public class Job implements java.io.Serializable {
         this.category = category;
         this.title = title;
         this.description = description;
+        this.descriptionJson = descriptionJson;
         this.required = required;
         this.address = address;
         this.salary = salary;
@@ -58,7 +63,7 @@ public class Job implements java.io.Serializable {
     }
 
     public Job(Employer employer, Experience experience, Location location, Worktype worktype, Category category, String title,
-               String description, String required, String address, String salary, boolean status, Date postedAt,
+               String description, String descriptionJson, String required, String address, String salary, boolean status, Date postedAt,
                Date postedExpired, String requiredSkills, String member, Set<Favorite> favorites,
                Set<Application> applications, Set<Matches> matcheses) {
         this.employer = employer;
@@ -68,6 +73,7 @@ public class Job implements java.io.Serializable {
         this.category = category;
         this.title = title;
         this.description = description;
+        this.descriptionJson = descriptionJson;
         this.required = required;
         this.address = address;
         this.salary = salary;
@@ -83,7 +89,6 @@ public class Job implements java.io.Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     @Column(name = "id", unique = true, nullable = false)
     public Integer getId() {
         return this.id;
@@ -152,13 +157,22 @@ public class Job implements java.io.Serializable {
         this.title = title;
     }
 
-    @Column(name = "description", nullable = false, length = 65535)
+    @Column(name = "description", nullable = true, length = 65535)
     public String getDescription() {
         return this.description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column(name = "description_json", columnDefinition = "LONGTEXT")
+    public String getDescriptionJson() {
+        return this.descriptionJson;
+    }
+
+    public void setDescriptionJson(String descriptionJson) {
+        this.descriptionJson = descriptionJson;
     }
 
     @Column(name = "required", nullable = false, length = 65535)
@@ -261,5 +275,4 @@ public class Job implements java.io.Serializable {
     public void setMatcheses(Set<Matches> matcheses) {
         this.matcheses = matcheses;
     }
-
 }
