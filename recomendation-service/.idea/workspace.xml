@@ -6,13 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9fdebc3c-6c83-4748-9530-f48b064f8553" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/../application-service/src/main/resources/client_secret.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../job-service/src/main/java/com/demo/dtos/MatchesDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../job-service/src/main/java/com/demo/repositories/MatchesRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../job-service/src/main/java/com/demo/services/MatchesService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../job-service/src/main/java/com/demo/services/MatchesServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../job-service/src/main/java/com/demo/configurations/ModelMapperConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../job-service/src/main/java/com/demo/configurations/ModelMapperConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -265,7 +258,7 @@
       <workItem from="1743303028749" duration="1525000" />
       <workItem from="1743325873476" duration="1239000" />
       <workItem from="1743391126765" duration="1287000" />
-      <workItem from="1744254407096" duration="7288000" />
+      <workItem from="1744254407096" duration="7904000" />
     </task>
     <servers />
   </component>
