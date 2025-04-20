@@ -35,7 +35,6 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
-    @Cacheable(value = "jobs", key = "'allJobs'")
     public List<JobDTO> findAll() {
         logger.info("⚡ Fetching jobs from database...");
         return mapper.map(jobRepository.findAll(), new TypeToken<List<JobDTO>>() {
@@ -43,7 +42,6 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Cacheable(value = "job", key = "#id")
     public JobDTO findById(int id) {
         return mapper.map(jobRepository.findById(id).get(), JobDTO.class);
     }
@@ -75,7 +73,6 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @CacheEvict(value = "jobs", allEntries = true)
     public boolean save(JobDTO jobDTO) {
         try {
             Job job = mapper.map(jobDTO, Job.class);
@@ -94,7 +91,6 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @CacheEvict(value = "jobs", allEntries = true)
     public boolean delete(int jobId) {
         try {
             Job job = jobRepository.findById(jobId).get();

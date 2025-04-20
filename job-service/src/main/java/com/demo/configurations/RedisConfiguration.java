@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -19,13 +18,12 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfiguration {
-    // Configuration
     private static final Logger logger = LoggerFactory.getLogger(RedisConfiguration.class);
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))  // Cache tồn tại trong 10 phút
+                .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
@@ -33,15 +31,7 @@ public class RedisConfiguration {
                 .cacheDefaults(cacheConfig)
                 .build();
     }
-
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        logger.info("🔗 Connecting to Redis using Jedis...");
-        JedisConnectionFactory factory = new JedisConnectionFactory();
-        factory.afterPropertiesSet();
-        return factory;
-    }
-
+    
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
