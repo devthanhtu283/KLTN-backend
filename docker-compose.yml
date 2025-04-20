@@ -47,7 +47,7 @@ services:
     ports:
       - "9094:8080"
     environment:
-      KAFKA_CONNECT_URIS: http://kafka-connect:9093
+      KAFKA_CONNECT_URIS: http://kafka-connect:8083
     depends_on:
       - kafka-connect
 
@@ -55,34 +55,42 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     ports:
-      - "8090:8090"
+      - "8090:8080"
     environment:
       DYNAMIC_CONFIG_ENABLED: 'true'
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: tunh_source_mysql
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:9093
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:8083
     depends_on:
       - kafka
       - kafka-connect
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
   discovery-service:
     image: discovery-service
     container_name: discovery-service
     build:
-      context: .
+      context: discovery-service
       dockerfile: Dockerfile
     networks:
       - default
     ports:
       - "9999:9999"
     restart: always
+    env_file:
+      - local.env
 
   config-service:
     image: config-service
     container_name: config-service
     build:
-      context: .
+      context: config-service
       dockerfile: Dockerfile
     networks:
       - default
@@ -92,11 +100,14 @@ services:
       - "8888:8888"
     depends_on:
       - discovery-service
+    restart: always
+    env_file:
+      - local.env
   gateway-service:
     image: gateway-service
     container_name: gateway-service
     build:
-      context: .
+      context: gateway-service
       dockerfile: Dockerfile
     networks:
       - default
@@ -108,11 +119,13 @@ services:
       - discovery-service
       - config-service
     restart: always
+    env_file:
+      - local.env
   notification-service:
     image: notification-service
     container_name: notification-service
     build:
-      context: .
+      context: notification-service
       dockerfile: Dockerfile
     networks:
       - default
@@ -124,11 +137,13 @@ services:
       - discovery-service
       - config-service
     restart: always
+    env_file:
+      - local.env
   application-service:
     image: application-service
     container_name: application-service
     build:
-      context: .
+      context: application-service
       dockerfile: Dockerfile
     networks:
       - default
@@ -144,6 +159,54 @@ services:
       - discovery-service
       - config-service
     restart: always
+    env_file:
+      - local.env
+  job-service:
+    image: job-service
+    container_name: job-service
+    build:
+      context: job-service
+      dockerfile: Dockerfile
+    networks:
+      - default
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_REDIS_HOST: redis
+      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
+      # SPRING_ELASTICSEARCH_PORT: 9200
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    ports:
+      - "8083:8083"
+    depends_on:
+      - discovery-service
+      - config-service
+    restart: always
+    env_file:
+      - local.env
+  user-service:
+    image: user-service
+    container_name: user-service
+    build:
+      context: user-service
+      dockerfile: Dockerfile
+    networks:
+      - default
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
+      # SPRING_ELASTICSEARCH_PORT: 9200
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - discovery-service
+      - config-service
+    restart: always
+    env_file:
+      - local.env
 networks:
   default:
     driver: bridge
+
