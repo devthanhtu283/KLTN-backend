@@ -1,5 +1,6 @@
 package com.demo.configurations;
 
+import com.demo.dtos.FollowDTO;
 import com.demo.dtos.JobDTO;
 import com.demo.dtos.MatchesDTO;
 import com.demo.dtos.ReviewDTO;
@@ -65,6 +66,23 @@ public class ModelMapperConfiguration {
                 map().setRating(source.getRating());
                 map().setSatisfied(source.isSatisfied());
                 map().setCreatedAt(source.getCreatedAt());
+                map().setStatus(source.isStatus());
+            }
+
+        });
+
+        mapper.addMappings(new PropertyMap<Follow, FollowDTO>() {
+            @Override
+            protected void configure() {
+                // TODO Auto-generated method stub
+                map().setId(source.getId());
+                map().setSeekerId(source.getSeeker().getId());
+                map().setEmployerId(source.getEmployer().getId());
+                map().setAddress(source.getSeeker().getAddress());
+                map().setCreated(source.getCreated());
+                map().setEmployerName(source.getEmployer().getCompanyName());
+                map().setSeekerName(source.getSeeker().getFullName());
+                map().setLogo(source.getEmployer().getLogo());
                 map().setStatus(source.isStatus());
             }
 

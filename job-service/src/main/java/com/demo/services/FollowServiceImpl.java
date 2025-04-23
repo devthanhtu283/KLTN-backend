@@ -8,9 +8,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,5 +48,21 @@ public class FollowServiceImpl implements FollowService {
         follow.setStatus(followDTO.isStatus());
         followRepository.save(follow);
         return modelMapper.map(follow, FollowDTO.class);
+    }
+
+    @Override
+    public List<FollowDTO> getFollowerByEmployerAndStatus(Integer employerId, boolean status) {
+        return followRepository.findByEmployer_IdAndStatus(employerId, status)
+                .stream()
+                .map(f -> modelMapper.map(f, FollowDTO.class))
+                .toList();
+    }
+
+    @Override
+    public Page<FollowDTO> getSeekerFollowers(Integer seekerId, boolean status, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Follow> follows = followRepository.findBySeeker_IdAndStatus(seekerId, status, pageable);
+
+        return follows.map(f -> modelMapper.map(f, FollowDTO.class));
     }
 }

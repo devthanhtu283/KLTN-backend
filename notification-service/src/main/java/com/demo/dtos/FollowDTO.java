@@ -8,8 +8,6 @@ public class FollowDTO {
     String employerName;
     Integer seekerId;
     String seekerName;
-    String address;
-    String logo;
     boolean status;
     Date created;
 
@@ -53,22 +51,6 @@ public class FollowDTO {
         this.seekerName = seekerName;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getLogo() {
-        return logo;
-    }
-
-    public void setLogo(String logo) {
-        this.logo = logo;
-    }
-
     public boolean isStatus() {
         return status;
     }
@@ -85,16 +67,14 @@ public class FollowDTO {
         this.created = created;
     }
 
-    @java.lang.Override
-    public java.lang.String toString() {
+    @Override
+    public String toString() {
         return "FollowDTO{" +
                 "id=" + id +
                 ", employerId=" + employerId +
                 ", employerName='" + employerName + '\'' +
                 ", seekerId=" + seekerId +
                 ", seekerName='" + seekerName + '\'' +
-                ", address='" + address + '\'' +
-                ", logo='" + logo + '\'' +
                 ", status=" + status +
                 ", created=" + created +
                 '}';

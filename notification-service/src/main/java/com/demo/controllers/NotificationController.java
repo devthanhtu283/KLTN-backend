@@ -2,6 +2,7 @@ package com.demo.controllers;
 
 import com.demo.dtos.Email;
 import com.demo.services.MailService;
+import com.demo.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,16 @@ public class NotificationController {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @GetMapping("findAll")
     public String findAll() {
         return "findAll notification";
     }
 
 
-    @PostMapping(value = "sendEmail",  produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "sendEmail", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> sendEmail(@RequestBody Email email) {
         try {
             return new ResponseEntity<Object>(new Object() {
@@ -33,4 +37,6 @@ public class NotificationController {
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }
