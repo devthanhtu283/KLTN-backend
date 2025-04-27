@@ -24,7 +24,7 @@ services:
     depends_on:
       - zookeeper
   kafka-connect:
-    image: debezium/connect:2.4 
+    image: debezium/connect:2.4
     container_name: kafka-connect
     depends_on:
       - kafka
@@ -40,7 +40,7 @@ services:
       CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-      
+
   debezium-ui:
     image: debezium/debezium-ui:2.4
     container_name: debezium-ui
@@ -103,24 +103,6 @@ services:
     restart: always
     env_file:
       - local.env
-  gateway-service:
-    image: gateway-service
-    container_name: gateway-service
-    build:
-      context: gateway-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
-      - "8080:8080"
-    depends_on:
-      - discovery-service
-      - config-service
-    restart: always
-    env_file:
-      - local.env
   notification-service:
     image: notification-service
     container_name: notification-service
@@ -133,6 +115,24 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     ports:
       - "8084:8084"
+    depends_on:
+      - discovery-service
+      - config-service
+    restart: always
+    env_file:
+      - local.env
+  quiz-service:
+    image: quiz-service
+    container_name: quiz-service
+    build:
+      context: quiz-service
+      dockerfile: Dockerfile
+    networks:
+      - default
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8082:8082"
     depends_on:
       - discovery-service
       - config-service
@@ -203,6 +203,35 @@ services:
     depends_on:
       - discovery-service
       - config-service
+    restart: always
+    env_file:
+      - local.env
+  recommendation-service:
+    image: recommendation-service
+    container_name: recommendation-service
+    build:
+      context: ./recommendation-service
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - local.env
+
+  gateway-service:
+    image: gateway-service
+    container_name: gateway-service
+    build:
+      context: gateway-service
+      dockerfile: Dockerfile
+    networks:
+      - default
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8080:8080"
+    depends_on:
+      - discovery-service
+      - config-service
+      - user-service
     restart: always
     env_file:
       - local.env

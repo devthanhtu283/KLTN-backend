@@ -1,1 +1,24 @@
 /.metadata/
+# Ignore IDE settings
+.idea/
+*.iml
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore VS Code settings
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Optional: ignore compiled docker python bytecode
+*.pyo
+*.pyd
+
+# Ignore test data if needed
+*.log
+.env
+
