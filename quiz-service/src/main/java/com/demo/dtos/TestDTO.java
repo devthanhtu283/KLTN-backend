@@ -7,6 +7,7 @@ public class TestDTO {
 	private int userID;
 	private String username;
 	private String code;
+	private int time;
 	public int getId() {
 		return id;
 	}
@@ -44,7 +45,14 @@ public class TestDTO {
 		this.code = code;
 	}
 
-	// test commit
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+// test commit
 	// cc
 	/// aaaaa
 	// vvvv

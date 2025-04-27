@@ -396,4 +396,17 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "sendEmailTest", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> sendEmailTest(@RequestBody Email email) {
+        try {
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = mailService.send(email.getFrom(), email.getTo(), email.getSubject(), email.getContent());
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
