@@ -4,9 +4,9 @@ public class TestHistoryDTO {
     private int id;
     private int testID;
     private int userID;
-    private String contentAnswer;
+
     private String timeSubmit;
-    private double score;
+    private int score;
 
     public int getId() {
         return id;
@@ -32,13 +32,7 @@ public class TestHistoryDTO {
         this.userID = userID;
     }
 
-    public String getContentAnswer() {
-        return contentAnswer;
-    }
 
-    public void setContentAnswer(String contentAnswer) {
-        this.contentAnswer = contentAnswer;
-    }
 
     public String getTimeSubmit() {
         return timeSubmit;
@@ -48,11 +42,11 @@ public class TestHistoryDTO {
         this.timeSubmit = timeSubmit;
     }
 
-    public double getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(int score) {
         this.score = score;
     }
 }

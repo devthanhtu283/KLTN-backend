@@ -16,17 +16,16 @@ public class Testhistory implements java.io.Serializable {
 	private User user;
 	private LocalDateTime timeSubmit;
 	private int score;
-	private String contentAnswer;
 
 	public Testhistory() {
 	}
 
-	public Testhistory(Test test, User user, LocalDateTime timeSubmit, int score, String contentAnswer) {
+	public Testhistory(Test test, User user, LocalDateTime timeSubmit, int score) {
 		this.test = test;
 		this.user = user;
 		this.timeSubmit = timeSubmit;
 		this.score = score;
-		this.contentAnswer = contentAnswer;
+
 	}
 
 	@Id
@@ -79,12 +78,5 @@ public class Testhistory implements java.io.Serializable {
 		this.score = score;
 	}
 
-	@Column(name = "contentAnswer", nullable = false, length = 500)
-	public String getContentAnswer() {
-		return this.contentAnswer;
-	}
 
-	public void setContentAnswer(String contentAnswer) {
-		this.contentAnswer = contentAnswer;
-	}
 }

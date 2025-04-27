@@ -19,7 +19,7 @@ public class Test implements java.io.Serializable {
 	private String code;
 	private Set<Testhistory> testhistories = new HashSet<Testhistory>(0);
 	private Set<Question> questions = new HashSet<Question>(0);
-
+	private Integer time;
 	public Test() {
 	}
 
@@ -106,5 +106,12 @@ public class Test implements java.io.Serializable {
 	public void setQuestions(Set<Question> questions) {
 		this.questions = questions;
 	}
+	@Column(name = "time")
+	public Integer getTime() {
+		return this.time;
+	}
 
+	public void setTime(Integer time) {
+		this.time = time;
+	}
 }
