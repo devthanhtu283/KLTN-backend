@@ -11,6 +11,7 @@ import com.demo.repositories.SeekerRepository;
 import com.demo.services.*;
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,8 @@ public class UserController {
     private EmployerMembershipService employerMembershipService;
     @Autowired
     private PaymentService paymentService;
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
 
     @PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO) {
@@ -212,34 +215,33 @@ public class UserController {
     @PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
         try {
-            // Kiểm tra xem tệp có rỗng không
             if (file.isEmpty()) {
                 return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
             }
-            // Lấy thông tin của tệp
-            String originalFilename = file.getOriginalFilename();
-            String contentType = file.getContentType();
-            long size = file.getSize();
 
-            // Thư mục lưu trữ tệp
-            File uploadFolder = new File(new ClassPathResource("static/assets/files").getFile().getAbsolutePath());
+            String originalFilename = file.getOriginalFilename();
+            String filename = FileHelper.generateFileName(originalFilename);
+
+            String uploadDir;
+
+            // ✅ Chia 2 trường hợp dựa trên profile
+            if ("docker".equals(activeProfile)) {
+                uploadDir = "/app/user-static/assets/files"; // Docker path
+            } else {
+                // Dev: lưu vào classpath/static (chỉ dùng được khi chạy bằng IDE)
+                uploadDir = new ClassPathResource("static/assets/files").getFile().getAbsolutePath();
+            }
+
+            File uploadFolder = new File(uploadDir);
             if (!uploadFolder.exists()) {
                 uploadFolder.mkdirs();
             }
 
-            // Tạo tên tệp duy nhất
-            String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
-
-            // Tạo đường dẫn lưu trữ tệp
-            Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
-            System.out.println(path.toString());
-            // Lưu tệp vào thư mục
+            Path path = Paths.get(uploadDir + File.separator + filename);
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-            // Tạo URL cho tệp đã tải lên
-            String fileUrl = filename;
-            // Trả về URL của tệp đã tải lên
-            System.out.println(fileUrl);
+            String fileUrl = "/assets/files/" + filename;
+
             return ResponseEntity.ok().body(new Object() {
                 public String url = fileUrl;
             });

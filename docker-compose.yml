@@ -190,10 +190,13 @@ services:
     build:
       context: user-service
       dockerfile: Dockerfile
+    volumes:
+      - ./user-static:/app/user-static
     networks:
       - default
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_PROFILES_ACTIVE: docker
       # SPRING_ELASTICSEARCH_HOST: host.docker.internal
       # SPRING_ELASTICSEARCH_PORT: 9200
     # extra_hosts:
