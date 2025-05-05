@@ -1,9 +1,12 @@
 package com.demo.configurations;
 
 
-import java.sql.Date;
-
-import com.demo.entities.*;
+import com.demo.dtos.EmployerDTO;
+import com.demo.dtos.SeekerDTO;
+import com.demo.dtos.UserDTO;
+import com.demo.entities.Employer;
+import com.demo.entities.Seeker;
+import com.demo.entities.User;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -12,11 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.demo.dtos.EmployerDTO;
-import com.demo.dtos.SeekerDTO;
-import com.demo.dtos.UserDTO;
 
 
 @Configuration
@@ -24,8 +22,6 @@ public class ModelMapperConfiguration {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    private BCryptPasswordEncoder encoder;
 
     @Bean
     public ModelMapper modelMapper() {
