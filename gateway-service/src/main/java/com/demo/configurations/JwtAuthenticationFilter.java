@@ -9,15 +9,19 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -34,25 +38,28 @@ public class JwtAuthenticationFilter implements WebFilter {
                 "/job/findById/**", "/job/findByEmployerIdPagination/**", "/job/worktype/**",
                 "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                 , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
-                , "/application/save-event/**", "/application/get-saved-event/**"
+                , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**"
+                , "/assets/**", "/user/employer/get-large-companies/**"
         };
 
         // Kiểm tra xem path có nằm trong danh sách permitAll không
-        boolean isPermitted = false;
-        for (String permittedPath : permittedPaths) {
-            if (permittedPath.endsWith("/**")) {
-                String prefix = permittedPath.substring(0, permittedPath.length() - 3);
-                if (path.startsWith(prefix)) {
-                    isPermitted = true;
-                    break;
-                }
-            } else {
-                if (path.equals(permittedPath)) {
-                    isPermitted = true;
-                    break;
-                }
-            }
-        }
+//        boolean isPermitted = false;
+        boolean isPermitted = Arrays.stream(permittedPaths)
+                .anyMatch(p -> pathMatcher.match(p, path));
+//        for (String permittedPath : permittedPaths) {
+//            if (permittedPath.endsWith("/**")) {
+//                String prefix = permittedPath.substring(0, permittedPath.length() - 3);
+//                if (path.startsWith(prefix)) {
+//                    isPermitted = true;
+//                    break;
+//                }
+//            } else {
+//                if (path.equals(permittedPath)) {
+//                    isPermitted = true;
+//                    break;
+//                }
+//            }
+//        }
 
         // Nếu endpoint nằm trong permitAll, bỏ qua kiểm tra token
         if (isPermitted) {

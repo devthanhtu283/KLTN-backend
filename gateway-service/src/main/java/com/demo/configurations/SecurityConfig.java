@@ -30,7 +30,7 @@ public class SecurityConfig {
                                 , "/job/category/**", "/job/experience/**", "/job/findAllPagination/**", "/job/findById/**", "/job/findByEmployerIdPagination/**"
                                 , "/job/worktype/**", "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                                 , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
-                                , "/application/save-event/**", "/application/get-saved-event/**").permitAll()
+                                , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**", "/assets/**", "/user/employer/get-large-companies/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHORIZATION)

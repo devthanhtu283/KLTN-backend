@@ -14,10 +14,12 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:29092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://172.29.160.1:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -72,172 +74,172 @@ services:
     restart: always
     ports:
       - "6379:6379"
-  discovery-service:
-    image: discovery-service
-    container_name: discovery-service
-    build:
-      context: discovery-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    ports:
-      - "9999:9999"
-    restart: always
-    env_file:
-      - local.env
+#  discovery-service:
+#    image: discovery-service
+#    container_name: discovery-service
+#    build:
+#      context: discovery-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    ports:
+#      - "9999:9999"
+#    restart: always
+#    env_file:
+#      - local.env
+#
+#  config-service:
+#    image: config-service
+#    container_name: config-service
+#    build:
+#      context: config-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#    ports:
+#      - "8888:8888"
+#    depends_on:
+#      - discovery-service
+#    restart: always
+#    env_file:
+#      - local.env
+#  notification-service:
+#    image: notification-service
+#    container_name: notification-service
+#    build:
+#      context: notification-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#    ports:
+#      - "8084:8084"
+#    depends_on:
+#      - discovery-service
+#      - config-service
+#    restart: always
+#    env_file:
+#      - local.env
+#  quiz-service:
+#    image: quiz-service
+#    container_name: quiz-service
+#    build:
+#      context: quiz-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - discovery-service
+#      - config-service
+#    restart: always
+#    env_file:
+#      - local.env
+#  application-service:
+#    image: application-service
+#    container_name: application-service
+#    build:
+#      context: application-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
+#      # SPRING_ELASTICSEARCH_PORT: 9200
+#    # extra_hosts:
+#    #   - "host.docker.internal:host-gateway"
+#    ports:
+#      - "8085:8085"
+#    depends_on:
+#      - discovery-service
+#      - config-service
+#    restart: always
+#    env_file:
+#      - local.env
+#  job-service:
+#    image: job-service
+#    container_name: job-service
+#    build:
+#      context: job-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#      SPRING_DATA_REDIS_HOST: redis
+#      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
+#      # SPRING_ELASTICSEARCH_PORT: 9200
+#    # extra_hosts:
+#    #   - "host.docker.internal:host-gateway"
+#    ports:
+#      - "8083:8083"
+#    depends_on:
+#      - discovery-service
+#      - config-service
+#    restart: always
+#    env_file:
+#      - local.env
+#  user-service:
+#    image: user-service
+#    container_name: user-service
+#    build:
+#      context: user-service
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ./user-static:/app/user-static
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#      SPRING_PROFILES_ACTIVE: docker
+#      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
+#      # SPRING_ELASTICSEARCH_PORT: 9200
+#    # extra_hosts:
+#    #   - "host.docker.internal:host-gateway"
+#    ports:
+#      - "8081:8081"
+#    depends_on:
+#      - discovery-service
+#      - config-service
+#    restart: always
+#    env_file:
+#      - local.env
+#  recommendation-service:
+#    image: recommendation-service
+#    container_name: recommendation-service
+#    build:
+#      context: ./recommendation-service
+#      dockerfile: Dockerfile
+#    restart: always
+#    env_file:
+#      - local.env
 
-  config-service:
-    image: config-service
-    container_name: config-service
-    build:
-      context: config-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
-      - "8888:8888"
-    depends_on:
-      - discovery-service
-    restart: always
-    env_file:
-      - local.env
-  notification-service:
-    image: notification-service
-    container_name: notification-service
-    build:
-      context: notification-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
-      - "8084:8084"
-    depends_on:
-      - discovery-service
-      - config-service
-    restart: always
-    env_file:
-      - local.env
-  quiz-service:
-    image: quiz-service
-    container_name: quiz-service
-    build:
-      context: quiz-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
-      - "8082:8082"
-    depends_on:
-      - discovery-service
-      - config-service
-    restart: always
-    env_file:
-      - local.env
-  application-service:
-    image: application-service
-    container_name: application-service
-    build:
-      context: application-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
-      # SPRING_ELASTICSEARCH_PORT: 9200
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
-    ports:
-      - "8085:8085"
-    depends_on:
-      - discovery-service
-      - config-service
-    restart: always
-    env_file:
-      - local.env
-  job-service:
-    image: job-service
-    container_name: job-service
-    build:
-      context: job-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_DATA_REDIS_HOST: redis
-      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
-      # SPRING_ELASTICSEARCH_PORT: 9200
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
-    ports:
-      - "8083:8083"
-    depends_on:
-      - discovery-service
-      - config-service
-    restart: always
-    env_file:
-      - local.env
-  user-service:
-    image: user-service
-    container_name: user-service
-    build:
-      context: user-service
-      dockerfile: Dockerfile
-    volumes:
-      - ./user-static:/app/user-static
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      SPRING_PROFILES_ACTIVE: docker
-      # SPRING_ELASTICSEARCH_HOST: host.docker.internal
-      # SPRING_ELASTICSEARCH_PORT: 9200
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
-    ports:
-      - "8081:8081"
-    depends_on:
-      - discovery-service
-      - config-service
-    restart: always
-    env_file:
-      - local.env
-  recommendation-service:
-    image: recommendation-service
-    container_name: recommendation-service
-    build:
-      context: ./recommendation-service
-      dockerfile: Dockerfile
-    restart: always
-    env_file:
-      - local.env
-
-  gateway-service:
-    image: gateway-service
-    container_name: gateway-service
-    build:
-      context: gateway-service
-      dockerfile: Dockerfile
-    networks:
-      - default
-    environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports:
-      - "8080:8080"
-    depends_on:
-      - discovery-service
-      - config-service
-      - user-service
-    restart: always
-    env_file:
-      - local.env
+#  gateway-service:
+#    image: gateway-service
+#    container_name: gateway-service
+#    build:
+#      context: gateway-service
+#      dockerfile: Dockerfile
+#    networks:
+#      - default
+#    environment:
+#      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - discovery-service
+#      - config-service
+#      - user-service
+#    restart: always
+#    env_file:
+#      - local.env
 networks:
   default:
     driver: bridge

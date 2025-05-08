@@ -18,7 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
-    
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -29,5 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
         // Cấu hình để phục vụ các tệp tĩnh từ thư mục uploads
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:uploads/");
+
     }
 }

@@ -236,33 +236,34 @@ public class UserController {
     @PostMapping(value = "uploadCV", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> uploadCV(@RequestPart("file") MultipartFile file) {
         try {
+            // Kiểm tra xem tệp có rỗng không
             if (file.isEmpty()) {
                 return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
             }
-
+            // Lấy thông tin của tệp
             String originalFilename = file.getOriginalFilename();
-            String filename = FileHelper.generateFileName(originalFilename);
+            String contentType = file.getContentType();
+            long size = file.getSize();
 
-            String uploadDir;
-
-            // ✅ Chia 2 trường hợp dựa trên profile
-            if ("docker".equals(activeProfile)) {
-                uploadDir = "/app/user-static/assets/files"; // Docker path
-            } else {
-                // Dev: lưu vào classpath/static (chỉ dùng được khi chạy bằng IDE)
-                uploadDir = new ClassPathResource("static/assets/files").getFile().getAbsolutePath();
-            }
-
-            File uploadFolder = new File(uploadDir);
+            // Thư mục lưu trữ tệp
+            File uploadFolder = new File(new ClassPathResource("static/assets/files").getFile().getAbsolutePath());
             if (!uploadFolder.exists()) {
                 uploadFolder.mkdirs();
             }
 
-            Path path = Paths.get(uploadDir + File.separator + filename);
+            // Tạo tên tệp duy nhất
+            String filename = FileHelper.generateFileName(originalFilename); // hoặc sử dụng phương thức generateFileName
+
+            // Tạo đường dẫn lưu trữ tệp
+            Path path = Paths.get(uploadFolder.getAbsolutePath() + File.separator + filename);
+            System.out.println(path.toString());
+            // Lưu tệp vào thư mục
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-            String fileUrl = "/assets/files/" + filename;
-
+            // Tạo URL cho tệp đã tải lên
+            String fileUrl = filename;
+            // Trả về URL của tệp đã tải lên
+            System.out.println(fileUrl);
             return ResponseEntity.ok().body(new Object() {
                 public String url = fileUrl;
             });
