@@ -24,4 +24,6 @@ public interface JobService {
 
     public boolean delete(int jobId);
 
+    public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize);
+
 }

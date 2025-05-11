@@ -44,6 +44,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     @Query(value = "SELECT COUNT(*) FROM Application a where a.job.id = :jobId and a.seeker.id = :seekerId")
     public int countApply(@Param("seekerId") int seekerId, @Param("jobId") int jobId);
 
+    @Query("SELECT COUNT(a) FROM Application a WHERE a.job.id = :jobId")
+    int countApplicantsByJobId(@Param("jobId") int jobId);
+
+
     @Query("""
                 SELECT a FROM Application a
                 JOIN FETCH a.job j

@@ -42,4 +42,7 @@ public interface JobPaginationRepository extends PagingAndSortingRepository<Job,
                             Pageable pageable);
 
     Page<Job> findByEmployerId(@Param("employerId") Integer employerId, Pageable pageable);
+
+    Page<Job> findByEmployerIdAndTitleContainingIgnoreCase(int employerId, String title, Pageable pageable);
+
 }

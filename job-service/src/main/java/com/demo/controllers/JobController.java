@@ -2,11 +2,16 @@ package com.demo.controllers;
 
 import com.demo.dtos.*;
 import com.demo.entities.Feedback;
+import com.demo.entities.Job;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.repositories.FavoriteRepository;
+import com.demo.repositories.JobPaginationRepository;
+import com.demo.repositories.JobRepository;
 import com.demo.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
@@ -39,6 +44,8 @@ public class JobController {
     private CategoryService categoryService;
     @Autowired
     private MembershipService membershipService;
+    @Autowired
+    private JobPaginationRepository jobRepository;
 
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findAllPagination(@RequestParam(defaultValue = "1") int page,
@@ -283,4 +290,18 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("search")
+    public ResponseEntity<Page<JobDTO>> searchByTitle(
+            @RequestParam String title,
+            @RequestParam int employerId,
+            @RequestParam int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<JobDTO> result = jobService.searchByTitle(title, employerId, page, size);
+        return ResponseEntity.ok(result);
+    }
+
+
+
+
 }
