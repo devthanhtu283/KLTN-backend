@@ -76,6 +76,13 @@ SKILLS = {
 
 # Hàm khởi tạo Eureka Client
 async def init_eureka():
+    # await eureka_client.init_async(
+    #     # eureka_server="http://discovery-service:9999",
+    #     eureka_server="http://discovery-service:9999",
+    #     app_name="recommendation-service",
+    #     instance_port=8000,
+    #     instance_host="recommendation-service"
+    # )
     await eureka_client.init_async(
         eureka_server="http://localhost:9999",
         app_name="recommendation-service",
@@ -89,6 +96,13 @@ async def startup_event():
     asyncio.create_task(init_eureka())
 
 # Kết nối MySQL
+# def get_db_connection():
+#     return mysql.connector.connect(
+#         host="host.docker.internal",
+#         user="root",
+#         password="",
+#         database="jobs"
+#     )
 def get_db_connection():
     return mysql.connector.connect(
         host="localhost",
@@ -96,7 +110,6 @@ def get_db_connection():
         password="",
         database="jobs"
     )
-
 # Từ điển chuẩn hóa kỹ năng (giữ nguyên từ code gốc)
 skills_dictionary = {
     "java script": "javascript",

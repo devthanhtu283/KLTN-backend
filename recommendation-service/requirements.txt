@@ -1,0 +1,25 @@
+# Machine Learning & NLP
+pandas
+numpy==1.23.5
+scikit-learn
+xgboost
+spacy==3.6.0
+thinc==8.1.12
+pyvi
+pdfplumber
+python-docx
+python-multipart
+
+# Web backend
+fastapi
+uvicorn[standard]
+flask
+
+# Database
+mysql-connector-python
+
+# Service Discovery
+py-eureka-client
+
+# Vietnamese spaCy model (cài link trực tiếp)
+https://gitlab.com/trungtv/vi_spacy/-/raw/master/packages/vi_core_news_lg-3.6.0/dist/vi_core_news_lg-3.6.0.tar.gz

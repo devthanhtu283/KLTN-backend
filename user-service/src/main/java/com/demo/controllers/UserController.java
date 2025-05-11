@@ -1,20 +1,25 @@
 package com.demo.controllers;
 
 import com.demo.clients.NotificationService;
+import com.demo.configurations.JwtUtils;
 import com.demo.dtos.*;
-
-import com.demo.entities.*;
+import com.demo.entities.Employermembership;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.helpers.FileHelper;
+import com.demo.helpers.LoginResponse;
 import com.demo.helpers.PaymentProcessor;
 import com.demo.repositories.SeekerRepository;
 import com.demo.services.*;
-import com.netflix.discovery.converters.Auto;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,12 +31,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+
 
 @RestController
 @RequestMapping("user")
 public class UserController {
-
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserService userService;
 
@@ -52,6 +59,16 @@ public class UserController {
     private EmployerMembershipService employerMembershipService;
     @Autowired
     private PaymentService paymentService;
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO) {
@@ -60,7 +77,14 @@ public class UserController {
             System.out.println(user);
             boolean status = userService.login(userDTO.getEmail(), userDTO.getPassword());
             if (status) {
-                return ApiResponseEntity.success(user, "Successfull!!");
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(user.getUsername(), userDTO.getPassword())
+                );
+                final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+                final String jwt = jwtUtils.generateToken(userDetails.getUsername());
+                LoginResponse loginResponse = new LoginResponse(jwt, user);
+                logger.info("Login successful for email: {}, JWT: {}", userDTO.getEmail(), jwt);
+                return ApiResponseEntity.success(loginResponse, "Successfull!!");
             } else {
                 return ApiResponseEntity.error("Failure !!", HttpStatus.BAD_REQUEST);
             }
