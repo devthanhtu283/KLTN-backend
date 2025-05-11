@@ -163,5 +163,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.countApply(seekerId, jobId);
     }
 
+    @Override
+    public int countApplicantsByJobId(int jobId) {
+        return applicationRepository.countApplicantsByJobId(jobId);
+    }
+
 
 }

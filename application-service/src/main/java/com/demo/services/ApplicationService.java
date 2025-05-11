@@ -27,4 +27,7 @@ public interface ApplicationService {
 //    public void saveDBIntoElasticsearch();
 
     public int countApply(int seekerId, int jobId);
+
+
+    public int countApplicantsByJobId(int jobId);
 }

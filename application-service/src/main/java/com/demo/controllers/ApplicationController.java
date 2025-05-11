@@ -63,6 +63,18 @@ public class ApplicationController {
         }
     }
 
+    @GetMapping(value = "countApplicantsByJobId/{jobId}")
+    public ApiResponseEntity<Object> countApplicantsByJobId(@PathVariable("jobId") int jobId) {
+        try {
+            int count = applicationService.countApplicantsByJobId(jobId);
+
+            return ApiResponseEntity.success(count, "Successful !!");
+
+        } catch (Exception e) {
+            return ApiResponseEntity.badRequest("Error " + e.getMessage());
+        }
+    }
+
 
     @PostMapping(value = "save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> save(@RequestBody ApplicationDTO applicationDTO) {

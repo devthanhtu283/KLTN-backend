@@ -65,6 +65,14 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        return jobPaginationRepository.findByEmployerIdAndTitleContainingIgnoreCase(employerId, title, pageable)
+                .map(job -> mapper.map(job, JobDTO.class));
+    }
+
+
+    @Override
     public List<JobDTO> findByEmployeeId(int employeeId) {
         return jobRepository.findByEmployerId(employeeId, true)
                 .stream()
@@ -102,6 +110,8 @@ public class JobServiceImpl implements JobService {
             return false;
         }
     }
+
+
 
 
 }
