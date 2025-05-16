@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,6 +71,17 @@ public class UserController {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @GetMapping("findAll")
+    public ApiResponseEntity<Object> findAll(@RequestParam(value = "userType", required = false) Integer userType,
+                                             @RequestParam(value = "search", required = false) String search,
+                                             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+                                             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        Page<UserDTO> res = userService.findAll(userType, search, page, size);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Data found successfully")
+                : ApiResponseEntity.success(null, "No data found");
+
+    }
+
     @PostMapping(value = "login", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> login(@RequestBody UserDTO userDTO) {
         try {
@@ -81,7 +93,7 @@ public class UserController {
                         new UsernamePasswordAuthenticationToken(user.getUsername(), userDTO.getPassword())
                 );
                 final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-                final String jwt = jwtUtils.generateToken(userDetails.getUsername());
+                final String jwt = jwtUtils.generateToken(userDetails.getUsername(), user.getEmail(), user.getUserType());
                 LoginResponse loginResponse = new LoginResponse(jwt, user);
                 logger.info("Login successful for email: {}, JWT: {}", userDTO.getEmail(), jwt);
                 return ApiResponseEntity.success(loginResponse, "Successfull!!");

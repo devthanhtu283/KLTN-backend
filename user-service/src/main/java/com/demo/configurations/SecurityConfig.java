@@ -3,6 +3,7 @@ package com.demo.configurations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,20 +31,22 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register").permitAll()
-                        .requestMatchers("/user/login").permitAll()
-                        .requestMatchers("/user/findByEmail/**").permitAll()
-                        .requestMatchers("/user/findById/**").permitAll()
-                        .requestMatchers("/user-static/**").permitAll()
-                        .requestMatchers("/assets/**").permitAll()
-                        .requestMatchers("/user/employer/get-large-companies/**").permitAll()
-                        .requestMatchers("/user/employer/get-medium-companies/**").permitAll()
-                        .requestMatchers("/user/employer/findById/**").permitAll()
-                        .requestMatchers("/user/employer/search/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/seeker/**").hasRole("SEEKER")
-                        .requestMatchers("/user/employer/**").hasRole("EMPLOYER")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/user/register").permitAll()
+                                .requestMatchers("/user/login").permitAll()
+                                .requestMatchers("/user/findByEmail/**").permitAll()
+                                .requestMatchers("/user/findById/**").permitAll()
+                                .requestMatchers("/user-static/**").permitAll()
+                                .requestMatchers("/user/findAll/**").permitAll()
+//                        .requestMatchers(HttpMethod.PUT, "/user/update").permitAll()
+//                        .requestMatchers("/assets/**").permitAll()
+                                .requestMatchers("/user/employer/get-large-companies/**").permitAll()
+                                .requestMatchers("/user/employer/get-medium-companies/**").permitAll()
+                                .requestMatchers("/user/employer/findById/**").permitAll()
+                                .requestMatchers("/user/employer/search/**").permitAll()
+                                .requestMatchers("/user/seeker/**").hasAnyRole("SEEKER", "ADMIN")
+                                .requestMatchers("/user/employer/**").hasAnyRole("EMPLOYER", "ADMIN")
+                                .requestMatchers("/user/**").hasRole("ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

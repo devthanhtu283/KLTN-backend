@@ -39,13 +39,14 @@ public class JwtAuthenticationFilter implements WebFilter {
                 "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                 , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
                 , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**"
-                , "/assets/**", "/user/employer/get-large-companies/**"
+                , "/assets/**", "/user/employer/get-large-companies/**", "/user/**"
         };
 
         // Kiểm tra xem path có nằm trong danh sách permitAll không
 //        boolean isPermitted = false;
         boolean isPermitted = Arrays.stream(permittedPaths)
                 .anyMatch(p -> pathMatcher.match(p, path));
+        
 //        for (String permittedPath : permittedPaths) {
 //            if (permittedPath.endsWith("/**")) {
 //                String prefix = permittedPath.substring(0, permittedPath.length() - 3);

@@ -3,6 +3,7 @@ package com.demo.configurations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -26,12 +27,15 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        .pathMatchers("/user/login", "/user/register", "/user/findByEmail/**", "/user/findById/**", "/python/**", "/job/findAll"
-                                , "/job/category/**", "/job/experience/**", "/job/findAllPagination/**", "/job/findById/**", "/job/findByEmployerIdPagination/**"
-                                , "/job/worktype/**", "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
-                                , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
-                                , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**", "/assets/**", "/user/employer/get-large-companies/**").permitAll()
-                        .anyExchange().authenticated()
+                                .pathMatchers("/user/login", "/user/register", "/user/findByEmail/**", "/user/findById/**", "/python/**", "/job/findAll"
+                                        , "/job/category/**", "/job/experience/**", "/job/findAllPagination/**", "/job/findById/**", "/job/findByEmployerIdPagination/**"
+                                        , "/job/worktype/**", "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
+                                        , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
+                                        , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**", "/assets/**", "/user/employer/get-large-companies/**"
+                                        , "/user/**").permitAll()
+//                        .pathMatchers(HttpMethod.PUT, "/user/update").permitAll()
+
+                                .anyExchange().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHORIZATION)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Sử dụng CorsWebFilter
