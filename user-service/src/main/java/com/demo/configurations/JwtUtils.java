@@ -1,11 +1,16 @@
 package com.demo.configurations;
 
+import com.demo.helpers.Role;
+import com.demo.services.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -22,10 +27,15 @@ public class JwtUtils {
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
-    public String generateToken(String username) {
+
+    public String generateToken(String username, String email, Integer userType) {
+        Role role = Role.fromUserType(userType);
         logger.debug("Generating token for username: {}", username);
         String token = Jwts.builder()
                 .setSubject(username)
+                .claim("email", email)
+                .claim("userType", userType)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)

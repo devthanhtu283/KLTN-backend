@@ -9,6 +9,8 @@ import com.demo.repositories.SeekerRepository;
 import com.demo.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -136,6 +138,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findById(int id) {
         return userRepository.findById(id).map(user -> modelMapper.map(user, UserDTO.class)).orElse(null);
+    }
+
+    @Override
+    public Page<UserDTO> findAll(Integer userType, String search, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return userRepository.findUsers(search, userType, pageable).map(user -> modelMapper.map(user, UserDTO.class));
     }
 
 }

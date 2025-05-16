@@ -63,7 +63,7 @@ public class ApplicationController {
         }
     }
 
-    @GetMapping(value = "countApplicantsByJobId/{jobId}")
+    @GetMapping(value = "/{jobId}")
     public ApiResponseEntity<Object> countApplicantsByJobId(@PathVariable("jobId") int jobId) {
         try {
             int count = applicationService.countApplicantsByJobId(jobId);
