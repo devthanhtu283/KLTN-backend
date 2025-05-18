@@ -78,5 +78,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
                                         @Param("seekerName") String seekerName,
                                         Pageable pageable);
 
+    @Query("SELECT a FROM Application a WHERE a.seeker.id = :seekerId")
+    Page<Application> historyApplication(@Param("seekerId") int seekerId, Pageable pageable);
 
 }

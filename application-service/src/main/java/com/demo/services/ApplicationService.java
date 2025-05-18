@@ -22,6 +22,8 @@ public interface ApplicationService {
 
     public Page<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status);
 
+    public Page<ApplicationDTO> historyApplication(int seekerId, int page, int size);
+
     public ApplicationDTO updateStatus(int id, int status);
 
 //    public void saveDBIntoElasticsearch();

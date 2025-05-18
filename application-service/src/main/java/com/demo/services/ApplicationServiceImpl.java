@@ -118,6 +118,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .map(application -> modelMapper.map(application, ApplicationDTO.class));
     }
 
+    @Override
+    public Page<ApplicationDTO> historyApplication(int seekerId, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return applicationRepository.historyApplication(seekerId, pageable)
+                .map(application -> modelMapper.map(application, ApplicationDTO.class));
+    }
+
 
     @Override
     public ApplicationDTO updateStatus(int id, int status) {

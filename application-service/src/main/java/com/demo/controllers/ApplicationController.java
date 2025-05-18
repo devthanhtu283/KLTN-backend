@@ -100,6 +100,15 @@ public class ApplicationController {
                 : ApiResponseEntity.success(result, "No data !!");
     }
 
+    @GetMapping(value = "history-application", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> historyApplication(@RequestParam int seekerId,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size) {
+        Page<ApplicationDTO> result = applicationService.historyApplication(seekerId, page, size);
+        return result.hasContent() ? ApiResponseEntity.success(result, "Successful !!")
+                : ApiResponseEntity.success(result, "No data !!");
+    }
+
 
     @GetMapping(value = "list-seeker", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> listSeekerByEmployerId(@RequestParam int employerId,
