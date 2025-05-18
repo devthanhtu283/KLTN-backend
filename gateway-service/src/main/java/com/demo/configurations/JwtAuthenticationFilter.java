@@ -39,14 +39,14 @@ public class JwtAuthenticationFilter implements WebFilter {
                 "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                 , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
                 , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**"
-                , "/assets/**", "/user/employer/get-large-companies/**", "/user/**"
+                , "/assets/**", "/user/employer/get-large-companies/**", "/user/**", "/user-static/assets/**"
         };
 
         // Kiểm tra xem path có nằm trong danh sách permitAll không
 //        boolean isPermitted = false;
         boolean isPermitted = Arrays.stream(permittedPaths)
                 .anyMatch(p -> pathMatcher.match(p, path));
-        
+
 //        for (String permittedPath : permittedPaths) {
 //            if (permittedPath.endsWith("/**")) {
 //                String prefix = permittedPath.substring(0, permittedPath.length() - 3);
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter implements WebFilter {
 //        }
 
         // Nếu endpoint nằm trong permitAll, bỏ qua kiểm tra token
-        if (isPermitted) {
+        if (isPermitted || exchange.getRequest().getPath().toString().startsWith("/user-static/")) {
             logger.debug("Skipping authentication for permitted endpoint: {}", path);
             return chain.filter(exchange);
         }
