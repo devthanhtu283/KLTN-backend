@@ -60,4 +60,11 @@ public class ReviewController {
                 : ApiResponseEntity.badRequest("Error creating review");
     }
 
+    @PutMapping("/reviews/{id}")
+    public ApiResponseEntity<Object> updateReview(@PathVariable int id) {
+        ReviewDTO res = reviewService.updateReview(id);
+        return res != null ? ApiResponseEntity.success(res, "Successfull")
+                : ApiResponseEntity.badRequest("Error creating review");
+    }
+
 }

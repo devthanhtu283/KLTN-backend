@@ -58,6 +58,15 @@ public class JobController {
         }
     }
 
+    @GetMapping(value = "getAllJobAdmin", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Page<JobDTO>> getAllJobAdmin(@RequestParam(value = "search", required = false) String search,
+                                                          @RequestParam(defaultValue = "0", required = false) int page,
+                                                          @RequestParam(defaultValue = "10", required = false) int size) {
+        Page<JobDTO> res = jobService.getAllJobAdmin(search, page, size);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+                : ApiResponseEntity.success(res, "Fail");
+    }
+
     @GetMapping(value = "findByEmployerIdPagination/{employerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<JobDTO>> findByEmployerIdPagination(@PathVariable("employerId") int employerId, @RequestParam(defaultValue = "1") int page,
                                                                    @RequestParam(defaultValue = "5") int size) {
@@ -300,8 +309,6 @@ public class JobController {
         Page<JobDTO> result = jobService.searchByTitle(title, employerId, page, size);
         return ResponseEntity.ok(result);
     }
-
-
 
 
 }

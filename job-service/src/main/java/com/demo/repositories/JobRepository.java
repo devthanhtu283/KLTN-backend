@@ -1,6 +1,9 @@
 package com.demo.repositories;
 
+import com.demo.dtos.JobDTO;
 import com.demo.entities.Job;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -35,4 +38,8 @@ public interface JobRepository extends CrudRepository<Job, Integer> {
     List<Job> searchBarJobs(@Param("title") String title,
                             @Param("locationId") Integer locationId,
                             @Param("categoryId") Integer categoryId);
+
+    @Query("SELECT j FROM Job j WHERE " +
+            "(:search IS NULL OR j.title LIKE %:search%)")
+    Page<Job> getAllJobdAdmin(@Param("search") String search, Pageable pageable);
 }

@@ -53,6 +53,14 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public ReviewDTO updateReview(int id) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found review"));
+        review.setStatus(!review.isStatus());
+        return modelMapper.map(reviewRepository.save(review), ReviewDTO.class);
+    }
+
+    @Override
     public double getApprovedReviewPercentageByEmployer(int employerId) {
         long approved = reviewRepository.countRecommendedByEmployer(employerId);
         long total = reviewRepository.countAllReviewsByEmployer(employerId);
