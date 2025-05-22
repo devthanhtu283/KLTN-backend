@@ -18,6 +18,13 @@ public class InterviewController {
     @Autowired
     private InterviewService interviewService;
 
+    @GetMapping("/list-interviews")
+    public ApiResponseEntity<Object> findAll(@RequestParam(defaultValue = "0", required = false) int page, @RequestParam(defaultValue = "10", required = false) int size) {
+        Page<InterviewDTO> res = interviewService.findAll(page, size);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Successful !!")
+                : ApiResponseEntity.error("No data !!", HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping(value = "/save-interview", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> save(@RequestBody InterviewDTO interviewDTO) {
 
