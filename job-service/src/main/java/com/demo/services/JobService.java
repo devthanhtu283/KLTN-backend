@@ -26,4 +26,6 @@ public interface JobService {
 
     public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize);
 
+    public Page<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize);
+
 }

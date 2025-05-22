@@ -71,6 +71,12 @@ public class JobServiceImpl implements JobService {
                 .map(job -> mapper.map(job, JobDTO.class));
     }
 
+    @Override
+    public Page<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return jobRepository.getAllJobdAdmin(search, pageable).map(job -> mapper.map(job, JobDTO.class));
+    }
+
 
     @Override
     public List<JobDTO> findByEmployeeId(int employeeId) {
@@ -110,8 +116,6 @@ public class JobServiceImpl implements JobService {
             return false;
         }
     }
-
-
 
 
 }

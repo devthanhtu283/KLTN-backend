@@ -16,5 +16,7 @@ public interface ReviewService {
 
     ReviewDTO createReview(ReviewDTO reviewDTO);
 
+    ReviewDTO updateReview(int id);
+
     double getApprovedReviewPercentageByEmployer(int employerId);
 }
