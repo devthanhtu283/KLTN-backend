@@ -1,11 +1,12 @@
 package com.demo.services;
 
 import com.demo.dto.InterviewDTO;
-import com.demo.entities.Interview;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface InterviewService {
+
+    public Page<InterviewDTO> findAll(int page, int size);
 
     public boolean save(InterviewDTO interviewDTO);
 
