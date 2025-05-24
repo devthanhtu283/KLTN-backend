@@ -290,7 +290,7 @@ public class JobController {
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
-
+    
     @GetMapping(value = "membership/findByTypeForAndDuration/{typeFor}/{duration}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> findByTypeForAndDuration(@PathVariable("typeFor") int typeFor, @PathVariable("duration") String duration) {
         try {
