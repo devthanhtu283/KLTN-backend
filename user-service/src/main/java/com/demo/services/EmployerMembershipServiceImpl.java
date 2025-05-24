@@ -8,13 +8,16 @@ import com.demo.repositories.EmployerMembershipRepository;
 import com.demo.repositories.MembershipRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
 
 @Service
-public class EmployerMembershipServiceImpl implements EmployerMembershipService{
+public class EmployerMembershipServiceImpl implements EmployerMembershipService {
     @Autowired
     private EmployerMembershipRepository employerMembershipRepository;
     @Autowired
@@ -64,11 +67,17 @@ public class EmployerMembershipServiceImpl implements EmployerMembershipService{
     public EmployerMembershipDTO findByUserId(int userId) {
         try {
             return modelMapper.map(employerMembershipRepository.findByUserId(userId), EmployerMembershipDTO.class);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public Page<EmployerMembershipDTO> getAll(Boolean status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employerMembershipRepository.findAll(status, pageable)
+                .map(employermembership -> modelMapper.map(employermembership, EmployerMembershipDTO.class));
     }
 
 

@@ -1,9 +1,6 @@
 package com.demo.configurations;
 
-import com.demo.dtos.FollowDTO;
-import com.demo.dtos.JobDTO;
-import com.demo.dtos.MatchesDTO;
-import com.demo.dtos.ReviewDTO;
+import com.demo.dtos.*;
 import com.demo.entities.*;
 
 import com.fasterxml.jackson.databind.JsonNode;

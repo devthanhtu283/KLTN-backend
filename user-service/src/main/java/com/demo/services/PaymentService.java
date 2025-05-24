@@ -4,4 +4,6 @@ import com.demo.dtos.PaymentDTO;
 
 public interface PaymentService {
     boolean create(PaymentDTO paymentDTO);
+
+    long getTotalAmount();
 }

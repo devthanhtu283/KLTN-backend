@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.UUID;
 
 @Service
-public class PaymentServiceImpl implements PaymentService{
+public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private PaymentRepository paymentRepository;
     @Autowired
@@ -36,10 +36,14 @@ public class PaymentServiceImpl implements PaymentService{
             payment.setPaymentType("BANKING");
             paymentRepository.save(payment);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public long getTotalAmount() {
+        return paymentRepository.getTotalAmount();
     }
 }

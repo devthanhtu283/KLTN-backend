@@ -367,6 +367,15 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "employermembership/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ApiResponseEntity<Object> findAll(@RequestParam(value = "status", required = false) Boolean status, @RequestParam(value = "page", defaultValue = "0") int page,
+                                             @RequestParam(value = "size", defaultValue = "10") int size) {
+        Page<EmployerMembershipDTO> res = employerMembershipService.getAll(status, page, size);
+        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+                : ApiResponseEntity.success(res, "Fail");
+    }
+
+
     @GetMapping(value = "employerMembership/findByUserId/{userId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> findEmployerMembershipByUserId(@PathVariable("userId") int userId) {
         try {
@@ -389,6 +398,12 @@ public class UserController {
             e.printStackTrace();
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "payment/totalAmount")
+    public ApiResponseEntity<Object> totalAmount() {
+        long res = paymentService.getTotalAmount();
+        return ApiResponseEntity.success(res, "Success");
     }
 
 
