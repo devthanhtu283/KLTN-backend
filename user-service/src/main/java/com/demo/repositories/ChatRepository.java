@@ -19,4 +19,10 @@ public interface ChatRepository extends CrudRepository<Chat, Integer> {
             "OR (c.userBySenderId.id = :receiverId AND c.userByReceiverId.id = :senderId) " +
             "ORDER BY c.time ASC")
     List<Chat> findMessagesBetweenUsers(@Param("senderId") Integer senderId, @Param("receiverId") Integer receiverId);
+
+    @Query("SELECT c FROM Chat c WHERE c.id IN (" +
+            "SELECT MAX(c2.id) FROM Chat c2 WHERE c2.userBySenderId.id = :userId OR c2.userByReceiverId.id = :userId " +
+            "GROUP BY CASE WHEN c2.userBySenderId.id = :userId THEN c2.userByReceiverId.id ELSE c2.userBySenderId.id END) " +
+            "ORDER BY c.time DESC")
+    List<Chat> findRecentMessagesByUserId(@Param("userId") Integer userId);
 }

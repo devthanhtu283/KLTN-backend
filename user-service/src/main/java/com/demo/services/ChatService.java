@@ -9,5 +9,5 @@ public interface ChatService {
     public List<Integer> getReceiverIdsByUserId(Integer userId);
     public List<ChatDTO> getMessagesBetweenUsers(Integer senderId, Integer receiverId);
     public ChatDTO save(ChatDTO chatDTO);
-
+    public List<ChatDTO> getRecentMessages(Integer userId);
 }

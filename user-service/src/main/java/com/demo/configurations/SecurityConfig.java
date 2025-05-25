@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers("/user/employer/get-medium-companies/**").permitAll()
                                 .requestMatchers("/user/employer/findById/**").permitAll()
                                 .requestMatchers("/user/employer/search/**").permitAll()
+                                .requestMatchers("/ws-chat/**").permitAll()
                                 .requestMatchers("/user/seeker/**").hasAnyRole("SEEKER", "ADMIN")
                                 .requestMatchers("/user/employer/**").hasAnyRole("EMPLOYER", "ADMIN")
                                 .requestMatchers("/user/**").hasRole("ADMIN")
@@ -62,4 +63,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+
 }
