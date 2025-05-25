@@ -32,7 +32,7 @@ public class SecurityConfig {
                                         , "/job/worktype/**", "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                                         , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
                                         , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**", "/assets/**", "/user/employer/get-large-companies/**"
-                                        , "/user/**", "/user-static/assets/**").permitAll()
+                                        , "/user/**", "/user-static/assets/**", "/ws-chat/**", "/job-static/**", "/user-static/**").permitAll()
 //                        .pathMatchers(HttpMethod.PUT, "/user/update").permitAll()
 
                                 .anyExchange().authenticated()

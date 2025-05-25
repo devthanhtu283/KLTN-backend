@@ -38,9 +38,17 @@ public class ChatServiceImpl implements ChatService {
         chat.setSenderRole(chatDTO.getSenderRole());
         chat.setReceiverRole(chatDTO.getReceiverRole());
         chat.setMessage(chatDTO.getMessage());
-        chat.setTime(new Date(chatDTO.getTime().getTime()));
+        chat.setTime(new Date());
         chat.setStatus(chatDTO.isStatus());
         chat = chatRepository.save(chat);
         return new ChatDTO(chat);
+    }
+
+    @Override
+    public List<ChatDTO> getRecentMessages(Integer userId) {
+        List<Chat> messages = chatRepository.findRecentMessagesByUserId(userId);
+        return messages.stream()
+                .map(ChatDTO::new) // Chuyển từ Chat sang ChatDTO
+                .collect(Collectors.toList());
     }
 }

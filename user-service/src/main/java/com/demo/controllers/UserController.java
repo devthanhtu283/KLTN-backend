@@ -314,6 +314,21 @@ public class UserController {
         }
     }
 
+    @GetMapping("/chat/getRecentMessages/{userId}")
+    public ResponseEntity<List<ChatDTO>> getRecentMessages(
+            @PathVariable Integer userId) {
+        try {
+            List<ChatDTO> messages = chatService.getRecentMessages(userId);
+            if (messages.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
 
     @PostMapping(value = "cv/save", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> saveCV(@RequestBody CvDTO cv) {

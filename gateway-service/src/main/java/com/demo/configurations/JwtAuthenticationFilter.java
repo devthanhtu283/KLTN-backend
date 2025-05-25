@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter implements WebFilter {
                 "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                 , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
                 , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**"
-                , "/assets/**", "/user/employer/get-large-companies/**", "/user/**", "/user-static/assets/**"
+                , "/assets/**", "/user/employer/get-large-companies/**", "/user/**", "/user-static/assets/**", "/ws-chat/**", "/job-static/**", "/user-static/**"
         };
 
         // Kiểm tra xem path có nằm trong danh sách permitAll không

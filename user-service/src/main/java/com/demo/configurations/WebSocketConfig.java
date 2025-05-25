@@ -12,13 +12,17 @@ import com.demo.controllers.ChatHandler;
 public class WebSocketConfig implements WebSocketConfigurer {
 
     private final ChatHandler chatHandler;
+    private final WebSocketHandshakeInterceptor handshakeInterceptor;
 
-    public WebSocketConfig(ChatHandler chatHandler) {
+    public WebSocketConfig(ChatHandler chatHandler, WebSocketHandshakeInterceptor handshakeInterceptor) {
         this.chatHandler = chatHandler;
+        this.handshakeInterceptor = handshakeInterceptor;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatHandler, "/ws-chat").setAllowedOrigins("*");
+        registry.addHandler(chatHandler, "/ws-chat")
+                .addInterceptors(handshakeInterceptor)
+                .setAllowedOrigins("*");
     }
 }
