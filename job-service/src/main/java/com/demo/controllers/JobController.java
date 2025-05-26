@@ -310,5 +310,59 @@ public class JobController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping(value = "membership/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> membershipFindAll() {
+        try {
+            List<MembershipDTO> memberships = membershipService.findAll();
+            return new ResponseEntity<>(memberships, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Get membership by ID
+    @GetMapping(value = "membership/findById/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> membershipFindById(@PathVariable("id") Integer id) {
+        try {
+            MembershipDTO membership = membershipService.findById(id);
+            return new ResponseEntity<>(membership, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    // Create a new membership
+    @PostMapping(value = "membership/create", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> membershipCreate(@RequestBody MembershipDTO membershipDTO) {
+        try {
+            MembershipDTO createdMembership = membershipService.create(membershipDTO);
+            return new ResponseEntity<>(createdMembership, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Update an existing membership
+    @PutMapping(value = "membership/update/{id}", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> membershipUpdate(@PathVariable("id") Integer id, @RequestBody MembershipDTO membershipDTO) {
+        try {
+            MembershipDTO updatedMembership = membershipService.update(id, membershipDTO);
+            return new ResponseEntity<>(updatedMembership, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // Deactivate a membership (set status to false)
+    @PutMapping(value = "membership/deactivate/{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> membershipDeactivate(@PathVariable("id") Integer id) {
+        try {
+            boolean deactivated = membershipService.deactivate(id);
+            return new ResponseEntity<>(deactivated, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

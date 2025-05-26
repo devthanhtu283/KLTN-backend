@@ -6,10 +6,12 @@ import com.demo.entities.Payment;
 import com.demo.repositories.PaymentRepository;
 import com.netflix.discovery.converters.Auto;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -46,4 +48,16 @@ public class PaymentServiceImpl implements PaymentService {
     public long getTotalAmount() {
         return paymentRepository.getTotalAmount();
     }
+
+    @Override
+    public List<PaymentDTO> findAll() {
+        try {
+            return mapper.map(paymentRepository.findAll(),
+                    new TypeToken<List<PaymentDTO>>() {}.getType());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

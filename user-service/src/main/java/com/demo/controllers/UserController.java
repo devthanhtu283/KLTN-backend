@@ -475,4 +475,14 @@ public class UserController {
         }
     }
 
+    @GetMapping(value = "payment/findAll")
+    public ResponseEntity<Object> paymentFindAll() {
+        try {
+            return new ResponseEntity<Object>(paymentService.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }
