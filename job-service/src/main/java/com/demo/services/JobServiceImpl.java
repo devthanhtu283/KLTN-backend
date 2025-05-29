@@ -1,9 +1,13 @@
 package com.demo.services;
 
 import com.demo.dtos.JobDTO;
+import com.demo.entities.Employermembership;
 import com.demo.entities.Job;
+import com.demo.entities.Membership;
+import com.demo.repositories.EmployerMembershipRepository;
 import com.demo.repositories.JobPaginationRepository;
 import com.demo.repositories.JobRepository;
+import com.demo.repositories.MembershipRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -17,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +35,10 @@ public class JobServiceImpl implements JobService {
     private JobRepository jobRepository;
     @Autowired
     private JobPaginationRepository jobPaginationRepository;
+    @Autowired
+    private EmployerMembershipRepository employerMembershipRepository;
+    @Autowired
+    private MembershipRepository membershipRepository;
     @Autowired
     private ModelMapper mapper; // Sử dụng ModelMapper để chuyển đổi giữa các đối tượng
 
@@ -92,12 +101,14 @@ public class JobServiceImpl implements JobService {
             Job job = mapper.map(jobDTO, Job.class);
             job.setStatus(true);
             job.setPostedAt(new Date());
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            job.setDescriptionJson(objectMapper.writeValueAsString(jobDTO.getDescriptionJson()));
-
-            jobRepository.save(job);
-
-            return true;
+            if (checkValidCreateJob(jobDTO.getEmployerId())) {
+                jobRepository.save(job); // Lưu bài đăng
+                System.out.println("Đăng bài thành công");
+                return true;
+            } else {
+                System.out.println("Không thể đăng bài: Gói không hợp lệ hoặc vượt giới hạn");
+                return false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -115,6 +126,33 @@ public class JobServiceImpl implements JobService {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    private boolean checkValidCreateJob(Integer employeeID) {
+        Employermembership employermembership = employerMembershipRepository.findByUserId(employeeID);
+        if (employermembership == null || !employermembership.isStatus() || convertToLocalDate(employermembership.getEndDate()).isBefore(LocalDate.now())) {
+            return false;
+        }
+
+        Membership membership = membershipRepository.findById(employermembership.getMembership().getId()).get();
+        if (membership.getDuration().equalsIgnoreCase("YEARLY")) {
+            return true;
+        } else if (membership.getDuration().equalsIgnoreCase("MONTHLY")) {
+            LocalDate startDate = convertToLocalDate(employermembership.getStartDate());
+            LocalDate endDate = convertToLocalDate(employermembership.getEndDate());
+            long jobCount = jobRepository.countByEmployerIdAndPostedAtBetween(
+                    employeeID,
+                    Date.from(startDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()),
+                    Date.from(endDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
+            );
+            return jobCount < 5;
+        }
+        return false;
+    }
+
+    private LocalDate convertToLocalDate(Date date) {
+        return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
     }
 
 

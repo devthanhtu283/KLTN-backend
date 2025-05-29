@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -42,4 +43,6 @@ public interface JobRepository extends CrudRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE " +
             "(:search IS NULL OR j.title LIKE %:search%)")
     Page<Job> getAllJobdAdmin(@Param("search") String search, Pageable pageable);
+
+    long countByEmployerIdAndPostedAtBetween(Integer employerId, Date start, Date end);
 }

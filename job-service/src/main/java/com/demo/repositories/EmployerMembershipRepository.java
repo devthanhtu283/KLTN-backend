@@ -12,4 +12,6 @@ public interface EmployerMembershipRepository extends JpaRepository<Employermemb
             "WHERE (:status IS NULL OR m.status = :status) " +
             "ORDER BY m.id DESC")
     Page<Employermembership> findAll(@Param("status") boolean status, Pageable pageable);
+    
+    Employermembership findByUserId(Integer employerId);
 }
