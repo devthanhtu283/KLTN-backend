@@ -15,253 +15,243 @@ import java.util.Set;
 @Table(name = "employer", catalog = "jobs")
 public class Employer implements java.io.Serializable {
 
-	private Integer id;
-	private User user;
-	private String companyName;
-	private String companyProfile;
-	private Double rating;
-	private String contactInfo;
-	private String logo;
-	private String coverImg;
-	private String address;
-	private String mapLink;
-	private Double amount;
-	private Boolean status;
-	private String description;
-	private String foundedIn;
-	private String teamMember;
-	private String companyField;
-	private String companyLink;
-	private Set<Employermembership> employermemberships = new HashSet<Employermembership>(0);
-	private Set<Follow> follows = new HashSet<Follow>(0);
-	private Set<Payment> payments = new HashSet<Payment>(0);
-	private Set<Job> jobs = new HashSet<Job>(0);
+    private Integer id;
+    private User user;
+    private String companyName;
+    private String companyProfile;
+    private Double rating;
+    private String contactInfo;
+    private String logo;
+    private String coverImg;
+    private String address;
+    private String mapLink;
+    private Double amount;
+    private Boolean status;
+    private String description;
+    private String foundedIn;
+    private String teamMember;
+    private String companyField;
+    private String companyLink;
+    private Set<Follow> follows = new HashSet<Follow>(0);
+    private Set<Payment> payments = new HashSet<Payment>(0);
+    private Set<Job> jobs = new HashSet<Job>(0);
 
-	public Employer() {
-	}
+    public Employer() {
+    }
 
-	public Employer(User user) {
-		this.user = user;
-	}
+    public Employer(User user) {
+        this.user = user;
+    }
 
-	public Employer(User user, String companyName, String companyProfile, Double rating, String contactInfo,
+    public Employer(User user, String companyName, String companyProfile, Double rating, String contactInfo,
                     String logo, String coverImg, String address, String mapLink, Double amount, Boolean status,
                     String description, String foundedIn, String teamMember, String companyField, String companyLink,
-                    Set<Employermembership> employermemberships, Set<Follow> follows, Set<Payment> payments, Set<Job> jobs) {
-		this.user = user;
-		this.companyName = companyName;
-		this.companyProfile = companyProfile;
-		this.rating = rating;
-		this.contactInfo = contactInfo;
-		this.logo = logo;
-		this.coverImg = coverImg;
-		this.address = address;
-		this.mapLink = mapLink;
-		this.amount = amount;
-		this.status = status;
-		this.description = description;
-		this.foundedIn = foundedIn;
-		this.teamMember = teamMember;
-		this.companyField = companyField;
-		this.companyLink = companyLink;
-		this.employermemberships = employermemberships;
-		this.follows = follows;
-		this.payments = payments;
-		this.jobs = jobs;
-	}
+                    Set<Follow> follows, Set<Payment> payments, Set<Job> jobs) {
+        this.user = user;
+        this.companyName = companyName;
+        this.companyProfile = companyProfile;
+        this.rating = rating;
+        this.contactInfo = contactInfo;
+        this.logo = logo;
+        this.coverImg = coverImg;
+        this.address = address;
+        this.mapLink = mapLink;
+        this.amount = amount;
+        this.status = status;
+        this.description = description;
+        this.foundedIn = foundedIn;
+        this.teamMember = teamMember;
+        this.companyField = companyField;
+        this.companyLink = companyLink;
+        this.follows = follows;
+        this.payments = payments;
+        this.jobs = jobs;
+    }
 
-	@GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "user"))
-	@Id
-	@GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "foreign", parameters = @Parameter(name = "property", value = "user"))
+    @Id
+    @GeneratedValue(generator = "generator")
 
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@PrimaryKeyJoinColumn
-	public User getUser() {
-		return this.user;
-	}
+    @OneToOne(fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
+    public User getUser() {
+        return this.user;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	@Column(name = "company_name", length = 65535)
-	public String getCompanyName() {
-		return this.companyName;
-	}
+    @Column(name = "company_name", length = 65535)
+    public String getCompanyName() {
+        return this.companyName;
+    }
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
-	@Column(name = "company_profile", length = 65535)
-	public String getCompanyProfile() {
-		return this.companyProfile;
-	}
+    @Column(name = "company_profile", length = 65535)
+    public String getCompanyProfile() {
+        return this.companyProfile;
+    }
 
-	public void setCompanyProfile(String companyProfile) {
-		this.companyProfile = companyProfile;
-	}
+    public void setCompanyProfile(String companyProfile) {
+        this.companyProfile = companyProfile;
+    }
 
-	@Column(name = "rating", precision = 22, scale = 0)
-	public Double getRating() {
-		return this.rating;
-	}
+    @Column(name = "rating", precision = 22, scale = 0)
+    public Double getRating() {
+        return this.rating;
+    }
 
-	public void setRating(Double rating) {
-		this.rating = rating;
-	}
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
 
-	@Column(name = "contact_info", length = 65535)
-	public String getContactInfo() {
-		return this.contactInfo;
-	}
+    @Column(name = "contact_info", length = 65535)
+    public String getContactInfo() {
+        return this.contactInfo;
+    }
 
-	public void setContactInfo(String contactInfo) {
-		this.contactInfo = contactInfo;
-	}
+    public void setContactInfo(String contactInfo) {
+        this.contactInfo = contactInfo;
+    }
 
-	@Column(name = "logo", length = 65535)
-	public String getLogo() {
-		return this.logo;
-	}
+    @Column(name = "logo", length = 65535)
+    public String getLogo() {
+        return this.logo;
+    }
 
-	public void setLogo(String logo) {
-		this.logo = logo;
-	}
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
-	@Column(name = "cover_img", length = 65535)
-	public String getCoverImg() {
-		return this.coverImg;
-	}
+    @Column(name = "cover_img", length = 65535)
+    public String getCoverImg() {
+        return this.coverImg;
+    }
 
-	public void setCoverImg(String coverImg) {
-		this.coverImg = coverImg;
-	}
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
+    }
 
-	@Column(name = "address", length = 65535)
-	public String getAddress() {
-		return this.address;
-	}
+    @Column(name = "address", length = 65535)
+    public String getAddress() {
+        return this.address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	@Column(name = "map_link", length = 65535)
-	public String getMapLink() {
-		return this.mapLink;
-	}
+    @Column(name = "map_link", length = 65535)
+    public String getMapLink() {
+        return this.mapLink;
+    }
 
-	public void setMapLink(String mapLink) {
-		this.mapLink = mapLink;
-	}
+    public void setMapLink(String mapLink) {
+        this.mapLink = mapLink;
+    }
 
-	@Column(name = "amount", precision = 22, scale = 0)
-	public Double getAmount() {
-		return this.amount;
-	}
+    @Column(name = "amount", precision = 22, scale = 0)
+    public Double getAmount() {
+        return this.amount;
+    }
 
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
 
-	@Column(name = "status")
-	public Boolean getStatus() {
-		return this.status;
-	}
+    @Column(name = "status")
+    public Boolean getStatus() {
+        return this.status;
+    }
 
-	public void setStatus(Boolean status) {
-		this.status = status;
-	}
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
 
-	@Column(name = "description", length = 65535)
-	public String getDescription() {
-		return this.description;
-	}
+    @Column(name = "description", length = 65535)
+    public String getDescription() {
+        return this.description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@Column(name = "founded_in", length = 65535)
-	public String getFoundedIn() {
-		return this.foundedIn;
-	}
+    @Column(name = "founded_in", length = 65535)
+    public String getFoundedIn() {
+        return this.foundedIn;
+    }
 
-	public void setFoundedIn(String foundedIn) {
-		this.foundedIn = foundedIn;
-	}
+    public void setFoundedIn(String foundedIn) {
+        this.foundedIn = foundedIn;
+    }
 
-	@Column(name = "team_member", length = 65535)
-	public String getTeamMember() {
-		return this.teamMember;
-	}
+    @Column(name = "team_member", length = 65535)
+    public String getTeamMember() {
+        return this.teamMember;
+    }
 
-	public void setTeamMember(String teamMember) {
-		this.teamMember = teamMember;
-	}
+    public void setTeamMember(String teamMember) {
+        this.teamMember = teamMember;
+    }
 
-	@Column(name = "company_field", length = 65535)
-	public String getCompanyField() {
-		return this.companyField;
-	}
+    @Column(name = "company_field", length = 65535)
+    public String getCompanyField() {
+        return this.companyField;
+    }
 
-	public void setCompanyField(String companyField) {
-		this.companyField = companyField;
-	}
+    public void setCompanyField(String companyField) {
+        this.companyField = companyField;
+    }
 
-	@Column(name = "company_link", length = 65535)
-	public String getCompanyLink() {
-		return this.companyLink;
-	}
+    @Column(name = "company_link", length = 65535)
+    public String getCompanyLink() {
+        return this.companyLink;
+    }
 
-	public void setCompanyLink(String companyLink) {
-		this.companyLink = companyLink;
-	}
+    public void setCompanyLink(String companyLink) {
+        this.companyLink = companyLink;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
-	public Set<Employermembership> getEmployermemberships() {
-		return this.employermemberships;
-	}
 
-	public void setEmployermemberships(Set<Employermembership> employermemberships) {
-		this.employermemberships = employermemberships;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
+    public Set<Follow> getFollows() {
+        return this.follows;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
-	public Set<Follow> getFollows() {
-		return this.follows;
-	}
+    public void setFollows(Set<Follow> follows) {
+        this.follows = follows;
+    }
 
-	public void setFollows(Set<Follow> follows) {
-		this.follows = follows;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
+    public Set<Payment> getPayments() {
+        return this.payments;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
-	public Set<Payment> getPayments() {
-		return this.payments;
-	}
+    public void setPayments(Set<Payment> payments) {
+        this.payments = payments;
+    }
 
-	public void setPayments(Set<Payment> payments) {
-		this.payments = payments;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
+    public Set<Job> getJobs() {
+        return this.jobs;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employer")
-	public Set<Job> getJobs() {
-		return this.jobs;
-	}
-
-	public void setJobs(Set<Job> jobs) {
-		this.jobs = jobs;
-	}
+    public void setJobs(Set<Job> jobs) {
+        this.jobs = jobs;
+    }
 
 }
