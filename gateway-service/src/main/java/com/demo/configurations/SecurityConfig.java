@@ -32,7 +32,8 @@ public class SecurityConfig {
                                         , "/job/worktype/**", "/job/reviews/**", "/job/location/findAll", "/job/searchJobs", "/notification/**"
                                         , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
                                         , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**", "/assets/**", "/user/employer/get-large-companies/**"
-                                        , "/user/**", "/user-static/assets/**", "/ws-chat/**", "/job-static/**", "/user-static/**", "/job/**").permitAll()
+                                        , "/user-static/assets/**", "/ws-chat/**", "/job-static/**"
+                                        , "/user/chat/**").permitAll()
 //                        .pathMatchers(HttpMethod.PUT, "/user/update").permitAll()
 
                                 .anyExchange().authenticated()
@@ -45,7 +46,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:4201"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:4201", "http://localhost:4202"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

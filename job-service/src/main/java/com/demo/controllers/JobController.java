@@ -8,6 +8,7 @@ import com.demo.repositories.FavoriteRepository;
 import com.demo.repositories.JobPaginationRepository;
 import com.demo.repositories.JobRepository;
 import com.demo.services.*;
+import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -231,6 +232,13 @@ public class JobController {
         }
     }
 
+    @DeleteMapping(value = "favorite/delete/{jobId}/{seekerId}")
+    public ApiResponseEntity<Object> deleteFavorite(@PathVariable("jobId") int jobId, @PathVariable("seekerId") int seekerId) {
+        boolean status = favoriteService.delete(seekerId, jobId);
+        return status ? ApiResponseEntity.success(status, "Delete successfully !!")
+                : ApiResponseEntity.badRequest("Delete Failed !!");
+    }
+
     @GetMapping(value = "favorite/checkExists/{jobId}/{seekerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> favoriteCheckExists(@PathVariable("jobId") int jobId, @PathVariable("seekerId") int seekerId) {
         try {
@@ -290,7 +298,7 @@ public class JobController {
             return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
         }
     }
-    
+
     @GetMapping(value = "membership/findByTypeForAndDuration/{typeFor}/{duration}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> findByTypeForAndDuration(@PathVariable("typeFor") int typeFor, @PathVariable("duration") String duration) {
         try {
