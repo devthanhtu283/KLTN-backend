@@ -147,6 +147,15 @@ public class JobServiceImpl implements JobService {
                     Date.from(endDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
             );
             return jobCount < 5;
+        } else if (membership.getDuration().equalsIgnoreCase("MONTHLY") && membership.getPrice() == 0) {
+            LocalDate startDate = convertToLocalDate(employermembership.getStartDate());
+            LocalDate endDate = convertToLocalDate(employermembership.getEndDate());
+            long jobCount = jobRepository.countByEmployerIdAndPostedAtBetween(
+                    employeeID,
+                    Date.from(startDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()),
+                    Date.from(endDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
+            );
+            return jobCount < 1;
         }
         return false;
     }

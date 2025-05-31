@@ -33,21 +33,31 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public boolean save(FavoriteDTO favoriteDTO) {
-        try{
+        try {
             Favorite favorite = mapper.map(favoriteDTO, Favorite.class);
             favorite.setCreated(new Date());
             favorite.setStatus(true);
-            if(favoriteRepository.findByJobIdAndSeekerId(favoriteDTO.getJobId(), favoriteDTO.getSeekerId()) == null){
+            if (favoriteRepository.findByJobIdAndSeekerId(favoriteDTO.getJobId(), favoriteDTO.getSeekerId()) == null) {
                 favoriteRepository.save(favorite);
                 return true;
             } else {
                 return false;
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
 
+    }
+
+    @Override
+    public boolean delete(int seekerId, int jobId) {
+        Favorite favorite = favoriteRepository.findByJobIdAndSeekerId(jobId, seekerId);
+        if (favorite != null) {
+            favoriteRepository.delete(favorite);
+            return true;
+        } else {
+            throw new RuntimeException("Favorite not found");
+        }
     }
 }
