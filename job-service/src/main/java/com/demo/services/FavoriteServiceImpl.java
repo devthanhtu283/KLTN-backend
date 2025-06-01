@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,9 +27,15 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public Page<FavoriteDTO> findBySeekerIdPagination(int seekerId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+
         return favoritePaginationRepository.findBySeekerId(seekerId, pageable)
-                .map(favorite -> mapper.map(favorite, FavoriteDTO.class));
+                .map(favorite -> {
+                    FavoriteDTO dto = mapper.map(favorite, FavoriteDTO.class);
+                    dto.setId(favorite.getId()); // ép gán thủ công
+                    return dto;
+                });
+
     }
 
     @Override

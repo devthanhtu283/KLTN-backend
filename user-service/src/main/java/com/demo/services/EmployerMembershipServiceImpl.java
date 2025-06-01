@@ -80,5 +80,26 @@ public class EmployerMembershipServiceImpl implements EmployerMembershipService 
                 .map(employermembership -> modelMapper.map(employermembership, EmployerMembershipDTO.class));
     }
 
+    @Override
+    public EmployerMembershipDTO updateEmployerMembership(EmployerMembershipDTO employerMembershipDTO) {
+        try {
+            // Tìm Employermembership theo ID
+            Employermembership existingMembership = employerMembershipRepository.findById(employerMembershipDTO.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy Employermembership với ID: " + employerMembershipDTO.getId()));
 
+            // Cập nhật các trường từ DTO
+            mapper.map(employerMembershipDTO, existingMembership);
+
+
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            Employermembership updatedMembership = employerMembershipRepository.save(existingMembership);
+
+            // Chuyển đổi sang DTO và trả về
+            return modelMapper.map(updatedMembership, EmployerMembershipDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
