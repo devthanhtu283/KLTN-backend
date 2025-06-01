@@ -382,6 +382,20 @@ public class UserController {
         }
     }
 
+    @PutMapping(value = "employerMembership/update", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateEmployerMembership(@RequestBody EmployerMembershipDTO employerMembershipDTO) {
+        try {
+            EmployerMembershipDTO employermembership = employerMembershipService.updateEmployerMembership(employerMembershipDTO);
+            return new ResponseEntity<Object>(new Object() {
+                public boolean status = employermembership != null;
+                public EmployerMembershipDTO object = employermembership;
+            }, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "employermembership/findAll", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> findAll(@RequestParam(value = "status", required = false) Boolean status, @RequestParam(value = "page", defaultValue = "0") int page,
                                              @RequestParam(value = "size", defaultValue = "10") int size) {

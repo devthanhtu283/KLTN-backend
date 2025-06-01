@@ -69,4 +69,17 @@ public class EmployerMembershipDTO {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "EmployerMembershipDTO{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", membershipId=" + membershipId +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", renewalDate=" + renewalDate +
+                ", status=" + status +
+                '}';
+    }
 }

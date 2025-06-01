@@ -10,4 +10,6 @@ public interface EmployerMembershipService {
     EmployerMembershipDTO findByUserId(int userId);
 
     Page<EmployerMembershipDTO> getAll(Boolean status, int page, int size);
+
+    EmployerMembershipDTO updateEmployerMembership(EmployerMembershipDTO employerMembershipDTO);
 }
