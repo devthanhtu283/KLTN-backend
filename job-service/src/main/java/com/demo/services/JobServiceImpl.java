@@ -1,13 +1,10 @@
 package com.demo.services;
 
+import com.demo.dtos.FollowDTO;
 import com.demo.dtos.JobDTO;
-import com.demo.entities.Employermembership;
-import com.demo.entities.Job;
-import com.demo.entities.Membership;
-import com.demo.repositories.EmployerMembershipRepository;
-import com.demo.repositories.JobPaginationRepository;
-import com.demo.repositories.JobRepository;
-import com.demo.repositories.MembershipRepository;
+import com.demo.entities.*;
+import com.demo.events.JobEvent;
+import com.demo.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -15,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +39,14 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private MembershipRepository membershipRepository;
     @Autowired
-    private ModelMapper mapper; // Sử dụng ModelMapper để chuyển đổi giữa các đối tượng
+    private ModelMapper mapper;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FollowRepository followRepository;
 
 
     @Override
@@ -101,9 +107,16 @@ public class JobServiceImpl implements JobService {
             Job job = mapper.map(jobDTO, Job.class);
             job.setStatus(true);
             job.setPostedAt(new Date());
+            User employer = userRepository.findById(job.getEmployer().getId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            List<Follow> follows = followRepository.findByEmployer_IdAndStatus(employer.getId(), true);
+            List<User> followers = follows.stream()
+                    .map(f -> f.getSeeker().getUser()) // giả sử Seeker có getUser()
+                    .toList();
             if (checkValidCreateJob(jobDTO.getEmployerId())) {
                 jobRepository.save(job); // Lưu bài đăng
                 System.out.println("Đăng bài thành công");
+                eventPublisher.publishEvent(new JobEvent(this, followers, employer, job.getTitle(), "JOB_CREATED"));
                 return true;
             } else {
                 System.out.println("Không thể đăng bài: Gói không hợp lệ hoặc vượt giới hạn");
@@ -130,35 +143,40 @@ public class JobServiceImpl implements JobService {
 
 
     private boolean checkValidCreateJob(Integer employeeID) {
-        Employermembership employermembership = employerMembershipRepository.findByUserId(employeeID);
-        if (employermembership == null || !employermembership.isStatus() || convertToLocalDate(employermembership.getEndDate()).isBefore(LocalDate.now())) {
+        Employermembership employerMembership = employerMembershipRepository.findByUserId(employeeID);
+
+        // Kiểm tra membership tồn tại và còn hiệu lực
+        if (employerMembership == null || !employerMembership.isStatus()
+                || convertToLocalDate(employerMembership.getEndDate()).isBefore(LocalDate.now())) {
             return false;
         }
 
-        Membership membership = membershipRepository.findById(employermembership.getMembership().getId()).get();
-        if (membership.getDuration().equalsIgnoreCase("YEARLY")) {
-            return true;
-        } else if (membership.getDuration().equalsIgnoreCase("MONTHLY")) {
-            LocalDate startDate = convertToLocalDate(employermembership.getStartDate());
-            LocalDate endDate = convertToLocalDate(employermembership.getEndDate());
-            long jobCount = jobRepository.countByEmployerIdAndPostedAtBetween(
-                    employeeID,
-                    Date.from(startDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()),
-                    Date.from(endDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
-            );
-            return jobCount < 5;
-        } else if (membership.getDuration().equalsIgnoreCase("MONTHLY") && membership.getPrice() == 0) {
-            LocalDate startDate = convertToLocalDate(employermembership.getStartDate());
-            LocalDate endDate = convertToLocalDate(employermembership.getEndDate());
-            long jobCount = jobRepository.countByEmployerIdAndPostedAtBetween(
-                    employeeID,
-                    Date.from(startDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()),
-                    Date.from(endDate.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant())
-            );
-            return jobCount < 1;
+        Membership membership = employerMembership.getMembership();
+        if (membership == null) return false;
+
+        String duration = membership.getDuration();
+        double price = membership.getPrice();
+
+        if ("YEARLY".equalsIgnoreCase(duration)) {
+            return true; // Không giới hạn job
         }
+
+        LocalDate startDate = convertToLocalDate(employerMembership.getStartDate());
+        LocalDate endDate = convertToLocalDate(employerMembership.getEndDate());
+
+        long jobCount = jobRepository.countByEmployerIdAndPostedAtBetween(
+                employeeID,
+                Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+        );
+
+        if ("MONTHLY".equalsIgnoreCase(duration)) {
+            return price == 0 ? jobCount < 1 : jobCount < 5;
+        }
+
         return false;
     }
+
 
     private LocalDate convertToLocalDate(Date date) {
         return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
