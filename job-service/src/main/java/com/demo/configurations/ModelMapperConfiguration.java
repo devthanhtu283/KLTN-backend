@@ -33,6 +33,24 @@ public class ModelMapperConfiguration {
             }
         };
 
+        // mapper cho USER
+        mapper.addMappings(new PropertyMap<User, UserDTO>() {
+
+            @Override
+            protected void configure() {
+                // TODO Auto-generated method stub
+                map().setId(source.getId());
+                map().setUsername(source.getUsername());
+                map().setEmail(source.getEmail());
+                map().setPassword(source.getPassword());
+                map().setUserType(source.getUserType());
+
+                map().setSecurityCode(source.getSecurityCode());
+                map().setStatus(source.getStatus());
+            }
+
+        });
+
 
         mapper.addMappings(new PropertyMap<Job, JobDTO>() {
             @Override
@@ -64,6 +82,21 @@ public class ModelMapperConfiguration {
                 map().setSatisfied(source.isSatisfied());
                 map().setCreatedAt(source.getCreatedAt());
                 map().setStatus(source.isStatus());
+            }
+
+        });
+
+        mapper.addMappings(new PropertyMap<Notification, NotificationDTO>() {
+            @Override
+            protected void configure() {
+                // TODO Auto-generated method stub
+                map().setId(source.getId());
+                map().setUserID(source.getUser().getId());
+                map().setContent(source.getContent());
+                map().setRead(source.isRead());
+                map().setType(source.getType());
+                map().setTitle(source.getTitle());
+                map().setCreatedAt(source.getCreatedAt());
             }
 
         });
