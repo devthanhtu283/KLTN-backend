@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -94,6 +96,7 @@ public class JobController {
         return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
                 : ApiResponseEntity.success(res, "Fail");
     }
+
 
     @GetMapping(value = "/recommend-jobs", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ApiResponseEntity<Object> getRecommendJobsBySeekerId(@RequestParam("seekerId") int seekerId, @RequestParam(defaultValue = "0") int page,

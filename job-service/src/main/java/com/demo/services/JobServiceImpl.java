@@ -20,6 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -116,7 +118,7 @@ public class JobServiceImpl implements JobService {
             if (checkValidCreateJob(jobDTO.getEmployerId())) {
                 jobRepository.save(job); // Lưu bài đăng
                 System.out.println("Đăng bài thành công");
-                eventPublisher.publishEvent(new JobEvent(this, followers, employer, job.getTitle(), "JOB_CREATED"));
+                eventPublisher.publishEvent(new JobEvent(this, followers, job, employer, job.getTitle(), "JOB_CREATED"));
                 return true;
             } else {
                 System.out.println("Không thể đăng bài: Gói không hợp lệ hoặc vượt giới hạn");

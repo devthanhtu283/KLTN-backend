@@ -3,8 +3,10 @@ package com.demo.services;
 import com.demo.configurations.NotificationMapper;
 import com.demo.configurations.NotificationWebSocketHandler;
 import com.demo.configurations.RedisPublisher;
+import com.demo.dtos.JobDTO;
 import com.demo.dtos.NotificationDTO;
 import com.demo.dtos.UserDTO;
+import com.demo.entities.Job;
 import com.demo.entities.Notification;
 import com.demo.entities.User;
 import com.demo.repositories.NotificationRepository;
@@ -43,16 +45,18 @@ public class NotificationServiceImpl implements NotificationService {
     private static final String UNREAD_NOTIFICATIONS_KEY = "unread_notifications:";
 
     @Override
-    public NotificationDTO createNotification(User user, String title, String content, String type) {
+    public NotificationDTO createNotification(User user, Job job, String title, String content, String type) {
         Notification notification = new Notification();
         notification.setUser(user);
         notification.setTitle(title);
         notification.setContent(content);
         notification.setType(type);
         notification.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        notification.setJobId(job.getId());
 
         notificationRepository.save(notification);
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        JobDTO jobDTO = modelMapper.map(job, JobDTO.class);
         NotificationDTO notificationDTO = modelMapper.map(notification, NotificationDTO.class);
         // Lưu vào Redis (chỉ nếu chưa đọc)
         String redisKey = UNREAD_NOTIFICATIONS_KEY + userDTO.getId();
