@@ -13,6 +13,8 @@ public class NotificationDTO {
     private boolean isRead = false;
     private Timestamp createdAt;
     private String type;
+    private Integer jobId;
+
 
     public Integer getId() {
         return id;
@@ -81,5 +83,13 @@ public class NotificationDTO {
                 ", createdAt=" + createdAt +
                 ", type='" + type + '\'' +
                 '}';
+    }
+
+    public Integer getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Integer jobId) {
+        this.jobId = jobId;
     }
 }

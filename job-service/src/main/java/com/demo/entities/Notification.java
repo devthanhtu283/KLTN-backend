@@ -17,6 +17,7 @@ public class Notification implements java.io.Serializable {
     private boolean isRead = false;
     private Timestamp createdAt;
     private String type;
+    private Integer jobId;
 
     public Notification() {
     }
@@ -86,5 +87,14 @@ public class Notification implements java.io.Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Column(name = "job_id", nullable = false)
+    public Integer getJobId() {
+        return this.jobId;
+    }
+
+    public void setJobId(Integer jobId) {
+        this.jobId = jobId;
     }
 }

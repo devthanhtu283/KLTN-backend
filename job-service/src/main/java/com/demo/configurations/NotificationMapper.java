@@ -21,6 +21,7 @@ public class NotificationMapper {
         dto.setRead(notification.isRead());
         dto.setCreatedAt(notification.getCreatedAt());
         dto.setType(notification.getType());
+        dto.setJobId(notification.getJobId());
         return dto;
     }
 

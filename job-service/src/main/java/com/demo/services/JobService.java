@@ -5,6 +5,7 @@ import com.demo.entities.Job;
 import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface JobService {
@@ -27,5 +28,6 @@ public interface JobService {
     public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize);
 
     public Page<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize);
+
 
 }
