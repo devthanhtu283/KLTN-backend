@@ -1,7 +1,6 @@
 package com.demo.controllers;
 
-import com.demo.dto.ApplicationDTO;
-import com.demo.entities.Application;
+import com.demo.dtos.ApplicationDTO;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;

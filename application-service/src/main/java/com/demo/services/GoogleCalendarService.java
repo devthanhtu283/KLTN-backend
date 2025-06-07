@@ -1,10 +1,8 @@
 package com.demo.services;
 
-import com.demo.dto.InterviewDTO;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -150,7 +148,7 @@ public class GoogleCalendarService {
         if (createdEvent.getConferenceData() != null &&
                 createdEvent.getConferenceData().getEntryPoints() != null &&
                 !createdEvent.getConferenceData().getEntryPoints().isEmpty()) {
-           
+
             return createdEvent.getConferenceData().getEntryPoints().get(0).getUri();
         } else {
             throw new IOException("Failed to generate Google Meet link.");

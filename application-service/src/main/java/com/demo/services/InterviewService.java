@@ -1,6 +1,6 @@
 package com.demo.services;
 
-import com.demo.dto.InterviewDTO;
+import com.demo.dtos.InterviewDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,6 +1,6 @@
 package com.demo.controllers;
 
-import com.demo.dto.InterviewDTO;
+import com.demo.dtos.InterviewDTO;
 import com.demo.helpers.ApiResponseEntity;
 import com.demo.services.InterviewService;
 import org.springframework.beans.factory.annotation.Autowired;

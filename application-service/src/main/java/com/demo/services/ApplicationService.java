@@ -1,7 +1,6 @@
 package com.demo.services;
 
-import com.demo.dto.ApplicationDTO;
-import com.demo.entities.Application;
+import com.demo.dtos.ApplicationDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

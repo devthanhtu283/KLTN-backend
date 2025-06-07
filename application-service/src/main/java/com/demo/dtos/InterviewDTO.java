@@ -1,6 +1,5 @@
-package com.demo.dto;
+package com.demo.dtos;
 
-import com.demo.entities.Application;
 import lombok.*;
 
 import java.util.Date;
