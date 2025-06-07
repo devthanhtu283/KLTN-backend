@@ -2,6 +2,8 @@ package com.demo.events;
 
 import com.demo.entities.Job;
 import com.demo.entities.User;
+import com.demo.repositories.EmployeeRepository;
+import com.demo.repositories.UserRepository;
 import com.demo.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -14,6 +16,8 @@ public class NotificationListener {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @EventListener
     public void handleJobEvent(JobEvent event) {
@@ -22,6 +26,7 @@ public class NotificationListener {
         Job job = event.getJob();
         String jobTitle = event.getJobTitle();
         User employer = event.getUser();
+        String companyName = employeeRepository.findById(employer.getId()).get().getCompanyName();
 
         for (User receiver : receivers) {
             switch (eventType) {
@@ -29,22 +34,12 @@ public class NotificationListener {
                     notificationService.createNotification(
                             receiver,
                             job,
-                            "Công việc mới từ " + employer.getUsername(),
-                            employer.getUsername() + " vừa đăng công việc '" + jobTitle + "'.",
+                            "Công việc mới từ " + companyName,
+                            companyName + " vừa đăng công việc " + jobTitle + ".",
                             eventType
                     );
                     break;
-
-                case "APPLICATION_SUBMITTED":
-                    notificationService.createNotification(
-                            receiver,
-                            job,
-                            "Ứng tuyển thành công",
-                            "Bạn đã ứng tuyển vào công việc '" + jobTitle + "'.",
-                            eventType
-                    );
-                    break;
-
+                    
                 default:
                     break;
             }

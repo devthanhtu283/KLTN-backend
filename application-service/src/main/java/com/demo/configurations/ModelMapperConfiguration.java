@@ -1,11 +1,10 @@
 package com.demo.configurations;
 
 
-import com.demo.dto.ApplicationDTO;
-import com.demo.dto.InterviewDTO;
+import com.demo.dtos.ApplicationDTO;
+import com.demo.dtos.InterviewDTO;
 import com.demo.entities.Application;
 import com.demo.entities.Interview;
-import com.demo.entities.Job;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;

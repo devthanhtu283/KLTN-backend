@@ -1,6 +1,6 @@
 package com.demo.services;
 
-import com.demo.dto.InterviewDTO;
+import com.demo.dtos.InterviewDTO;
 import com.demo.entities.Interview;
 import com.demo.helpers.NullProperty;
 import com.demo.repository.InterviewRepository;

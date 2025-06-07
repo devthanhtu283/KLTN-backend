@@ -1,10 +1,7 @@
 package com.demo.controllers;
 
-import com.demo.dto.EventRequest;
+import com.demo.dtos.EventRequest;
 import com.demo.services.GoogleCalendarService;
-import com.demo.services.GoogleCalendarService1;
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +26,7 @@ public class CalendarController {
         this.googleCalendarService = googleCalendarService;
     }
 
-//    @GetMapping("/auth-url")
+    //    @GetMapping("/auth-url")
 //    public Map<String, String> getAuthUrl() throws IOException, GeneralSecurityException {
 //        String authUrl = googleCalendarService.getAuthUrl();
 //        Map<String, String> response = new HashMap<>();

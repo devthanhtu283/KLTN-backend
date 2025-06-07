@@ -1,17 +1,24 @@
 package com.demo.services;
 
-import com.demo.dto.ApplicationDTO;
+import com.demo.dtos.ApplicationDTO;
 import com.demo.entities.Application;
+import com.demo.entities.Job;
+import com.demo.entities.User;
+import com.demo.events.JobEvent;
 import com.demo.repository.ApplicationRepository;
+import com.demo.repository.JobRepository;
+import com.demo.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +30,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private ApplicationRepository applicationRepository;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private JobRepository jobRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
@@ -131,11 +144,28 @@ public class ApplicationServiceImpl implements ApplicationService {
         try {
             // Tìm đơn ứng tuyển hiện tại
             ApplicationDTO applicationDTO = findById(id);
+            Job job = jobRepository.findById(applicationDTO.getJobId()).get();
+            User seeker = userRepository.findById(applicationDTO.getSeekerId()).get();
+            List<User> followers = new ArrayList<>();
+            followers.add(seeker);
             if (applicationDTO != null) {
                 // Cập nhật trạng thái cho đơn ứng tuyển hiện tại
                 applicationDTO.setStatus(status);
                 Application application = modelMapper.map(applicationDTO, Application.class);
                 applicationRepository.save(application);
+                switch (status) {
+                    case 1:
+                        eventPublisher.publishEvent(new JobEvent(this, followers, job, seeker, job.getTitle(), "APPLICATION_SEEN"));
+                        break;
+                    case 2:
+                        eventPublisher.publishEvent(new JobEvent(this, followers, job, seeker, job.getTitle(), "APPLICATION_ACCEPTED"));
+                        break;
+                    case 3:
+                        eventPublisher.publishEvent(new JobEvent(this, followers, job, seeker, job.getTitle(), "APPLICATION_REJECTED"));
+                        break;
+                    default:
+                        break;
+                }
 
                 List<Application> allApplicationsForJobs = applicationRepository.listSeekerAppliedForJob(applicationDTO.getSeekerId(), applicationDTO.getJobId());
 
