@@ -34,12 +34,13 @@ public class NotificationListener {
                     notificationService.createNotification(
                             receiver,
                             job,
-                            "Công việc mới từ " + companyName,
-                            companyName + " vừa đăng công việc " + jobTitle + ".",
+                            "Công việc mới từ <span class='company-name'>" + companyName + "</span>",
+                            "<span class='company-name'>" + companyName + "</span> vừa đăng công việc " + jobTitle + ".",
                             eventType
                     );
+
                     break;
-                    
+
                 default:
                     break;
             }
