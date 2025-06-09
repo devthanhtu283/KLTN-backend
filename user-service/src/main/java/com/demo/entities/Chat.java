@@ -12,105 +12,119 @@ import java.util.Date;
 @Table(name = "chat", catalog = "jobs")
 public class Chat implements java.io.Serializable {
 
-	private Integer id;
-	private User userBySenderId;
-	private User userByReceiverId;
-	private String senderRole;
-	private String receiverRole;
-	private String message;
-	private Date time;
-	private boolean status;
+    private Integer id;
+    private User userBySenderId;
+    private User userByReceiverId;
+    private String senderRole;
+    private String receiverRole;
+    private String message;
+    private Date time;
+    private boolean status;
 
-	public Chat() {
-	}
+    public Chat() {
+    }
 
-	public Chat(User userBySenderId, User userByReceiverId, String senderRole, String receiverRole, String message,
+    public Chat(User userBySenderId, User userByReceiverId, String senderRole, String receiverRole, String message,
                 Date time, boolean status) {
-		this.userBySenderId = userBySenderId;
-		this.userByReceiverId = userByReceiverId;
-		this.senderRole = senderRole;
-		this.receiverRole = receiverRole;
-		this.message = message;
-		this.time = time;
-		this.status = status;
-	}
+        this.userBySenderId = userBySenderId;
+        this.userByReceiverId = userByReceiverId;
+        this.senderRole = senderRole;
+        this.receiverRole = receiverRole;
+        this.message = message;
+        this.time = time;
+        this.status = status;
+    }
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sender_id", nullable = false)
-	public User getUserBySenderId() {
-		return this.userBySenderId;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    public User getUserBySenderId() {
+        return this.userBySenderId;
+    }
 
-	public void setUserBySenderId(User userBySenderId) {
-		this.userBySenderId = userBySenderId;
-	}
+    public void setUserBySenderId(User userBySenderId) {
+        this.userBySenderId = userBySenderId;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "receiver_id", nullable = false)
-	public User getUserByReceiverId() {
-		return this.userByReceiverId;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id", nullable = false)
+    public User getUserByReceiverId() {
+        return this.userByReceiverId;
+    }
 
-	public void setUserByReceiverId(User userByReceiverId) {
-		this.userByReceiverId = userByReceiverId;
-	}
+    public void setUserByReceiverId(User userByReceiverId) {
+        this.userByReceiverId = userByReceiverId;
+    }
 
-	@Column(name = "sender_role", nullable = false, length = 65535)
-	public String getSenderRole() {
-		return this.senderRole;
-	}
+    @Column(name = "sender_role", nullable = false, length = 65535)
+    public String getSenderRole() {
+        return this.senderRole;
+    }
 
-	public void setSenderRole(String senderRole) {
-		this.senderRole = senderRole;
-	}
+    public void setSenderRole(String senderRole) {
+        this.senderRole = senderRole;
+    }
 
-	@Column(name = "receiver_role", nullable = false, length = 65535)
-	public String getReceiverRole() {
-		return this.receiverRole;
-	}
+    @Column(name = "receiver_role", nullable = false, length = 65535)
+    public String getReceiverRole() {
+        return this.receiverRole;
+    }
 
-	public void setReceiverRole(String receiverRole) {
-		this.receiverRole = receiverRole;
-	}
+    public void setReceiverRole(String receiverRole) {
+        this.receiverRole = receiverRole;
+    }
 
-	@Column(name = "message", nullable = false, length = 65535)
-	public String getMessage() {
-		return this.message;
-	}
+    @Column(name = "message", nullable = false, length = 65535)
+    public String getMessage() {
+        return this.message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "time", nullable = false, length = 19)
-	public Date getTime() {
-		return this.time;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "time", nullable = false, length = 19)
+    public Date getTime() {
+        return this.time;
+    }
 
-	public void setTime(Date time) {
-		this.time = time;
-	}
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
-	@Column(name = "status", nullable = false)
-	public boolean isStatus() {
-		return this.status;
-	}
+    @Column(name = "status", nullable = false)
+    public boolean isStatus() {
+        return this.status;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
+
+    @Override
+    public String toString() {
+        return "Chat{" +
+                "id=" + id +
+                ", userBySenderId=" + userBySenderId +
+                ", userByReceiverId=" + userByReceiverId +
+                ", senderRole='" + senderRole + '\'' +
+                ", receiverRole='" + receiverRole + '\'' +
+                ", message='" + message + '\'' +
+                ", time=" + time +
+                ", status=" + status +
+                '}';
+    }
 }

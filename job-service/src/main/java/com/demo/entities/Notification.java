@@ -89,7 +89,7 @@ public class Notification implements java.io.Serializable {
         this.type = type;
     }
 
-    @Column(name = "job_id", nullable = false)
+    @Column(name = "job_id", nullable = true)
     public Integer getJobId() {
         return this.jobId;
     }

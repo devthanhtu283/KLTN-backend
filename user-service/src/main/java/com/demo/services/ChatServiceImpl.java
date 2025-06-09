@@ -3,8 +3,10 @@ package com.demo.services;
 import com.demo.dtos.ChatDTO;
 import com.demo.entities.Chat;
 import com.demo.entities.User;
+import com.demo.events.ChatEvent;
 import com.demo.repositories.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,16 +17,21 @@ import java.util.stream.Collectors;
 public class ChatServiceImpl implements ChatService {
     @Autowired
     private ChatRepository chatRepository;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     @Override
     public List<Integer> getReceiverIdsByUserId(Integer userId) {
-        return chatRepository.findAllReceiverIdsByUserId(userId);    }
+        return chatRepository.findAllReceiverIdsByUserId(userId);
+    }
 
     @Override
     public List<ChatDTO> getMessagesBetweenUsers(Integer senderId, Integer receiverId) {
         List<Chat> messages = chatRepository.findMessagesBetweenUsers(senderId, receiverId);
         return messages.stream()
                 .map(ChatDTO::new) // Chuyển từ Chat sang ChatDTO
-                .collect(Collectors.toList());    }
+                .collect(Collectors.toList());
+    }
 
     @Override
     public ChatDTO save(ChatDTO chatDTO) {
@@ -41,6 +48,8 @@ public class ChatServiceImpl implements ChatService {
         chat.setTime(new Date());
         chat.setStatus(chatDTO.isStatus());
         chat = chatRepository.save(chat);
+        eventPublisher.publishEvent(new ChatEvent(this, chat));
+        System.out.println("cc");
         return new ChatDTO(chat);
     }
 
