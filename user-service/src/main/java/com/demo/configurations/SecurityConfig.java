@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/employer/findById/**").permitAll()
                         .requestMatchers("/user/employer/search/**").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
+                        .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/user/seeker/**").hasAnyRole("SEEKER", "ADMIN")
                         .requestMatchers("/user/employer/**").hasAnyRole("EMPLOYER", "ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("ADMIN", "SEEKER", "EMPLOYER")
