@@ -1,0 +1,77 @@
+package com.demo.controllers;
+
+import com.demo.dtos.UserDTO;
+import com.demo.services.UserService;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.sql.Date;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+@RestController
+@RequestMapping("user")
+public class GoogleLoginController {
+    @Autowired
+    private UserService userService;
+    private static final String CLIENT_ID = "154715425720-a22pc63jahbgsq5pnqs05rr9a4sa7q3e.apps.googleusercontent.com";
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+
+    @PostMapping(value = "google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> requestBody) throws Exception {
+        String idTokenString = requestBody.get("idToken");
+        String userTypeString = requestBody.get("userType");
+
+        int userType = 1;
+        try {
+            userType = Integer.parseInt(userTypeString);
+        } catch (Exception e) {
+            System.out.println("Không thể parse userType, dùng mặc định 1");
+        }
+
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY)
+                .setAudience(Collections.singletonList(CLIENT_ID))
+                .build();
+
+        GoogleIdToken idToken = verifier.verify(idTokenString);
+        if (idToken != null) {
+            GoogleIdToken.Payload payload = idToken.getPayload();
+
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+
+            // ✅ Kiểm tra user đã tồn tại chưa
+            Optional<UserDTO> existingUserOpt = Optional.ofNullable(userService.findByEmail(email));
+
+            UserDTO user;
+            if (existingUserOpt.isPresent()) {
+                user = existingUserOpt.get();
+            } else {
+                // ✅ Nếu chưa có thì tạo mới
+                user = new UserDTO();
+                user.setPassword("$2a$10$EGz5UXiizIxOG0fvJz2mM.0u4rcfA6KVBZx897NkzfNrRB/p/fRLa"); // Dummy password
+                user.setUsername(email.split("@")[0]);
+                user.setEmail(email);
+                user.setUserType(userType);
+                user.setSecurityCode("google");
+                user.setStatus(1);
+                user.setCreated(new java.sql.Date(System.currentTimeMillis()));
+                userService.save(user);
+            }
+
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.badRequest().body("Invalid ID Token");
+        }
+    }
+
+
+}

@@ -33,7 +33,7 @@ public class SecurityConfig {
                                         , "/application/auth-url/**", "/application/check-auth/**", "/application/oauth-callback/**", "/application/create-event/**"
                                         , "/application/save-event/**", "/application/get-saved-event/**", "/user-static/**", "/assets/**", "/user/employer/get-large-companies/**"
                                         , "/user-static/assets/**", "/ws-chat/**", "/job-static/**"
-                                        , "/user/chat/**").permitAll()
+                                        , "/user/chat/**", "/user/**").permitAll()
 //                        .pathMatchers(HttpMethod.PUT, "/user/update").permitAll()
 
                                 .anyExchange().authenticated()
