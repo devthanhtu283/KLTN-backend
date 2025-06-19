@@ -30,7 +30,7 @@ public class ModelMapperConfiguration {
                 map().setId(source.getId());
                 map().setSeekerId(source.getSeeker().getId());
                 map().setSeekerName(source.getSeeker().getFullName());
-                map().setAddress(source.getSeeker().getAddress());
+                map().setAddress(source.getJob().getAddress());
                 map().setAvatar(source.getJob().getEmployer().getLogo());
                 map().setPhone(source.getSeeker().getPhone());
                 map().setJobId(source.getJob().getId());
