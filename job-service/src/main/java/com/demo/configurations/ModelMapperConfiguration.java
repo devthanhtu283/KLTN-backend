@@ -108,7 +108,7 @@ public class ModelMapperConfiguration {
                 map().setId(source.getId());
                 map().setSeekerId(source.getSeeker().getId());
                 map().setEmployerId(source.getEmployer().getId());
-                map().setAddress(source.getSeeker().getAddress());
+                map().setAddress(source.getEmployer().getAddress());
                 map().setCreated(source.getCreated());
                 map().setEmployerName(source.getEmployer().getCompanyName());
                 map().setSeekerName(source.getSeeker().getFullName());
