@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/user/register").permitAll()
                         .requestMatchers("/user/login").permitAll()
                         .requestMatchers("/user/findByEmail/**").permitAll()
@@ -40,7 +41,6 @@ public class SecurityConfig {
                         .requestMatchers("/user/sendEmail").permitAll()
                         .requestMatchers("/user/seeker/findById/**").permitAll()
                         .requestMatchers("/user/verifyAccount/**").permitAll()
-                        .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/user/employerMembership/**").permitAll()
                         .requestMatchers("/user/chat/**").permitAll()
                         .requestMatchers("/user/employer/get-large-companies/**").permitAll()
@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/employer/search/**").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/user/seeker/**").hasAnyRole("SEEKER", "ADMIN")
                         .requestMatchers("/user/employer/**").hasAnyRole("EMPLOYER", "ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("ADMIN", "SEEKER", "EMPLOYER")
