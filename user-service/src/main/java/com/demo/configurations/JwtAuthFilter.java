@@ -48,7 +48,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/ws-chat");
+        boolean shouldSkip = path.startsWith("/assets/") || path.startsWith("/ws-chat") || path.startsWith("/user-static/");
+        System.out.println("shouldNotFilter: " + path + " → " + shouldSkip);
+        return shouldSkip;
     }
+
 
 }
