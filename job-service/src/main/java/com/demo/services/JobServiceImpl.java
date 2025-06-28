@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,6 +30,7 @@ import java.util.List;
 import org.modelmapper.TypeToken;
 
 @Service
+@CacheConfig(cacheNames = "jobs")
 public class JobServiceImpl implements JobService {
 
     private static final Logger logger = LoggerFactory.getLogger(JobServiceImpl.class);
@@ -52,36 +54,41 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
+    @Cacheable(key = "'all'")
     public List<JobDTO> findAll() {
-        logger.info("⚡ Fetching jobs from database...");
         return mapper.map(jobRepository.findAll(), new TypeToken<List<JobDTO>>() {
         }.getType());
     }
 
     @Override
+    @Cacheable(key = "#id")
     public JobDTO findById(int id) {
         return mapper.map(jobRepository.findById(id).get(), JobDTO.class);
     }
 
     @Override
+    @Cacheable(key = "'page_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> findAllPagination(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.findAll(pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
+    @Cacheable(key = "'search_' + #title + '_' + #locationId + '_' + #worktypeId + '_' + #experienceId + '_' + #categoryId + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, Integer categoryId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, categoryId, pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
+    @Cacheable(key = "'employee_page_' + #employeeId + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.findByEmployerId(employeeId, pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
+    @Cacheable(key = "'search_title_' + #title + '_' + #employerId + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         return jobPaginationRepository.findByEmployerIdAndTitleContainingIgnoreCase(employerId, title, pageable)
@@ -89,6 +96,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(key = "'admin_' + #search + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return jobRepository.getAllJobdAdmin(search, pageable).map(job -> mapper.map(job, JobDTO.class));
@@ -96,6 +104,7 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
+    @Cacheable(key = "'employee_' + #employeeId")
     public List<JobDTO> findByEmployeeId(int employeeId) {
         return jobRepository.findByEmployerId(employeeId, true)
                 .stream()
@@ -104,6 +113,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public boolean save(JobDTO jobDTO) {
         try {
             Job job = mapper.map(jobDTO, Job.class);
@@ -131,6 +141,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public boolean delete(int jobId) {
         try {
             Job job = jobRepository.findById(jobId).get();
