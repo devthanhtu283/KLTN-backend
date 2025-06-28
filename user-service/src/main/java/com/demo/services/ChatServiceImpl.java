@@ -49,7 +49,6 @@ public class ChatServiceImpl implements ChatService {
         chat.setStatus(chatDTO.isStatus());
         chat = chatRepository.save(chat);
         eventPublisher.publishEvent(new ChatEvent(this, chat));
-        System.out.println("cc");
         return new ChatDTO(chat);
     }
 

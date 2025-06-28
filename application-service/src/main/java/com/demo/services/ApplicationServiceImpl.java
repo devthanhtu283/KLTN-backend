@@ -11,6 +11,9 @@ import com.demo.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@CacheConfig(cacheNames = "applications")
 public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
@@ -39,12 +43,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
+    @Cacheable(key = "'all'")
     public List<ApplicationDTO> listApplications() {
         return modelMapper.map(applicationRepository.findAll(), new TypeToken<List<ApplicationDTO>>() {
         }.getType());
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public boolean save(ApplicationDTO applicationDTO) {
         try {
             Application application = modelMapper.map(applicationDTO, Application.class);
@@ -57,6 +63,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Cacheable(key = "#id")
     public ApplicationDTO findById(int id) {
         try {
             return applicationRepository.findById(id).map(application -> modelMapper.map(application, ApplicationDTO.class)).orElse(null);
@@ -66,6 +73,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Cacheable(key = "'job_' + #jobId + '_page_' + #page + '_size_' + #size + '_status_' + #status")
     public Page<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -85,6 +93,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Cacheable(key = "'employer_' + #employerId + '_page_' + #page + '_size_' + #size + '_status_' + #status")
     public Page<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -104,6 +113,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Cacheable(key = "'search_' + #jobTitle + '_' + #seekerName + '_page_' + #page + '_size_' + #size")
     public Page<ApplicationDTO> searchApplication(String jobTitle, String seekerName, int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -124,6 +134,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Cacheable(key = "'seeker_' + #seekerId + '_page_' + #page + '_size_' + #size + '_status_' + #status")
     public Page<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -132,6 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Cacheable(key = "'history_' + #seekerId + '_page_' + #page + '_size_' + #size")
     public Page<ApplicationDTO> historyApplication(int seekerId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
         return applicationRepository.historyApplication(seekerId, pageable)
@@ -140,6 +152,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     @Override
+    @CacheEvict(allEntries = true)
     public ApplicationDTO updateStatus(int id, int status) {
         try {
             // Tìm đơn ứng tuyển hiện tại
@@ -196,11 +209,13 @@ public class ApplicationServiceImpl implements ApplicationService {
 //    }
 
     @Override
+    @Cacheable(key = "'count_apply_' + #seekerId + '_' + #jobId")
     public int countApply(int seekerId, int jobId) {
         return applicationRepository.countApply(seekerId, jobId);
     }
 
     @Override
+    @Cacheable(key = "'count_applicants_' + #jobId")
     public int countApplicantsByJobId(int jobId) {
         return applicationRepository.countApplicantsByJobId(jobId);
     }
