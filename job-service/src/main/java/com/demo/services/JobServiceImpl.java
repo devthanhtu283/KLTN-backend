@@ -4,6 +4,7 @@ import com.demo.dtos.FollowDTO;
 import com.demo.dtos.JobDTO;
 import com.demo.entities.*;
 import com.demo.events.JobEvent;
+import com.demo.helpers.PageResult;
 import com.demo.repositories.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
@@ -67,34 +68,120 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Page<JobDTO> findAllPagination(int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
-        return jobPaginationRepository.findAll(pageable).map(job -> mapper.map(job, JobDTO.class));
-    }
-
-    @Override
-    public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, Integer categoryId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
-        return jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, categoryId, pageable).map(job -> mapper.map(job, JobDTO.class));
-    }
-
-    @Override
-    public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
-        return jobPaginationRepository.findByEmployerId(employeeId, pageable).map(job -> mapper.map(job, JobDTO.class));
-    }
-
-    @Override
-    public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize) {
+    @Cacheable(value = "jobs", key = "'all_page_' + (#pageNo - 1) + '_' + #pageSize", unless = "#result == null")
+    public PageResult<JobDTO> findAllPagination(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        return jobPaginationRepository.findByEmployerIdAndTitleContainingIgnoreCase(employerId, title, pageable)
-                .map(job -> mapper.map(job, JobDTO.class));
+        Page<Job> page = jobPaginationRepository.findAll(pageable);
+
+        List<JobDTO> content = page.getContent()
+                .stream()
+                .map(job -> mapper.map(job, JobDTO.class))
+                .toList();
+
+        return new PageResult<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
     }
 
+
     @Override
-    public Page<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize) {
+    @Cacheable(
+            value = "jobs",
+            key = "'search_' + #title + '_' + #locationId + '_' + #worktypeId + '_' + #experienceId + '_' + #categoryId + '_' + (#pageNo - 1) + '_' + #pageSize",
+            unless = "#result == null"
+    )
+    public PageResult<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, Integer categoryId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Job> page = jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, categoryId, pageable);
+
+        List<JobDTO> content = page.getContent()
+                .stream()
+                .map(job -> mapper.map(job, JobDTO.class))
+                .toList();
+
+        return new PageResult<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
+    }
+
+
+    @Override
+    @Cacheable(value = "jobs", key = "'employee_page_' + #employeeId + '_' + (#pageNo - 1) + '_' + #pageSize")
+    public PageResult<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+
+        Page<Job> page = jobPaginationRepository.findByEmployerId(employeeId, pageable);
+
+        List<JobDTO> content = page.getContent()
+                .stream()
+                .map(job -> mapper.map(job, JobDTO.class))
+                .toList();
+
+        return new PageResult<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
+    }
+
+
+    @Override
+    @Cacheable(
+            value = "jobs",
+            key = "'search_title_' + #employerId + '_' + #title + '_' + (#pageNo - 1) + '_' + #pageSize",
+            unless = "#result == null"
+    )
+    public PageResult<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Job> page = jobPaginationRepository.findByEmployerIdAndTitleContainingIgnoreCase(employerId, title, pageable);
+
+        List<JobDTO> content = page.getContent()
+                .stream()
+                .map(job -> mapper.map(job, JobDTO.class))
+                .toList();
+
+        return new PageResult<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
+    }
+
+
+    @Override
+    @Cacheable(
+            value = "jobs",
+            key = "'admin_all_' + #search + '_' + #pageNo + '_' + #pageSize",
+            unless = "#result == null"
+    )
+    public PageResult<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return jobRepository.getAllJobdAdmin(search, pageable).map(job -> mapper.map(job, JobDTO.class));
+        Page<Job> page = jobRepository.getAllJobdAdmin(search, pageable);
+
+        List<JobDTO> content = page.getContent()
+                .stream()
+                .map(job -> mapper.map(job, JobDTO.class))
+                .toList();
+
+        return new PageResult<>(
+                content,
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
+        );
     }
 
 
