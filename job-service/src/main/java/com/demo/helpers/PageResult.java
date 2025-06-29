@@ -1,45 +1,26 @@
 package com.demo.helpers;
 
-import org.springframework.data.domain.Page;
-
+import java.io.Serializable;
 import java.util.List;
 
-public class PageResponse<T> {
+public class PageResult<T> implements Serializable {
 
     private List<T> content;
     private int pageNumber;
     private int pageSize;
     private long totalElements;
     private int totalPages;
-    private boolean last;
-    private boolean first;
 
-    public PageResponse() {
+    public PageResult() {
     }
 
-    public PageResponse(List<T> content, int pageNumber, int pageSize, long totalElements, int totalPages, boolean last, boolean first) {
+    public PageResult(List<T> content, int pageNumber, int pageSize, long totalElements, int totalPages) {
         this.content = content;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.totalElements = totalElements;
         this.totalPages = totalPages;
-        this.last = last;
-        this.first = first;
     }
-
-    public static <T> PageResponse<T> from(Page<T> page) {
-        PageResponse<T> response = new PageResponse<>();
-        response.setContent(page.getContent());
-        response.setPageNumber(page.getNumber() + 1); // convert to 1-based index
-        response.setPageSize(page.getSize());
-        response.setTotalElements(page.getTotalElements());
-        response.setTotalPages(page.getTotalPages());
-        response.setLast(page.isLast());
-        response.setFirst(page.isFirst());
-        return response;
-    }
-
-    // Getters & Setters
 
     public List<T> getContent() {
         return content;
@@ -79,21 +60,5 @@ public class PageResponse<T> {
 
     public void setTotalPages(int totalPages) {
         this.totalPages = totalPages;
-    }
-
-    public boolean isLast() {
-        return last;
-    }
-
-    public void setLast(boolean last) {
-        this.last = last;
-    }
-
-    public boolean isFirst() {
-        return first;
-    }
-
-    public void setFirst(boolean first) {
-        this.first = first;
     }
 }

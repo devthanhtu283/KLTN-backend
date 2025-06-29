@@ -4,6 +4,7 @@ import com.demo.dtos.*;
 import com.demo.entities.Feedback;
 import com.demo.entities.Job;
 import com.demo.helpers.ApiResponseEntity;
+import com.demo.helpers.PageResult;
 import com.demo.repositories.FavoriteRepository;
 import com.demo.repositories.JobPaginationRepository;
 import com.demo.repositories.JobRepository;
@@ -51,10 +52,10 @@ public class JobController {
     private JobPaginationRepository jobRepository;
 
     @GetMapping(value = "findAllPagination", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<JobDTO>> findAllPagination(@RequestParam(defaultValue = "1") int page,
-                                                          @RequestParam(defaultValue = "6") int size) {
+    public ResponseEntity<PageResult<JobDTO>> findAllPagination(@RequestParam(defaultValue = "1") int page,
+                                                                @RequestParam(defaultValue = "6") int size) {
         try {
-            Page<JobDTO> result = jobService.findAllPagination(page, size);
+            PageResult<JobDTO> result = jobService.findAllPagination(page, size);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -62,19 +63,19 @@ public class JobController {
     }
 
     @GetMapping(value = "getAllJobAdmin", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ApiResponseEntity<Page<JobDTO>> getAllJobAdmin(@RequestParam(value = "search", required = false) String search,
-                                                          @RequestParam(defaultValue = "0", required = false) int page,
-                                                          @RequestParam(defaultValue = "10", required = false) int size) {
-        Page<JobDTO> res = jobService.getAllJobAdmin(search, page, size);
-        return !res.isEmpty() ? ApiResponseEntity.success(res, "Success")
+    public ApiResponseEntity<PageResult<JobDTO>> getAllJobAdmin(@RequestParam(value = "search", required = false) String search,
+                                                                @RequestParam(defaultValue = "0", required = false) int page,
+                                                                @RequestParam(defaultValue = "10", required = false) int size) {
+        PageResult<JobDTO> res = jobService.getAllJobAdmin(search, page, size);
+        return !res.getContent().isEmpty() ? ApiResponseEntity.success(res, "Success")
                 : ApiResponseEntity.success(res, "Fail");
     }
 
     @GetMapping(value = "findByEmployerIdPagination/{employerId}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<JobDTO>> findByEmployerIdPagination(@PathVariable("employerId") int employerId, @RequestParam(defaultValue = "1") int page,
-                                                                   @RequestParam(defaultValue = "5") int size) {
+    public ResponseEntity<PageResult<JobDTO>> findByEmployerIdPagination(@PathVariable("employerId") int employerId, @RequestParam(defaultValue = "1") int page,
+                                                                         @RequestParam(defaultValue = "5") int size) {
         try {
-            Page<JobDTO> result = jobService.findByEmployeeIdPagination(employerId, page, size);
+            PageResult<JobDTO> result = jobService.findByEmployeeIdPagination(employerId, page, size);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -176,7 +177,7 @@ public class JobController {
     }
 
     @GetMapping("searchJobs")
-    public ResponseEntity<Page<JobDTO>> searchJobs(
+    public ResponseEntity<PageResult<JobDTO>> searchJobs(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "locationId", required = false) Integer locationId,
             @RequestParam(value = "worktypeId", required = false) Integer worktypeId,
@@ -313,12 +314,12 @@ public class JobController {
     }
 
     @GetMapping("search")
-    public ResponseEntity<Page<JobDTO>> searchByTitle(
+    public ResponseEntity<PageResult<JobDTO>> searchByTitle(
             @RequestParam String title,
             @RequestParam int employerId,
             @RequestParam int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<JobDTO> result = jobService.searchByTitle(title, employerId, page, size);
+        PageResult<JobDTO> result = jobService.searchByTitle(title, employerId, page, size);
         return ResponseEntity.ok(result);
     }
 
