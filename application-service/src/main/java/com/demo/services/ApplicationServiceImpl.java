@@ -73,7 +73,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Cacheable(key = "'job_' + #jobId + '_page_' + #page + '_size_' + #size + '_status_' + #status")
     public Page<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -93,7 +92,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Cacheable(key = "'employer_' + #employerId + '_page_' + #page + '_size_' + #size + '_status_' + #status")
     public Page<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -113,7 +111,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Cacheable(key = "'search_' + #jobTitle + '_' + #seekerName + '_page_' + #page + '_size_' + #size")
     public Page<ApplicationDTO> searchApplication(String jobTitle, String seekerName, int page, int size) {
         try {
             Pageable pageable = PageRequest.of(page, size);
@@ -134,7 +131,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Cacheable(key = "'seeker_' + #seekerId + '_page_' + #page + '_size_' + #size + '_status_' + #status")
     public Page<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -143,7 +139,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Cacheable(key = "'history_' + #seekerId + '_page_' + #page + '_size_' + #size")
     public Page<ApplicationDTO> historyApplication(int seekerId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
         return applicationRepository.historyApplication(seekerId, pageable)

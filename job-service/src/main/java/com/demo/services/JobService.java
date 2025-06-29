@@ -21,7 +21,7 @@ public interface JobService {
 
     public List<JobDTO> findByEmployeeId(int employeeId);
 
-    public boolean save(JobDTO jobDTO);
+    public JobDTO save(JobDTO jobDTO);
 
     public boolean delete(int jobId);
 

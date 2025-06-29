@@ -67,28 +67,24 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Cacheable(key = "'page_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> findAllPagination(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.findAll(pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
-    @Cacheable(key = "'search_' + #title + '_' + #locationId + '_' + #worktypeId + '_' + #experienceId + '_' + #categoryId + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> searchJobs(String title, Integer locationId, Integer worktypeId, Integer experienceId, Integer categoryId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.searchJobs(title, locationId, worktypeId, experienceId, categoryId, pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
-    @Cacheable(key = "'employee_page_' + #employeeId + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> findByEmployeeIdPagination(int employeeId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id")); // 🔥 Sắp xếp theo ID giảm dần
         return jobPaginationRepository.findByEmployerId(employeeId, pageable).map(job -> mapper.map(job, JobDTO.class));
     }
 
     @Override
-    @Cacheable(key = "'search_title_' + #title + '_' + #employerId + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> searchByTitle(String title, int employerId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         return jobPaginationRepository.findByEmployerIdAndTitleContainingIgnoreCase(employerId, title, pageable)
@@ -96,7 +92,6 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    @Cacheable(key = "'admin_' + #search + '_' + #pageNo + '_' + #pageSize")
     public Page<JobDTO> getAllJobAdmin(String search, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return jobRepository.getAllJobdAdmin(search, pageable).map(job -> mapper.map(job, JobDTO.class));
@@ -114,7 +109,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     @CacheEvict(allEntries = true)
-    public boolean save(JobDTO jobDTO) {
+    public JobDTO save(JobDTO jobDTO) {
         try {
             Job job = mapper.map(jobDTO, Job.class);
             job.setStatus(true);
@@ -126,17 +121,16 @@ public class JobServiceImpl implements JobService {
                     .map(f -> f.getSeeker().getUser()) // giả sử Seeker có getUser()
                     .toList();
             if (checkValidCreateJob(jobDTO.getEmployerId())) {
-                jobRepository.save(job); // Lưu bài đăng
-                System.out.println("Đăng bài thành công");
+                Job savedJob = jobRepository.save(job); // Lưu bài đăng
                 eventPublisher.publishEvent(new JobEvent(this, followers, job, employer, job.getTitle(), "JOB_CREATED"));
-                return true;
+                return mapper.map(savedJob, JobDTO.class);
             } else {
                 System.out.println("Không thể đăng bài: Gói không hợp lệ hoặc vượt giới hạn");
-                return false;
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

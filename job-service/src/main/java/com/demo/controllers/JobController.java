@@ -125,6 +125,7 @@ public class JobController {
         try {
             return new ResponseEntity<JobDTO>(jobService.findById(id), HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<JobDTO>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -280,7 +281,7 @@ public class JobController {
     public ResponseEntity<Object> create(@RequestBody JobDTO jobDTO) {
         try {
             return new ResponseEntity<Object>(new Object() {
-                public boolean status = jobService.save(jobDTO);
+                public JobDTO status = jobService.save(jobDTO);
 
             }, HttpStatus.OK);
         } catch (Exception e) {
