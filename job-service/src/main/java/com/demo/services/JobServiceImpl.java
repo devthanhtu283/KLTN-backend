@@ -251,10 +251,6 @@ public class JobServiceImpl implements JobService {
         String duration = membership.getDuration();
         double price = membership.getPrice();
 
-        if ("YEARLY".equalsIgnoreCase(duration)) {
-            return true; // Không giới hạn job
-        }
-
         LocalDate startDate = convertToLocalDate(employerMembership.getStartDate());
         LocalDate endDate = convertToLocalDate(employerMembership.getEndDate());
 
