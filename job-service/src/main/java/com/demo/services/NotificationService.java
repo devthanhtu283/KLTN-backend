@@ -4,6 +4,7 @@ import com.demo.dtos.NotificationDTO;
 import com.demo.entities.Job;
 import com.demo.entities.Notification;
 import com.demo.entities.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface NotificationService {
 
     List<NotificationDTO> getAllNotifications(User user);
 
-    void markAsRead(Integer notificationId);
+    void markAsRead(Integer notificationId) throws JsonProcessingException;
+
+    void markAsReadAll(Integer userId);
 }

@@ -7,6 +7,7 @@ import com.demo.helpers.ApiResponseEntity;
 import com.demo.repositories.UserRepository;
 import com.demo.services.JobService;
 import com.demo.services.NotificationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,8 +51,14 @@ public class NotificationController {
     }
 
     @PostMapping("/notification/{notificationId}/read")
-    public ApiResponseEntity<Object> markAsRead(@PathVariable Integer notificationId) {
+    public ApiResponseEntity<Object> markAsRead(@PathVariable Integer notificationId) throws JsonProcessingException {
         notificationService.markAsRead(notificationId);
         return ApiResponseEntity.success(notificationId, "Successfully !!!");
+    }
+
+    @PostMapping("/notification/{userId}/readAll")
+    public ApiResponseEntity<Object> markAsReadAll(@PathVariable Integer userId) {
+        notificationService.markAsReadAll(userId);
+        return ApiResponseEntity.success(userId, "Successfully !!!");
     }
 }
