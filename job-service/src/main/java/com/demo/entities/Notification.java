@@ -1,5 +1,6 @@
 package com.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -8,6 +9,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "notifications", catalog = "jobs")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Notification implements java.io.Serializable {
 
     private Integer id;

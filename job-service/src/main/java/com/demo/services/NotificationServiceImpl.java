@@ -10,7 +10,10 @@ import com.demo.entities.Job;
 import com.demo.entities.Notification;
 import com.demo.entities.User;
 import com.demo.repositories.NotificationRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -114,24 +117,66 @@ public class NotificationServiceImpl implements NotificationService {
     public void markAsRead(Integer notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
+
         notification.setRead(true);
         notificationRepository.save(notification);
 
-        // Xóa khỏi Redis
         String redisKey = UNREAD_NOTIFICATIONS_KEY + notification.getUser().getId();
         List<Object> unreadNotifications = redisTemplate.opsForList().range(redisKey, 0, -1);
-        if (unreadNotifications != null) {
+
+        if (unreadNotifications != null && !unreadNotifications.isEmpty()) {
+            List<Object> updatedList = new ArrayList<>();
+            ObjectMapper mapper = new ObjectMapper();
+            boolean removed = false;
+
             for (Object obj : unreadNotifications) {
-                Notification n = modelMapper.map(obj, Notification.class);
-                if (n.getId().equals(notificationId)) {
-                    System.out.println("Found matching notification, removing...");
-                    Long removedCount = redisTemplate.opsForList().remove(redisKey, 1, obj);
-                    System.out.println("Removed " + removedCount + " entries from Redis for notification ID " + notificationId);
-                    break;
+                try {
+                    NotificationDTO dto = mapper.convertValue(obj, NotificationDTO.class);
+
+                    if (!dto.getId().equals(notificationId)) {
+                        updatedList.add(obj); // giữ lại các notification khác
+                    } else {
+                        removed = true;
+                    }
+                } catch (Exception e) {
+                    System.out.println("❌ Failed to convert Redis object: " + e.getMessage());
                 }
             }
+
+            // Ghi đè danh sách mới nếu có sự thay đổi
+            if (removed) {
+                redisTemplate.delete(redisKey);
+                if (!updatedList.isEmpty()) {
+                    redisTemplate.opsForList().rightPushAll(redisKey, updatedList);
+                    redisTemplate.expire(redisKey, 7, TimeUnit.DAYS);
+                }
+                System.out.println("✅ Removed notification ID " + notificationId + " from Redis");
+            } else {
+                System.out.println("⚠️ Notification ID " + notificationId + " not found in Redis");
+            }
         } else {
-            System.out.println("No unread notifications found in Redis for key " + redisKey);
+            System.out.println("ℹ️ No unread notifications found in Redis for user ID: " + notification.getUser().getId());
+        }
+    }
+
+
+    @Override
+    public void markAsReadAll(Integer userId) {
+        List<Notification> unreadNotifications = notificationRepository.findUnreadByUser(userId);
+
+        if (!unreadNotifications.isEmpty()) {
+            // Đánh dấu tất cả là đã đọc
+            for (Notification notification : unreadNotifications) {
+                notification.setRead(true);
+            }
+            notificationRepository.saveAll(unreadNotifications);
+
+            // Xóa toàn bộ danh sách chưa đọc trong Redis
+            String redisKey = UNREAD_NOTIFICATIONS_KEY + userId;
+            redisTemplate.delete(redisKey);
+            System.out.println("Marked all notifications as read and cleared Redis for user ID: " + userId);
+        } else {
+            System.out.println("No unread notifications found for user ID: " + userId);
         }
     }
 }
