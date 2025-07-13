@@ -355,17 +355,21 @@ public class UserController {
     }
 
     @GetMapping(value = "payment/{amount}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> saveCV(@PathVariable long amount) {
+    public ResponseEntity<Object> saveCV(
+            @PathVariable long amount,
+            @RequestParam(name = "returnUrl") String returnUrl) {
+
         try {
-            return new ResponseEntity<Object>(new Object() {
-                public String paymentUrl = PaymentProcessor.processPayment(amount);
+            String url = PaymentProcessor.processPayment(amount, returnUrl);
+            return new ResponseEntity<>(new Object() {
+                public String paymentUrl = url;
             }, HttpStatus.OK);
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
-            return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PostMapping(value = "employerMembership/create", produces = MimeTypeUtils.APPLICATION_JSON_VALUE, consumes = MimeTypeUtils.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createEmployerMembership(@RequestBody EmployerMembershipDTO employerMembershipDTO) {

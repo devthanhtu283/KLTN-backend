@@ -25,16 +25,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class PaymentProcessor {
-    
-    public static void main(String[] args) {
-        System.out.println(processPayment(100000));
-    }
 
 
 
 
-
-    public static String processPayment(long amout) {
+    public static String processPayment(long amout,  String returnUrl) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
@@ -65,7 +60,7 @@ public class PaymentProcessor {
         } else {
             vnp_Params.put("vnp_Locale", "vn");
         }
-        vnp_Params.put("vnp_ReturnUrl", ConfigVNPay.vnp_ReturnUrl);
+        vnp_Params.put("vnp_ReturnUrl", returnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
