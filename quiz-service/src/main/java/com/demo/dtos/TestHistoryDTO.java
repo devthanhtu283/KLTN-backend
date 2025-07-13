@@ -5,7 +5,6 @@ public class TestHistoryDTO {
     private int testID;
     private int userID;
 
-    private String timeSubmit;
     private int score;
 
     public int getId() {
@@ -34,13 +33,6 @@ public class TestHistoryDTO {
 
 
 
-    public String getTimeSubmit() {
-        return timeSubmit;
-    }
-
-    public void setTimeSubmit(String timeSubmit) {
-        this.timeSubmit = timeSubmit;
-    }
 
     public int getScore() {
         return score;

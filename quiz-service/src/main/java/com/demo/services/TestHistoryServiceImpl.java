@@ -25,11 +25,12 @@ public class TestHistoryServiceImpl implements TestHistoryService {
     public boolean save(TestHistoryDTO testHistoryDTO) {
         try {
             User user = new User();
+            System.out.println(testHistoryDTO);
             user.setId(testHistoryDTO.getUserID());
             Test test = new Test();
             test.setId(testHistoryDTO.getTestID());
             Testhistory testhistory = modelMapper.map(testHistoryDTO, Testhistory.class);
-
+            testhistory.setTimeSubmit(LocalDateTime.now());
             testHistoryRepository.save(testhistory);
             return true;
         } catch (Exception e) {
