@@ -41,6 +41,19 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(review -> modelMapper.map(review, ReviewDTO.class))
                 .toList();
     }
+    @Override
+    public Page<ReviewDTO> getAllReviews(Boolean status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Review> reviews;
+
+        if (status != null) {
+            reviews = reviewRepository.findAllByStatus(status, pageable);
+        } else {
+            reviews = reviewRepository.findAll(pageable);
+        }
+
+        return reviews.map(review -> modelMapper.map(review, ReviewDTO.class));
+    }
 
 
     @Override

@@ -25,26 +25,31 @@ public class ReviewController {
                                                    @RequestParam(required = false) Boolean status,
                                                    @RequestParam(required = false) Integer page,
                                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
-
+        // Trường hợp có employerId và phân trang
         if (employerId != null && page != null) {
             Page<ReviewDTO> result = reviewService.getAllReviewsByEmployerId(employerId, status, page, size);
             return result.hasContent()
                     ? ApiResponseEntity.success(result, "Successful !!")
                     : ApiResponseEntity.success(result, "No data !!");
 
+            // Trường hợp có employerId nhưng không phân trang
         } else if (employerId != null) {
             List<ReviewDTO> res = reviewService.getAllReviewsByEmployerId(employerId, status);
             return !res.isEmpty()
                     ? ApiResponseEntity.success(res, "Successful !!")
                     : ApiResponseEntity.success(res, "No data !!");
 
+            // Trường hợp KHÔNG có employerId => lấy tất cả review (có/không lọc theo status)
         } else {
-            Page<ReviewDTO> result = reviewService.getAllReviewsByStatus(status, page != null ? page : 0, size != null ? size : 10);
+            int pageNumber = page != null ? page : 0;
+            Page<ReviewDTO> result = reviewService.getAllReviews(status, pageNumber, size);
             return result.hasContent()
                     ? ApiResponseEntity.success(result, "Successful !!")
                     : ApiResponseEntity.success(result, "No data !!");
         }
     }
+
+
 
     @GetMapping("/reviews/approved-percent")
     public ApiResponseEntity<Object> getApprovedReviewPercentByEmployer(@RequestParam("employerId") int employerId) {
