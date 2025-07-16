@@ -38,5 +38,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query("SELECT COUNT(r) FROM Review r WHERE r.employer.id = :employerId and r.status = true")
     long countAllReviewsByEmployer(@Param("employerId") int employerId);
 
+    Page<Review> findAllByStatus(Boolean status, Pageable pageable);
 
 }

@@ -19,4 +19,7 @@ public interface ReviewService {
     ReviewDTO updateReview(int id);
 
     double getApprovedReviewPercentageByEmployer(int employerId);
+
+    Page<ReviewDTO> getAllReviews(Boolean status, int page, int size);
+
 }
