@@ -57,7 +57,7 @@ public class GoogleLoginController {
             } else {
                 // ✅ Nếu chưa có thì tạo mới
                 user = new UserDTO();
-                user.setPassword("$2a$10$EGz5UXiizIxOG0fvJz2mM.0u4rcfA6KVBZx897NkzfNrRB/p/fRLa"); // Dummy password
+                user.setPassword("123"); // Dummy password
                 user.setUsername(email.split("@")[0]);
                 user.setEmail(email);
                 user.setUserType(userType);

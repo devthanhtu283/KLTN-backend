@@ -1,10 +1,12 @@
 package com.demo.dtos;
 
+import java.time.LocalDateTime;
+
 public class TestHistoryDTO {
     private int id;
     private int testID;
     private int userID;
-
+    private LocalDateTime timeSubmit;
     private int score;
 
     public int getId() {
@@ -31,8 +33,13 @@ public class TestHistoryDTO {
         this.userID = userID;
     }
 
+    public LocalDateTime getTimeSubmit() {
+        return timeSubmit;
+    }
 
-
+    public void setTimeSubmit(LocalDateTime timeSubmit) {
+        this.timeSubmit = timeSubmit;
+    }
 
     public int getScore() {
         return score;
