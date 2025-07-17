@@ -186,7 +186,7 @@ public class JobServiceImpl implements JobService {
 
 
     @Override
-    @Cacheable(key = "'employee_' + #employeeId")
+//    @Cacheable(key = "'employee_' + #employeeId")
     public List<JobDTO> findByEmployeeId(int employeeId) {
         return jobRepository.findByEmployerId(employeeId, true)
                 .stream()
@@ -238,9 +238,13 @@ public class JobServiceImpl implements JobService {
 
     private boolean checkValidCreateJob(Integer employeeID) {
         Employermembership employerMembership = employerMembershipRepository.findByUserId(employeeID);
+        if (employerMembership == null) {
+            long totalJobCount = jobRepository.countByEmployerId(employeeID);
 
+            return totalJobCount < 1;
+        }
         // Kiểm tra membership tồn tại và còn hiệu lực
-        if (employerMembership == null || !employerMembership.isStatus()
+        if (!employerMembership.isStatus()
                 || convertToLocalDate(employerMembership.getEndDate()).isBefore(LocalDate.now())) {
             return false;
         }

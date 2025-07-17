@@ -47,4 +47,5 @@ public interface JobRepository extends CrudRepository<Job, Integer> {
 
     long countByEmployerIdAndPostedAtBetween(Integer employerId, Date start, Date end);
 
+    long countByEmployerId(Integer employerId);
 }
