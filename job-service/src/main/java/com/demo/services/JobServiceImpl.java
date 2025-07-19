@@ -265,7 +265,7 @@ public class JobServiceImpl implements JobService {
         );
 
         if ("MONTHLY".equalsIgnoreCase(duration)) {
-            return price == 0 ? jobCount < 1 : jobCount < 5;
+            return price == 0 ? jobCount < 1 : jobCount < 1000;
         }
 
         return false;

@@ -12,82 +12,92 @@ import java.util.Date;
 @Table(name = "matches", catalog = "jobs")
 public class Matches implements java.io.Serializable {
 
-	private Integer id;
-	private Cv cv;
-	private Job job;
-	private String matchedSkill;
-	private Date timeMatches;
-	private boolean status;
+    private Integer id;
+    private Cv cv;
+    private Job job;
+    private String matchedSkill;
+    private Date timeMatches;
+    private boolean status;
+    private Double accuracy;
 
-	public Matches() {
-	}
+    public Matches() {
+    }
 
-	public Matches(Cv cv, Job job, String matchedSkill, Date timeMatches, boolean status) {
-		this.cv = cv;
-		this.job = job;
-		this.matchedSkill = matchedSkill;
-		this.timeMatches = timeMatches;
-		this.status = status;
-	}
+    public Matches(Cv cv, Job job, String matchedSkill, Date timeMatches, boolean status, Double accuracy) {
+        this.cv = cv;
+        this.job = job;
+        this.matchedSkill = matchedSkill;
+        this.timeMatches = timeMatches;
+        this.status = status;
+        this.accuracy = accuracy;
+    }
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	@Column(name = "id", unique = true, nullable = false)
-	public Integer getId() {
-		return this.id;
-	}
+    @Column(name = "id", unique = true, nullable = false)
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cv_id", nullable = false)
-	public Cv getCv() {
-		return this.cv;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cv_id", nullable = false)
+    public Cv getCv() {
+        return this.cv;
+    }
 
-	public void setCv(Cv cv) {
-		this.cv = cv;
-	}
+    public void setCv(Cv cv) {
+        this.cv = cv;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "job_id", nullable = false)
-	public Job getJob() {
-		return this.job;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", nullable = false)
+    public Job getJob() {
+        return this.job;
+    }
 
-	public void setJob(Job job) {
-		this.job = job;
-	}
+    public void setJob(Job job) {
+        this.job = job;
+    }
 
-	@Column(name = "matched_skill", nullable = false, length = 65535)
-	public String getMatchedSkill() {
-		return this.matchedSkill;
-	}
+    @Column(name = "matched_skill", nullable = false, length = 65535)
+    public String getMatchedSkill() {
+        return this.matchedSkill;
+    }
 
-	public void setMatchedSkill(String matchedSkill) {
-		this.matchedSkill = matchedSkill;
-	}
+    public void setMatchedSkill(String matchedSkill) {
+        this.matchedSkill = matchedSkill;
+    }
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "time_matches", nullable = false, length = 19)
-	public Date getTimeMatches() {
-		return this.timeMatches;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "time_matches", nullable = false, length = 19)
+    public Date getTimeMatches() {
+        return this.timeMatches;
+    }
 
-	public void setTimeMatches(Date timeMatches) {
-		this.timeMatches = timeMatches;
-	}
+    public void setTimeMatches(Date timeMatches) {
+        this.timeMatches = timeMatches;
+    }
 
-	@Column(name = "status", nullable = false)
-	public boolean isStatus() {
-		return this.status;
-	}
+    @Column(name = "status", nullable = false)
+    public boolean isStatus() {
+        return this.status;
+    }
 
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
+    @Column(name = "accuracy")
+    public Double getAccuracy() {
+        return this.accuracy;
+    }
+
+    public void setAccuracy(Double accuracy) {
+        this.accuracy = accuracy;
+    }
 }

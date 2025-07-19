@@ -12,6 +12,7 @@ public class MatchesDTO {
     private String matchedSkill;
     private Date timeMatches;
     private boolean status;
+    private Double accuracy;
 
     // Các trường từ JobDTO
     private Integer employerId;
@@ -259,5 +260,13 @@ public class MatchesDTO {
 
     public void setMember(String member) {
         this.member = member;
+    }
+
+    public Double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Double accurary) {
+        this.accuracy = accurary;
     }
 }

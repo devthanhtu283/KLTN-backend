@@ -5,6 +5,7 @@ import com.demo.entities.Application;
 import com.demo.entities.Job;
 import com.demo.entities.User;
 import com.demo.events.JobEvent;
+import com.demo.helpers.PageResult;
 import com.demo.repository.ApplicationRepository;
 import com.demo.repository.JobRepository;
 import com.demo.repository.UserRepository;
@@ -73,26 +74,31 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status) {
+    @Cacheable(key = "'listByJobId_' + #jobId + '_' + #page + '_' + #size + '_' + #status")
+    public PageResult<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<Application> applicationPage = applicationRepository.listApplicationByJobId(jobId, pageable, status);
 
-            // Ánh xạ từng phần tử trong Page<Application> sang ApplicationDTO
             List<ApplicationDTO> applicationDTOs = applicationPage.getContent()
                     .stream()
                     .map(application -> modelMapper.map(application, ApplicationDTO.class))
                     .collect(Collectors.toList());
-
-            // Tạo đối tượng Page<ApplicationDTO> mới
-            return new PageImpl<>(applicationDTOs, pageable, applicationPage.getTotalElements());
+            return new PageResult<>(
+                    applicationDTOs,
+                    applicationPage.getNumber(),
+                    applicationPage.getSize(),
+                    applicationPage.getTotalElements(),
+                    applicationPage.getTotalPages()
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Page<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status) {
+    @Cacheable(key = "'listByEmployerId_' + #employerId + '_' + #page + '_' + #size + '_' + #status")
+    public PageResult<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status) {
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<Application> applicationPage = applicationRepository.listDistinctApplicationByEmployerId(employerId, pageable, status);
@@ -104,7 +110,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .collect(Collectors.toList());
 
             // Tạo đối tượng Page<ApplicationDTO> mới
-            return new PageImpl<>(applicationDTOs, pageable, applicationPage.getTotalElements());
+            return new PageResult<>(
+                    applicationDTOs,
+                    applicationPage.getNumber(),
+                    applicationPage.getSize(),
+                    applicationPage.getTotalElements(),
+                    applicationPage.getTotalPages()
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -131,18 +143,45 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status) {
+    @Cacheable(key = "'listSeekerApplied_' + #seekerId + '_' + #page + '_' + #size + '_' + #status")
+    public PageResult<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status) {
         Pageable pageable = PageRequest.of(page, size);
+        Page<Application> applicationPage = applicationRepository.listSeekerApplied(seekerId, pageable, status);
+        // Ánh xạ từng phần tử trong Page<Application> sang ApplicationDTO
+        List<ApplicationDTO> applicationDTOs = applicationPage.getContent()
+                .stream()
+                .map(application -> modelMapper.map(application, ApplicationDTO.class))
+                .collect(Collectors.toList());
 
-        return applicationRepository.listSeekerApplied(seekerId, pageable, status)
-                .map(application -> modelMapper.map(application, ApplicationDTO.class));
+        // Tạo đối tượng Page<ApplicationDTO> mới
+        return new PageResult<>(
+                applicationDTOs,
+                applicationPage.getNumber(),
+                applicationPage.getSize(),
+                applicationPage.getTotalElements(),
+                applicationPage.getTotalPages()
+        );
     }
 
     @Override
-    public Page<ApplicationDTO> historyApplication(int seekerId, int page, int size) {
+    @Cacheable(key = "'history_' + #seekerId + '_' + #page + '_' + #size")
+    public PageResult<ApplicationDTO> historyApplication(int seekerId, int page, int size) {
         PageRequest pageable = PageRequest.of(page, size);
-        return applicationRepository.historyApplication(seekerId, pageable)
-                .map(application -> modelMapper.map(application, ApplicationDTO.class));
+        Page<Application> applicationPage = applicationRepository.historyApplication(seekerId, pageable);
+        // Ánh xạ từng phần tử trong Page<Application> sang ApplicationDTO
+        List<ApplicationDTO> applicationDTOs = applicationPage.getContent()
+                .stream()
+                .map(application -> modelMapper.map(application, ApplicationDTO.class))
+                .collect(Collectors.toList());
+
+        // Tạo đối tượng Page<ApplicationDTO> mới
+        return new PageResult<>(
+                applicationDTOs,
+                applicationPage.getNumber(),
+                applicationPage.getSize(),
+                applicationPage.getTotalElements(),
+                applicationPage.getTotalPages()
+        );
     }
 
 

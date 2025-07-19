@@ -2,6 +2,7 @@ package com.demo.controllers;
 
 import com.demo.dtos.ApplicationDTO;
 import com.demo.helpers.ApiResponseEntity;
+import com.demo.helpers.PageResult;
 import com.demo.services.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -94,8 +95,8 @@ public class ApplicationController {
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size,
                                                             @RequestParam int status) {
-        Page<ApplicationDTO> result = applicationService.listApplicationByJobId(jobId, page, size, status);
-        return result.hasContent() ? ApiResponseEntity.success(result, "Successful !!")
+        PageResult<ApplicationDTO> result = applicationService.listApplicationByJobId(jobId, page, size, status);
+        return result != null ? ApiResponseEntity.success(result, "Successful !!")
                 : ApiResponseEntity.success(result, "No data !!");
     }
 
@@ -103,8 +104,8 @@ public class ApplicationController {
     public ApiResponseEntity<Object> historyApplication(@RequestParam int seekerId,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "10") int size) {
-        Page<ApplicationDTO> result = applicationService.historyApplication(seekerId, page, size);
-        return result.hasContent() ? ApiResponseEntity.success(result, "Successful !!")
+        PageResult<ApplicationDTO> result = applicationService.historyApplication(seekerId, page, size);
+        return result != null ? ApiResponseEntity.success(result, "Successful !!")
                 : ApiResponseEntity.success(result, "No data !!");
     }
 
@@ -114,8 +115,8 @@ public class ApplicationController {
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size,
                                                             @RequestParam int status) {
-        Page<ApplicationDTO> result = applicationService.listDistinctApplicationByEmployerId(employerId, page, size, status);
-        return result.hasContent() ? ApiResponseEntity.success(result, "Successful !!")
+        PageResult<ApplicationDTO> result = applicationService.listDistinctApplicationByEmployerId(employerId, page, size, status);
+        return result != null ? ApiResponseEntity.success(result, "Successful !!")
                 : ApiResponseEntity.success(result, "No data !!");
     }
 
@@ -125,8 +126,8 @@ public class ApplicationController {
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size,
                                                        @RequestParam int status) {
-        Page<ApplicationDTO> result = applicationService.listSeekerApplied(seekerId, page, size, status);
-        return result.hasContent() ? ApiResponseEntity.success(result, "Successful !!")
+        PageResult<ApplicationDTO> result = applicationService.listSeekerApplied(seekerId, page, size, status);
+        return result != null ? ApiResponseEntity.success(result, "Successful !!")
                 : ApiResponseEntity.success(result, "No data !!");
     }
 

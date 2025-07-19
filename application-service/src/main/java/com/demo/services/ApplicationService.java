@@ -1,6 +1,7 @@
 package com.demo.services;
 
 import com.demo.dtos.ApplicationDTO;
+import com.demo.helpers.PageResult;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,15 +14,15 @@ public interface ApplicationService {
 
     public ApplicationDTO findById(int id);
 
-    public Page<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status);
+    public PageResult<ApplicationDTO> listApplicationByJobId(int jobId, int page, int size, int status);
 
-    public Page<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status);
+    public PageResult<ApplicationDTO> listDistinctApplicationByEmployerId(int employerId, int page, int size, int status);
 
     public Page<ApplicationDTO> searchApplication(String jobTitle, String seekerName, int page, int size);
 
-    public Page<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status);
+    public PageResult<ApplicationDTO> listSeekerApplied(int seekerId, int page, int size, int status);
 
-    public Page<ApplicationDTO> historyApplication(int seekerId, int page, int size);
+    public PageResult<ApplicationDTO> historyApplication(int seekerId, int page, int size);
 
     public ApplicationDTO updateStatus(int id, int status);
 
