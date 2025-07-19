@@ -6,4 +6,6 @@ public interface MailService {
 
     public void sendNewJobEmail(String toEmail, String jobTitle, String companyName, String jobLink);
 
+    public void sendMatchJobEmail(String toEmail, String jobTitle, String companyName, String jobLink);
+
 }

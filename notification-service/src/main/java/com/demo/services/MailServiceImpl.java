@@ -64,5 +64,41 @@ public class MailServiceImpl implements MailService {
         }
     }
 
+    @Override
+    public void sendMatchJobEmail(String toEmail, String jobTitle, String companyName, String jobLink) {
+        try {
+            MimeMessage message = sender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject("🎯 Có một công việc phù hợp với hồ sơ của bạn!");
+
+            String content = """
+                    <html>
+                    <body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; padding: 20px;">
+                        <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                            <h2 style="color: #2c3e50;">🚀 Tin vui từ <span style="color:#e67e22;">%s</span>!</h2>
+                            <p>Chào bạn,</p>
+                            <p>Chúng tôi phát hiện <strong>một công việc mới</strong> từ công ty <strong>%s</strong> <br>
+                            rất <strong>phù hợp với hồ sơ (CV)</strong> của bạn.</p>
+                            <p style="font-size: 18px; color: #2980b9; margin-top: 20px;"><strong>%s</strong></p>
+                            <p style="margin-top: 10px;">Bạn có thể xem thông tin chi tiết và ứng tuyển ngay tại đường dẫn bên dưới:</p>
+                            <p><a href="%s" style="background: #27ae60; color: white; padding: 10px 15px; border-radius: 4px; text-decoration: none;">👉 Xem chi tiết công việc</a></p>
+                            <hr style="margin-top: 30px;">
+                            <p style="font-size: 12px; color: #95a5a6;">Bạn nhận được email này vì hệ thống phát hiện sự phù hợp giữa hồ sơ của bạn và bài đăng tuyển dụng mới.</p>
+                            <p style="font-size: 12px; color: #bdc3c7;">Nếu không muốn nhận email tương tự, vui lòng điều chỉnh cài đặt thông báo của bạn.</p>
+                        </div>
+                    </body>
+                    </html>
+                    """.formatted(companyName, companyName, jobTitle, jobLink);
+
+            helper.setText(content, true);
+            sender.send(message);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

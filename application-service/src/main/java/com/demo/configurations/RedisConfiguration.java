@@ -21,24 +21,46 @@ public class RedisConfiguration {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        if (redisConnectionFactory == null) {
+            logger.error("RedisConnectionFactory is null. CacheManager cannot be initialized.");
+            throw new IllegalStateException("RedisConnectionFactory is not properly configured.");
+        }
+
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(cacheConfig)
-                .build();
+        try {
+            return RedisCacheManager.builder(redisConnectionFactory)
+                    .cacheDefaults(cacheConfig)
+                    .build();
+        } catch (Exception e) {
+            logger.error("Failed to initialize RedisCacheManager: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to initialize RedisCacheManager", e);
+        }
     }
-
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        logger.info("Redis Connection Established Successfully.");
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        return template;
+        if (redisConnectionFactory == null) {
+            logger.error("RedisConnectionFactory is null. RedisTemplate cannot be initialized.");
+            throw new IllegalStateException("RedisConnectionFactory is not properly configured.");
+        }
+
+        try {
+            RedisTemplate<String, Object> template = new RedisTemplate<>();
+            template.setConnectionFactory(redisConnectionFactory);
+            template.setKeySerializer(new StringRedisSerializer());
+            template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+            template.setHashKeySerializer(new StringRedisSerializer());
+            template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+            template.afterPropertiesSet(); // Khởi tạo template
+            logger.info("Redis Connection Established Successfully.");
+            return template;
+        } catch (Exception e) {
+            logger.error("Failed to initialize RedisTemplate: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to initialize RedisTemplate", e);
+        }
     }
 }
