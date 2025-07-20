@@ -19,17 +19,19 @@ public class Matches implements java.io.Serializable {
     private Date timeMatches;
     private boolean status;
     private Double accuracy;
+    private String label;
 
     public Matches() {
     }
 
-    public Matches(Cv cv, Job job, String matchedSkill, Date timeMatches, boolean status, Double accuracy) {
+    public Matches(Cv cv, Job job, String matchedSkill, Date timeMatches, boolean status, Double accuracy, String label) {
         this.cv = cv;
         this.job = job;
         this.matchedSkill = matchedSkill;
         this.timeMatches = timeMatches;
         this.status = status;
         this.accuracy = accuracy;
+        this.label = label;
     }
 
     @Id
@@ -99,5 +101,14 @@ public class Matches implements java.io.Serializable {
 
     public void setAccuracy(Double accuracy) {
         this.accuracy = accuracy;
+    }
+
+    @Column(name = "label")
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }
