@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/employer/get-medium-companies/**").permitAll()
                         .requestMatchers("/user/employer/findById/**").permitAll()
                         .requestMatchers("/user/employer/search/**").permitAll()
+                        .requestMatchers("/user/google-login/**").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/error").permitAll()

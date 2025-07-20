@@ -13,6 +13,7 @@ public class MatchesDTO {
     private Date timeMatches;
     private boolean status;
     private Double accuracy;
+    private String label;
 
     // Các trường từ JobDTO
     private Integer employerId;
@@ -268,5 +269,13 @@ public class MatchesDTO {
 
     public void setAccuracy(Double accurary) {
         this.accuracy = accurary;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

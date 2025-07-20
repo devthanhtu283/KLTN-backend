@@ -129,6 +129,7 @@ public class ModelMapperConfiguration {
                 map().setTimeMatches(source.getTimeMatches());
                 map().setStatus(source.isStatus());
                 map().setAccuracy(source.getAccuracy());
+                map().setLabel(source.getLabel());
 
                 // Map các trường từ Job
                 map().setJobId(source.getJob().getId());
