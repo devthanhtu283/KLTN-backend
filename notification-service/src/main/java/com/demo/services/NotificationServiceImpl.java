@@ -22,7 +22,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -93,7 +95,6 @@ public class NotificationServiceImpl implements NotificationService {
 
         if (followers.isEmpty()) {
             logger.info("No followers found for employer: {}", employerId);
-            return;
         }
 
         // Process followers in batches
@@ -104,20 +105,46 @@ public class NotificationServiceImpl implements NotificationService {
         logger.info("Found {} active CVs to match with job {}", activeCvs.size(), jobId);
 
         String jobUrl = "http://localhost:4200/seeker/job-details/" + jobId;
+        List<Integer> matchedCvIds = activeCvs.stream()
+                .filter(cv -> {
+                    try {
+                        Integer cvId = cv.getId();
+                        String url = "http://localhost:8000/python/match/cv/" + cv.getId() + "/match-all-jobs";
+                        logger.info("➡️ Sending match request for CV ID {} to {}", cvId, url);
+                        ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, null, JsonNode.class);
+                        JsonNode matches = response.getBody().get("matches");
+                        if (matches != null && matches.isArray()) {
+                            for (JsonNode match : matches) {
+                                int matchedJobId = match.get("job_id").asInt();
+                                logger.debug("🔍 CV ID {} matched with job ID {}", cvId, matchedJobId);
+                                if (matchedJobId == jobId) {
+                                    logger.info("✅ CV ID {} MATCHED with target job ID {}", cvId, jobId);
+                                    return true;
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.error("❌ Match API error for CV ID {}: {}", cv.getId(), e.getMessage());
+                    }
+                    return false;
+                })
+                .map(Cv::getId)
+                .toList();
+        logger.info("✅ Total matched CV IDs: {}", matchedCvIds);
 
-        activeCvs.parallelStream().forEach(cv -> {
-            try {
-                String url = "http://localhost:8000/python/match/cv/" + cv.getId() + "/match-all-jobs";
-                restTemplate.postForObject(url, null, Void.class);
-                User user = cv.getSeeker().getUser();
-                batches.forEach(batch ->
-                        processMatchBatch(batch, jobTitle, employer.getCompanyName(), jobUrl)
-                );
-                logger.info("✅ Triggered match API for CV ID {}", cv.getId());
-            } catch (Exception e) {
-                logger.error("❌ Error calling match API for CV ID {}: {}", cv.getId(), e.getMessage());
-            }
-        });
+        List<User> matchedUsers = matchedCvIds.stream()
+                .map(cvRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Cv::getSeeker)
+                .map(Seeker::getUser)
+                .filter(user -> user.getStatus() == 1)
+                .collect(Collectors.toList());
+        logger.info("📬 Matched users to notify: {}", matchedUsers.size());
+        List<List<User>> userBatches = getBatches(matchedUsers, BATCH_SIZE);
+        userBatches.forEach(batch ->
+                processMatchUserBatch(batch, jobTitle, employer.getCompanyName(), jobUrl)
+        );
 
 
         batches.forEach(batch ->
@@ -180,22 +207,18 @@ public class NotificationServiceImpl implements NotificationService {
                 });
     }
 
-    private void processMatchBatch(List<Follow> batch, String jobTitle, String companyName, String jobUrl) {
+    private void processMatchUserBatch(List<User> batch, String jobTitle, String companyName, String jobUrl) {
         List<CompletableFuture<Void>> futures = batch.stream()
-                .map(follow -> follow.getSeeker().getId())
-                .map(seekerId -> userRepository.findByIdAndStatus(seekerId, 1))
-                .filter(userOpt -> userOpt.isPresent())
-                .map(userOpt -> userOpt.get())
                 .map(user -> sendMatchJobEmailAsync(user, jobTitle, companyName, jobUrl))
                 .collect(Collectors.toList());
 
-        // Wait for all emails in batch to complete
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .exceptionally(throwable -> {
-                    logger.error("Error processing email batch", throwable);
+                    logger.error("Error processing matched CV email batch", throwable);
                     return null;
                 });
     }
+
 
     @Async
     protected CompletableFuture<Void> sendEmailAsync(User user, String jobTitle, String companyName, String jobUrl) {
